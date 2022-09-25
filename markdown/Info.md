@@ -20,18 +20,16 @@ Bei dem Nichterfüllen dieser stibrt das Küken und der Lebenszyklus fangt von v
 
 ## Geschichte
 
-
-
 ### Marktübernahme
 
 Zunächst nur auf dem japanischen Markt verfügbar, dann aber schnell auch auf dem amekrikanischen Markt verbreitet.
 In Deutschland war der Tamagotchi auch auf dem Schwarzmarkt erhältlich.
 
-Schnell waren auch Alternativen zu erhalten. Hier wurden die Platformen PC und Macintosh und sogar den Gameboy abgedeckt. 
+Schnell waren auch Alternativen zu erhalten. Hier wurden die Platformen PC und Macintosh und sogar den Gameboy abgedeckt.
 
 ### Online
 
-Für die verstorbenen Tiere wurden auch online viele digitale Friedhöfe eingerichtet. 
+Für die verstorbenen Tiere wurden auch online viele digitale Friedhöfe eingerichtet.
 
 ### Tamagotchi Rausch
 
