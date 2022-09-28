@@ -40,7 +40,7 @@
 
 ## Healthyness
 
-### `healtyness_value: int`
+### `sickness_value: int`
 
 > Represents the healthiness of the tama, this is affected by the poop, happiness and hunger values.
 >
