@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\py"
+    "\\py",
+    "\\py\\classes"
   ],
-  "SelectedNode": "\\py\\main.py",
+  "SelectedNode": "\\py\\classes\\Logic.py",
   "PreviewInSolutionExplorer": false
 }
