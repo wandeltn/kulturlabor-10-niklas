@@ -4,20 +4,32 @@ import threading
 
 class Logic(object):
     def __init__(self) -> None:
-        self.times_pooped = 0
+        # set up pooping timer interval
         self.next_pooping_interval = time.time()
         self.cause_pooping()
+
+        # set up hunger timer interval
+        self.next_hunger_interval = time.time()
+        self.cause_hunger()
     
-    def startTimer(self, interval: float, function: type) -> threading.Timer:
-        print("DEBUG: started timer for: " + str(function.__name__))
+    def start_timer(self, interval: float, function: type) -> threading.Timer:
+        if __debug__:
+            print("DEBUG: started timer for: " + str(function.__name__))
+
         return threading.Timer(interval - time.time(), function).start()
 
     def cause_pooping(self) -> None:
-        print("DEBUG: Pooped")
+        if __debug__:
+            print("DEBUG: Pooped")
 
         self.next_pooping_interval += 2
-        self.times_pooped += 1
-        self.startTimer(self.next_pooping_interval, self.cause_pooping)
+        self.start_timer(self.next_pooping_interval, self.cause_pooping)
 
+    def cause_hunger(self) -> None:
+        if __debug__:
+            print("DEBUG: hunger value increased by 1")
+        
+        # Hunger value change still to be implemented
 
-logic = Logic()
+        self.next_hunger_interval += 5
+        self.start_timer(self.next_hunger_interval, self.cause_hunger)
