@@ -16,14 +16,6 @@ class States(object):
     def add_poop_to_screen(self, amount: int) -> int:
         self.add_poop_to_screen += amount
 
-        if self._poop_on_screen >= 3:
-            # add random sickness: more poop -> more sickness
-            if random.randint(1, 10) > self._poop_on_screen:
-                self.add_sickness(math.floor(self._poop_on_screen / 2))
-
-        elif self._poop_on_screen >= 5:
-            self._care_errors += 1
-
         return self._poop_on_screen
 
     @property

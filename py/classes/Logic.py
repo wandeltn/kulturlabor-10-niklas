@@ -1,5 +1,7 @@
 import time
 import threading
+import random
+import math
 
 
 class Logic(object):
@@ -33,3 +35,13 @@ class Logic(object):
 
         self.next_hunger_interval += 5
         self.start_timer(self.next_hunger_interval, self.cause_hunger)
+
+    def cause_sickness(self) -> None:
+        if self._poop_on_screen >= 3:
+        # add random sickness: more poop -> more sickness
+            if random.randint(1, 10) > self._poop_on_screen:
+                self.add_sickness(math.floor(self._poop_on_screen / 2))
+
+            elif self._poop_on_screen >= 5:
+                self._care_errors += 1
+
