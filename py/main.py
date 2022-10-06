@@ -13,9 +13,6 @@ SPRITEMAP_MENU_PATH: str = "/home/pi/Downloads/py/image.png"
 BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
 BUTTON_C_GPIO: int = 16
-
-
-
             
 
 class DisplayItem(object):
@@ -26,12 +23,12 @@ class DisplayMenu(DisplayItem):
     def __init__(self, spritemap_index: int):
         self.selected: bool = False
         
-        spritemap = Image.open(SPRITEMAP_MENU_PATH).convert("1")
+        spritemap = Image.open(SPRITEMAP_MENU_PATH).convert("L")
         self.sprite_unselected: Image.Image = spritemap.crop((spritemap_index * 16, 0, (spritemap_index + 1) * 16, 16))
         self.sprite_selected: Image.Image = ImageOps.invert(self.sprite_unselected)
 
-        self.position_X = spritemap_index * 16
-        self.position_Y = spritemap_index * 6
+        self.position_X = (spritemap_index // 4) * 112
+        self.position_Y = (spritemap_index % 4) * 16
        
     def render(self, display: Image.Image):
         if self.selected:
