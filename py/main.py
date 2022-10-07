@@ -9,27 +9,29 @@ from luma.oled.device import ssd1306
 
 
 SPRITEMAP_MENU_PATH: str = "/home/pi/Downloads/py/image.png"
+
 BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
 BUTTON_C_GPIO: int = 16
 
-menu_position: int = 0
-max_menu_position: int = 7
-            
 poop_on_screen: int = 0
 sickness_value: int = 0
 care_errors: int = 0
 
+serial = spi()
+device = ssd1306(serial)
+
 class DisplayItem(object):
-    def render(self, image: Image.Image):
+    def __init__(self):
+        self.selected: bool
+        
+    def render(self, image: Image.Image) -> None:
         pass
+    
 
 class DisplayMenu(DisplayItem):
-    def __init__(self, spritemap_index: int):
-        if spritemap_index == menu_position:
-            self.selected: bool = True
-        else:
-            self.selected: bool = False
+    def __init__(self, spritemap_index: int):        
+        self.selected: bool = False
         
         spritemap = Image.open(SPRITEMAP_MENU_PATH).convert("L")
         self.sprite_unselected: Image.Image = spritemap.crop((spritemap_index * 16, 0, (spritemap_index + 1) * 16, 16))
@@ -44,44 +46,75 @@ class DisplayMenu(DisplayItem):
         else:
             display.paste(self.sprite_unselected, (self.position_X, self.position_Y))
     
+    
 class BaseScreen(object):
     def __init__(self):
         self.display_content: Image.Image = Image.new("1", (128, 64))
-        self.render_list: list[DisplayItem]
-
-    def draw(self) -> None: 
+        self.render_list: list[DisplayItem] = []
+        self.menu_position: int = 0
+        self.max_menu_position: int
+        
+    def render(self) -> None: 
         for display_item in self.render_list:
             display_item.render(self.display_content)
+        device.display(self.display_content)
+            
+    def on_button_A_pressed(self):
+        pass
+                
+    def on_button_B_pressed(self):
+        pass
+                
+    def on_button_C_pressed(self):
+        pass
+                      
 
 class MainScreen(BaseScreen):
     def __init__(self):
-        super()        
+        super().__init__()
+        self.max_menu_position = 7
+        
+        for i in range(0, 8):
+            self.render_list.append(DisplayMenu(i))
 
+    def on_button_A_pressed(self):
+        self.render_list[self.menu_position].selected = False
+        if self.menu_position >= self.max_menu_position:
+            self.menu_position = 0
+        else:
+            self.menu_position += 1
+        self.render_list[self.menu_position].selected = True
+    
+    def on_button_B_pressed(self):
+        pass
+    
+    def on_button_C_pressed(self):
+        self.render_list[self.menu_position].selected = False
+        if self.menu_position <= 0:
+            self.menu_position = self.max_menu_position
+        else:
+            self.menu_position -= 1
+        self.render_list[self.menu_position].selected = True
+            
+                
 class UserInput(object):
     def __init__(self) -> None:
         self.set_button_interrupt()
     
     def button_pressed_callback(self, channel):
-        global menu_position
         print("Button pressed!" + str(channel))
 
         if channel == BUTTON_A_GPIO:
-            if menu_position >= max_menu_position:
-                menu_position = 0
-            else:
-                menu_position += 1
+            active_screen.on_button_A_pressed()
         elif channel == BUTTON_B_GPIO:
-            pass
+            active_screen.on_button_B_pressed()
         elif channel == BUTTON_C_GPIO:
-            if menu_position <= 0:
-                menu_position = max_menu_position
-            else:
-                menu_position -= 1
+            active_screen.on_button_C_pressed()
         else:
             raise Exception("Invalid button channel in interrupt")
 
     def set_button_interrupt(self) -> None:
-        button_bouncetime = 100
+        button_bouncetime = 150
         
         # add interupt for button A
         GPIO.setmode(GPIO.BCM)# type: ignore
@@ -155,21 +188,13 @@ class Logic(object):
         threading.Timer(self.next_sickness_interval - time.time(), self.cause_sickness).run()
 
 
-
-
-
-
-serial = spi()
-device = ssd1306(serial)
-active_screen: BaseScreen
+active_screen: BaseScreen = MainScreen()
 
 test_image: Image.Image = Image.new("1", (128, 64))
 
 UI = UserInput()
 
-while True:
-    for i in 0, 1, 2, 3, 4, 5, 6, 7:
-        menu_item: DisplayMenu = DisplayMenu(i)
-        menu_item.render(test_image)
-    device.display(test_image)
 
+while True:
+    active_screen.render()
+    
