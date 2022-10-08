@@ -45,22 +45,21 @@ class DisplayMenu(DisplayItem):
         else:
             display.paste(self.sprite_unselected, (self.position_X, self.position_Y))
     
-class DisplayPoopItem(DisplayItem):
-    def __init__(self, spritemap_index: int):
+class DisplayPoopBar(DisplayItem):
+    def __init__(self):
         super().__init__()
+        self.poop_on_screen: int = 0
         
         spritemap: Image.Image = Image.open(SPRITEMAP_POOP_PATH).convert("L")
         self.sprite_unselected: Image.Image = spritemap.crop((0, 0, 5 ,6))
         self.sprite_selected: Image.Image = spritemap.crop((5, 0, 10, 6))
-
-        self.position_X: int =  106
-        self.position_Y: int = (spritemap_index * 8)
     
     def render(self, display: Image.Image):
-        if self.selected:
-            display.paste(self.sprite_selected, (self.position_X, self.position_Y))
-        else:
-            display.paste(self.sprite_unselected, (self.position_X, self.position_Y))
+        for poop_index in range(self.poop_on_screen):
+            if self.selected:
+                display.paste(self.sprite_selected, (106, poop_index * 8))
+            else:
+                display.paste(self.sprite_unselected, (106, poop_index * 8))
             
 
 class DisplayStoneBar(DisplayItem):
@@ -71,8 +70,8 @@ class DisplayStoneBar(DisplayItem):
         self.stones_on_screen: int = stones_on_screen
     
     def render(self, display: Image.Image):
-        for i in range(self.stones_on_screen):
-            display.paste(self.sprite, (17, i * 8))       
+        for stone_index in range(self.stones_on_screen):
+            display.paste(self.sprite, (17, stone_index * 8))       
         
         
 class BaseScreen(object):
@@ -103,15 +102,14 @@ class MainScreen(BaseScreen):
         super().__init__()
         self.max_menu_position = 7
         self.poop_index_list: list[int] = []
-        self.stone_display_menu: DisplayStoneBar = DisplayStoneBar()
+        self.stone_display_bar: DisplayStoneBar = DisplayStoneBar()
+        self.poop_display_bar: DisplayPoopBar = DisplayPoopBar()
         
         for i in range(0, 8):
             self.render_list.append(DisplayMenu(i))
         
-        for poop_index in range(logic_class.poop_on_screen):
-            self.render_list.append(DisplayPoopItem(poop_index))
-            
-        self.render_list.append(self.stone_display_menu)
+        self.render_list.append(self.poop_display_bar)
+        self.render_list.append(self.stone_display_bar)
 
     def on_button_A_pressed(self):
         self.render_list[self.menu_position].selected = False
@@ -131,13 +129,9 @@ class MainScreen(BaseScreen):
         else:
             self.menu_position -= 1
         self.render_list[self.menu_position].selected = True
-        
-    def add_poop_to_screen(self):
-        self.render_list.append(DisplayPoopItem(logic_class.poop_on_screen - 1))
-        self.poop_index_list.append(len(self.render_list) - 1)
-        
-    def remove_last_poop_from_screen(self): 
-        self.render_list.pop(self.poop_index_list.pop())
+            
+            
+main_screen: MainScreen = MainScreen()
             
                 
 class UserInput(object):
@@ -180,7 +174,6 @@ class UserInput(object):
 class Logic(object):
     def __init__(self) -> None:
         self.birthday_time: float = time.time()
-        self.poop_on_screen: int = 0
         self.sickness_value: int = 0
         self.care_errors: int = 0
             
@@ -213,7 +206,9 @@ class Logic(object):
     def cause_pooping(self) -> None:
         if __debug__:
             print("DEBUG: Pooped")
-        self.poop_on_screen += 1
+        global main_screen    
+        
+        main_screen.poop_display_bar.poop_on_screen += 1
         
         self.next_pooping_interval += 5
         pooping_timer: threading.Timer = threading.Timer(self.next_pooping_interval - time.time(), self.cause_pooping)
@@ -234,10 +229,10 @@ class Logic(object):
         return self.sickness_value
     
     def cause_sickness(self) -> None:
-        if self.poop_on_screen >= 3:
+        if main_screen.poop_display_bar.poop_on_screen >= 3:
         # add random sickness: more poop -> more sickness
-            if random.randint(1, 10) > self.poop_on_screen:
-                self.add_sickness(math.floor(self.poop_on_screen / 2))
+            if random.randint(1, 10) > main_screen.poop_display_bar.poop_on_screen:
+                self.add_sickness(math.floor(main_screen.poop_display_bar.poop_on_screen / 2))
         elif random.randint(1, 30) == 30:
             self.add_sickness(5)
         self.next_sickness_interval += 1
@@ -245,9 +240,11 @@ class Logic(object):
 
 logic_class: Logic = Logic()
 
-active_screen: BaseScreen = MainScreen()
 
 test_image: Image.Image = Image.new("1", (128, 64))
+
+
+active_screen: BaseScreen = main_screen
 
 UI = UserInput()
 
