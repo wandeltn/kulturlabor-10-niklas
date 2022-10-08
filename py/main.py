@@ -16,12 +16,6 @@ BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
 BUTTON_C_GPIO: int = 16
 
-# to be moved in to class
-poop_on_screen: int = 4
-sickness_value: int = 0
-care_errors: int = 0
-# end
-
 serial = spi()
 device = ssd1306(serial)
 
@@ -56,7 +50,7 @@ class DisplayPoopItem(DisplayItem):
         
         spritemap: Image.Image = Image.open(SPRITEMAP_POOP_PATH).convert("L")
         self.sprite_unselected: Image.Image = spritemap.crop((0, 0, 5 ,6))
-        self.sprite_selected: Image.Image = spritemap.crop((5, 0, 6, 10))
+        self.sprite_selected: Image.Image = spritemap.crop((5, 0, 10, 6))
 
         self.position_X: int =  106
         self.position_Y: int = (spritemap_index * 8)
@@ -66,6 +60,9 @@ class DisplayPoopItem(DisplayItem):
             display.paste(self.sprite_selected, (self.position_X, self.position_Y))
         else:
             display.paste(self.sprite_unselected, (self.position_X, self.position_Y))
+            
+
+
         
 class BaseScreen(object):
     def __init__(self):
@@ -94,11 +91,12 @@ class MainScreen(BaseScreen):
     def __init__(self):
         super().__init__()
         self.max_menu_position = 7
+        self.poop_index_list: list[int] = []
         
         for i in range(0, 8):
             self.render_list.append(DisplayMenu(i))
         
-        for poop_index in range(poop_on_screen):
+        for poop_index in range(logic_class.poop_on_screen):
             self.render_list.append(DisplayPoopItem(poop_index))
 
     def on_button_A_pressed(self):
@@ -119,6 +117,13 @@ class MainScreen(BaseScreen):
         else:
             self.menu_position -= 1
         self.render_list[self.menu_position].selected = True
+        
+    def add_poop_to_screen(self):
+        self.render_list.append(DisplayPoopItem(logic_class.poop_on_screen - 1))
+        self.poop_index_list.append(len(self.render_list) - 1)
+        
+    def remove_last_poop_from_screen(self): 
+        self.render_list.pop(self.poop_index_list.pop())
             
                 
 class UserInput(object):
@@ -160,6 +165,11 @@ class UserInput(object):
 
 class Logic(object):
     def __init__(self) -> None:
+        self.birthday_time: float = time.time()
+        self.poop_on_screen: int = 0
+        self.sickness_value: int = 0
+        self.care_errors: int = 0
+            
         # set up pooping timer interval
         self.next_pooping_interval = time.time()
         self.cause_pooping()
@@ -171,46 +181,55 @@ class Logic(object):
         # set up sickness timer interval
         self.next_sickness_interval = time.time()
         self.cause_sickness()
-
-    def add_poop_to_screen(self, amount: int) -> int:
-        global poop_on_screen
-        poop_on_screen += amount
-        return poop_on_screen
+        
+    def get_polynomial_value(self) -> float:
+        terms: list[float] = [
+        9.9999999999997874e+002,
+        5.9151704397609030e-003,
+        -5.5089670016536930e-009,
+        1.3956521653067459e-015
+        ]
+        t = 1
+        result = 0
+        for c in terms:
+            result += c * t
+            t *= (time.time() - self.birthday_time)
+        return result
     
     def cause_pooping(self) -> None:
         if __debug__:
             print("DEBUG: Pooped")
-
-        self.next_pooping_interval += 2
-        threading.Timer(self.next_pooping_interval - time.time(), self.cause_pooping).run()
+        self.poop_on_screen += 1
+        
+        self.next_pooping_interval += 5
+        pooping_timer: threading.Timer = threading.Timer(self.next_pooping_interval - time.time(), self.cause_pooping)
+        pooping_timer.start()
 
 
     def cause_hunger(self) -> None:
         if __debug__:
-            print("DEBUG: hunger value increased by 1")
+            print("DEBUG: hunger value increased by 1000")
         
         # Hunger value change still to be implemented
 
         self.next_hunger_interval += 5
-        threading.Timer(self.next_hunger_interval - time.time(), self.cause_hunger).run()
+        threading.Timer(self.next_hunger_interval - time.time(), self.cause_hunger).start()
 
     def add_sickness(self, amount: int) -> int:
-        global sickness_value
-        sickness_value += amount
-        return sickness_value
+        self.sickness_value += amount
+        return self.sickness_value
     
     def cause_sickness(self) -> None:
-        global poop_on_screen
-        global care_errors
-        if poop_on_screen >= 3:
+        if self.poop_on_screen >= 3:
         # add random sickness: more poop -> more sickness
-            if random.randint(1, 10) > poop_on_screen:
-                self.add_sickness(math.floor(poop_on_screen / 2))
+            if random.randint(1, 10) > self.poop_on_screen:
+                self.add_sickness(math.floor(self.poop_on_screen / 2))
         elif random.randint(1, 30) == 30:
             self.add_sickness(5)
         self.next_sickness_interval += 1
-        threading.Timer(self.next_sickness_interval - time.time(), self.cause_sickness).run()
+        threading.Timer(self.next_sickness_interval - time.time(), self.cause_sickness).start()
 
+logic_class: Logic = Logic()
 
 active_screen: BaseScreen = MainScreen()
 
