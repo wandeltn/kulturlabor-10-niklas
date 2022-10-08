@@ -11,6 +11,7 @@ from luma.core.sprite_system import framerate_regulator
 
 SPRITEMAP_MENU_PATH: str = "/home/pi/Downloads/py/img/image.png"
 SPRITEMAP_POOP_PATH: str = "/home/pi/Downloads/py/img/poop_menu_icon.png"
+SPRITEMAP_STONE_PATH: str = "/home/pi/Downloads/py/img/stone_icon.png"
 
 BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
@@ -62,7 +63,17 @@ class DisplayPoopItem(DisplayItem):
             display.paste(self.sprite_unselected, (self.position_X, self.position_Y))
             
 
-
+class DisplayStoneBar(DisplayItem):
+    def __init__(self, stones_on_screen: int = 4):
+        super().__init__()
+        self.sprite: Image.Image = Image.open(SPRITEMAP_STONE_PATH).convert("L")
+        
+        self.stones_on_screen: int = stones_on_screen
+    
+    def render(self, display: Image.Image):
+        for i in range(self.stones_on_screen):
+            display.paste(self.sprite, (17, i * 8))       
+        
         
 class BaseScreen(object):
     def __init__(self):
@@ -92,12 +103,15 @@ class MainScreen(BaseScreen):
         super().__init__()
         self.max_menu_position = 7
         self.poop_index_list: list[int] = []
+        self.stone_display_menu: DisplayStoneBar = DisplayStoneBar()
         
         for i in range(0, 8):
             self.render_list.append(DisplayMenu(i))
         
         for poop_index in range(logic_class.poop_on_screen):
             self.render_list.append(DisplayPoopItem(poop_index))
+            
+        self.render_list.append(self.stone_display_menu)
 
     def on_button_A_pressed(self):
         self.render_list[self.menu_position].selected = False
