@@ -12,6 +12,7 @@ from luma.core.sprite_system import framerate_regulator
 SPRITEMAP_MENU_PATH: str = "/home/pi/Downloads/py/img/image.png"
 SPRITEMAP_POOP_PATH: str = "/home/pi/Downloads/py/img/poop_menu_icon.png"
 SPRITEMAP_STONE_PATH: str = "/home/pi/Downloads/py/img/stone_icon.png"
+SPRITEMAP_EGG_PATH: str = "/home/pi/Downloads/py/img/spritemap_egg_stage.png"
 
 BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
@@ -65,13 +66,50 @@ class DisplayPoopBar(DisplayItem):
 class DisplayStoneBar(DisplayItem):
     def __init__(self, stones_on_screen: int = 4):
         super().__init__()
-        self.sprite: Image.Image = Image.open(SPRITEMAP_STONE_PATH).convert("L")
+        self.sprite: Image.Image = Image.open(SPRITEMAP_STONE_PATH)
         
         self.stones_on_screen: int = stones_on_screen
     
     def render(self, display: Image.Image):
         for stone_index in range(self.stones_on_screen):
-            display.paste(self.sprite, (17, stone_index * 8))       
+            display.paste(self.sprite, (17, stone_index * 8))
+            
+
+class DisplayTamaItem(DisplayItem):
+    def __init__(self):
+        self.evolution_state: int = 1
+        self.evolution_state_spritemap_index_X: int = 1
+        self.evolution_state_spritemap_index_Y: int = 1
+        
+        self.time_until_next_update: int = -30
+        
+        self.position_X: int = 30
+        self.position_Y: int = 0
+        
+        spritemap: Image.Image = Image.open(SPRITEMAP_EGG_PATH)
+        
+        self.sprite_0: Image.Image = spritemap.crop((
+            self.evolution_state_spritemap_index_X * 48,
+            self.evolution_state_spritemap_index_Y * 48,
+            (self.evolution_state_spritemap_index_X + 1) * 48,
+            (self.evolution_state_spritemap_index_Y + 1) * 48))
+    
+    def render(self, display: Image.Image):
+        if self.evolution_state:                            # do not update in egg state
+            if self.time_until_next_update == 0:            # wait until every 60th frame until position update
+                self.time_until_next_update = -60
+                
+                change_position_X = random.randint(-2, 2)
+                self.position_X += change_position_X
+                self.position_Y += random.randint(-2, 2)
+                if change_position_X:                      # change orientation of image if travelling to right
+                    display.paste(ImageOps.mirror(self.sprite_0), (self.position_X, self.position_Y))
+                else:
+                    display.paste(self.sprite_0, (self.position_X, self.position_Y))
+            else:
+                self.time_until_next_update += 1
+        else:
+            display.paste(self.sprite_0, (self.position_X, self.position_Y))
         
         
 class BaseScreen(object):
@@ -104,12 +142,14 @@ class MainScreen(BaseScreen):
         self.poop_index_list: list[int] = []
         self.stone_display_bar: DisplayStoneBar = DisplayStoneBar()
         self.poop_display_bar: DisplayPoopBar = DisplayPoopBar()
+        self.tama_display_item: DisplayTamaItem = DisplayTamaItem()
         
         for i in range(0, 8):
             self.render_list.append(DisplayMenu(i))
         
         self.render_list.append(self.poop_display_bar)
         self.render_list.append(self.stone_display_bar)
+        self.render_list.append(self.tama_display_item)
 
     def on_button_A_pressed(self):
         self.render_list[self.menu_position].selected = False
