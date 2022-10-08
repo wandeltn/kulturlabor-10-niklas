@@ -9,14 +9,15 @@ from luma.oled.device import ssd1306
 from luma.core.sprite_system import framerate_regulator
 
 
-SPRITEMAP_MENU_PATH: str = "/home/pi/Downloads/py/image.png"
+SPRITEMAP_MENU_PATH: str = "/home/pi/Downloads/py/img/image.png"
+SPRITEMAP_POOP_PATH: str = "/home/pi/Downloads/py/img/poop_menu_icon.png"
 
 BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
 BUTTON_C_GPIO: int = 16
 
 # to be moved in to class
-poop_on_screen: int = 0
+poop_on_screen: int = 4
 sickness_value: int = 0
 care_errors: int = 0
 # end
@@ -26,22 +27,22 @@ device = ssd1306(serial)
 
 class DisplayItem(object):
     def __init__(self):
-        self.selected: bool
+        self.selected: bool = False
         
     def render(self, image: Image.Image) -> None:
         pass
     
 
 class DisplayMenu(DisplayItem):
-    def __init__(self, spritemap_index: int):        
-        self.selected: bool = False
+    def __init__(self, spritemap_index: int):
+        super().__init__()
         
         spritemap = Image.open(SPRITEMAP_MENU_PATH).convert("L")
         self.sprite_unselected: Image.Image = spritemap.crop((spritemap_index * 16, 0, (spritemap_index + 1) * 16, 16))
         self.sprite_selected: Image.Image = ImageOps.invert(self.sprite_unselected)
 
-        self.position_X = (spritemap_index // 4) * 112
-        self.position_Y = (spritemap_index % 4) * 16
+        self.position_X: int = (spritemap_index // 4) * 112
+        self.position_Y: int = (spritemap_index % 4) * 16
        
     def render(self, display: Image.Image):
         if self.selected:
@@ -49,7 +50,23 @@ class DisplayMenu(DisplayItem):
         else:
             display.paste(self.sprite_unselected, (self.position_X, self.position_Y))
     
+class DisplayPoopItem(DisplayItem):
+    def __init__(self, spritemap_index: int):
+        super().__init__()
+        
+        spritemap: Image.Image = Image.open(SPRITEMAP_POOP_PATH).convert("L")
+        self.sprite_unselected: Image.Image = spritemap.crop((0, 0, 5 ,6))
+        self.sprite_selected: Image.Image = spritemap.crop((5, 0, 6, 10))
+
+        self.position_X: int =  106
+        self.position_Y: int = (spritemap_index * 8)
     
+    def render(self, display: Image.Image):
+        if self.selected:
+            display.paste(self.sprite_selected, (self.position_X, self.position_Y))
+        else:
+            display.paste(self.sprite_unselected, (self.position_X, self.position_Y))
+        
 class BaseScreen(object):
     def __init__(self):
         self.display_content: Image.Image = Image.new("1", (128, 64))
@@ -80,6 +97,9 @@ class MainScreen(BaseScreen):
         
         for i in range(0, 8):
             self.render_list.append(DisplayMenu(i))
+        
+        for poop_index in range(poop_on_screen):
+            self.render_list.append(DisplayPoopItem(poop_index))
 
     def on_button_A_pressed(self):
         self.render_list[self.menu_position].selected = False
