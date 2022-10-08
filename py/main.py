@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 from PIL import Image, ImageOps
 from luma.core.interface.serial import spi
 from luma.oled.device import ssd1306
+from luma.core.sprite_system import framerate_regulator
 
 
 SPRITEMAP_MENU_PATH: str = "/home/pi/Downloads/py/image.png"
@@ -14,9 +15,11 @@ BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
 BUTTON_C_GPIO: int = 16
 
+# to be moved in to class
 poop_on_screen: int = 0
 sickness_value: int = 0
 care_errors: int = 0
+# end
 
 serial = spi()
 device = ssd1306(serial)
@@ -53,10 +56,11 @@ class BaseScreen(object):
         self.render_list: list[DisplayItem] = []
         self.menu_position: int = 0
         self.max_menu_position: int
-        
+          
     def render(self) -> None: 
         for display_item in self.render_list:
             display_item.render(self.display_content)
+            
         device.display(self.display_content)
             
     def on_button_A_pressed(self):
@@ -194,7 +198,9 @@ test_image: Image.Image = Image.new("1", (128, 64))
 
 UI = UserInput()
 
+regulator: framerate_regulator = framerate_regulator(fps= 60)
+
 
 while True:
-    active_screen.render()
-    
+    with regulator:
+        active_screen.render()
