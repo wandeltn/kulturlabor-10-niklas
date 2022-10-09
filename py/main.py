@@ -38,7 +38,7 @@ class DisplaySprite(DisplayItem):
         self.position = display_position 
         
     def render(self, display: Image.Image, _menu_position: int):
-        display.paste(self.sprite)
+        display.paste(self.sprite, self.position)
         
 
 class DisplayMenu(DisplayItem):
@@ -278,6 +278,39 @@ class SubScreenLight(BaseScreen):
     def on_button_B_pressed(self):
         action = list(self.options_list.values())[self.menu_position]
         action()
+        
+
+class SubScreenPlay(BaseScreen):
+    def __init__(self):
+        super().__init__()
+        
+        """
+        first int in value  -> happyness_value to be added
+        second int in value -> healthyness of activity
+        """
+        self.options_list: dict[str, tuple[int, int]] = {       
+            "Soccer": (5, 5),
+            "Badminton": (5, 5),
+            "Icehockey": (5, 5),
+            "Chess": (5, 0),
+            "Cards": (5, 0),
+            "Exit": (0, 0)
+        }
+        
+        self.menu_position = 0
+        self.max_menu_position = 5
+        
+        self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 8))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (16, 0, 32, 16), (0, 32)))
+        
+    def on_button_B_pressed(self):
+        if self.menu_position <= 4:
+            global logic_class
+            logic_class.sickness_value -= list(self.options_list.values())[self.menu_position][0]
+            logic_class.happyness_value += list(self.options_list.values())[self.menu_position][1]
+        else:
+            global active_screen
+            active_screen = main_screen         
 
 
 class MainScreen(BaseScreen):
@@ -304,6 +337,8 @@ class MainScreen(BaseScreen):
             active_screen = SubScreenHunger()
         elif self.menu_position == 1:
             active_screen = SubScreenLight()
+        elif self.menu_position == 2:
+            active_screen = SubScreenPlay()
                
     def on_button_B_pressed(self):
         self.submenu_dispatcher()
@@ -356,6 +391,7 @@ class Logic(object):
         self.calories_intake_value: int = 2000
         self.last_calorie_needed: int = 2000
         self.sickness_value: int = 0
+        self.happyness_value: int = 50
         self.weight_in_stones: int = 50
         
         self.sleeping: bool = False
