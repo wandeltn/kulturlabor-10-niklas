@@ -182,6 +182,37 @@ class BaseScreen(object):
             self.menu_position -= 1
         self.on_menu_position_changed()
              
+            
+class SubDisplayMenu(DisplayItem):
+    def __init__(self, text_render_list: list[str]):
+        super().__init__()
+        self.text_render_list: list[str] = text_render_list
+        
+        self.text_image = Image.new("L", (128, 64))
+        self.clear_text_image: Image.Image = self.text_image.copy()
+        
+    def render(self, display: Image.Image, menu_position: int):
+        self.text_image = self.clear_text_image.copy()
+        display_draw: ImageDraw.ImageDraw = ImageDraw.Draw(self.text_image)
+        
+        display_draw.text((0, 55), str(logic_class.calories_intake_value), (255))
+        
+        list_index = 0
+        for food_item in self.text_render_list:
+            if list_index == menu_position:
+                display_draw.text(
+                    (50, (list_index * 8) - 1),                  # position of text
+                    "» " + food_item,                                        # text to be added
+                    (255))
+            else:
+                display_draw.text(
+                    (50, (list_index * 8) - 1),                             # position of text
+                    "  " + food_item,                                       # text to be added
+                    (255))                                                  # color of the text
+            list_index += 1
+        
+        display.paste(self.text_image)
+
 class SubScreenHunger(BaseScreen):
     def __init__(self):
         super().__init__()
@@ -201,36 +232,14 @@ class SubScreenHunger(BaseScreen):
         self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (0, 0, 16, 16), (0, 0)))
     
     def on_button_B_pressed(self):
-        pass
-            
-class SubDisplayMenu(DisplayItem):
-    def __init__(self, text_render_list: list[str]):
-        super().__init__()
-        self.text_render_list: list[str] = text_render_list
-        
-        self.text_image = Image.new("L", (128, 64))
-        self.clear_text_image: Image.Image = self.text_image.copy()
-        
-    def render(self, display: Image.Image, menu_position: int):
-        self.text_image = self.clear_text_image.copy()
-        display_draw: ImageDraw.ImageDraw = ImageDraw.Draw(self.text_image)
-        
-        list_index = 0
-        for food_item in self.text_render_list:
-            if list_index == menu_position:
-                display_draw.text(
-                    (50, (list_index * 8) - 1),                  # position of text
-                    "» " + food_item,                                        # text to be added
-                    (255))
-            else:
-                display_draw.text(
-                    (50, (list_index * 8) - 1),                             # position of text
-                    "  " + food_item,                                       # text to be added
-                    (255))                                                  # color of the text
-            list_index += 1
-        
-        display.paste(self.text_image)
-
+        if self.menu_position <= 6:
+            global logic_class
+            logic_class.calories_intake_value += list(self.food_items_dict.values())[self.menu_position]
+            if __debug__:
+                print("added calories: " + str(list(self.food_items_dict.values())[self.menu_position]))
+        else:
+            global active_screen
+            active_screen = main_screen
 
 
 class MainScreen(BaseScreen):
@@ -301,9 +310,13 @@ class UserInput(object):
 
 class Logic(object):
     def __init__(self) -> None:
-        self.birthday_time: float = time.time()
-        self.sickness_value: int = 0
         self.care_errors: int = 0
+        self.birthday_time: float = time.time()
+        
+        self.calories_intake_value: int = 2000
+        self.last_calorie_needed: int = 2000
+        self.sickness_value: int = 0
+        self.weight_in_stones: int = 50
             
         # set up pooping timer interval
         self.next_pooping_interval = time.time()
@@ -316,6 +329,10 @@ class Logic(object):
         # set up sickness timer interval
         self.next_sickness_interval = time.time()
         self.cause_sickness()
+        
+        # set up next weigth check
+        self.next_weight_check_interval = time.time()
+        self.update_weight()
         
     def get_polynomial_value(self) -> float:
         terms: list[float] = [
@@ -345,26 +362,31 @@ class Logic(object):
 
     def cause_hunger(self) -> None:
         if __debug__:
-            print("DEBUG: hunger value increased by 1000")
+            print("DEBUG: hunger value increased to: " + str(self.calories_intake_value))
         
-        # Hunger value change still to be implemented
-
-        self.next_hunger_interval += 5
+        self.calories_intake_value -= round(self.get_polynomial_value())
+        
+        self.next_hunger_interval += 40
         threading.Timer(self.next_hunger_interval - time.time(), self.cause_hunger).start()
-
-    def add_sickness(self, amount: int) -> int:
-        self.sickness_value += amount
-        return self.sickness_value
     
     def cause_sickness(self) -> None:
         if main_screen.poop_display_bar.poop_on_screen >= 3:
         # add random sickness: more poop -> more sickness
             if random.randint(1, 10) > main_screen.poop_display_bar.poop_on_screen:
-                self.add_sickness(math.floor(main_screen.poop_display_bar.poop_on_screen / 2))
+                self.sickness_value += math.floor(main_screen.poop_display_bar.poop_on_screen / 2)
         elif random.randint(1, 30) == 30:
-            self.add_sickness(5)
+            self.sickness_value += 5
         self.next_sickness_interval += 1
         threading.Timer(self.next_sickness_interval - time.time(), self.cause_sickness).start()
+        
+    def update_weight(self) -> None:
+        if self.last_calorie_needed - 1500 >= self.calories_intake_value:
+            self.weight_in_stones -= (self.last_calorie_needed - self.calories_intake_value) // 1500
+        elif self.last_calorie_needed + 1500 <= self.calories_intake_value:
+            self.weight_in_stones += (self.calories_intake_value - self.last_calorie_needed) // 1500 
+            
+        self.next_weight_check_interval += 60
+        threading.Timer(self.next_weight_check_interval - time.time(), self.update_weight).start()
 
 logic_class: Logic = Logic()
 
