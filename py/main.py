@@ -1,4 +1,5 @@
 import math
+from re import T
 import time
 import threading
 import random 
@@ -18,8 +19,8 @@ BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
 BUTTON_C_GPIO: int = 16
 
-serial = spi()
-device = ssd1306(serial)
+serial: spi = spi()
+device: ssd1306 = ssd1306(serial)
 
 class DisplayItem(object):
     def __init__(self):
@@ -85,6 +86,7 @@ class DisplayTamaItem(DisplayItem):
         
         self.position_X: int = 30
         self.position_Y: int = 0
+        self.facing_right: bool = False
         
         spritemap: Image.Image = Image.open(SPRITEMAP_EGG_PATH)
         
@@ -93,21 +95,42 @@ class DisplayTamaItem(DisplayItem):
             self.evolution_state_spritemap_index_Y * 48,
             (self.evolution_state_spritemap_index_X + 1) * 48,
             (self.evolution_state_spritemap_index_Y + 1) * 48))
-    
+        
+    def get_next_sprite_position(self):
+        MAX_VALUE_CHANGE: int = 3
+        # position_X
+        if not self.position_X - 30:
+            change_position_X = random.randint(0, MAX_VALUE_CHANGE)
+        elif self.position_X >= 58:
+            change_position_X = random.randint(MAX_VALUE_CHANGE * -1, 0)
+        else:
+            change_position_X = random.randint(MAX_VALUE_CHANGE * -1, MAX_VALUE_CHANGE)
+        if change_position_X:
+            self.facing_right = True
+        else:
+            self.facing_right = False
+            
+        self.position_X += change_position_X
+            
+        # position_Y 
+        if not self.position_Y:
+            self.position_Y += random.randint(0, MAX_VALUE_CHANGE)
+        elif self.position_Y >= 16:
+            self.position_Y += random.randint(MAX_VALUE_CHANGE * -1, 0)
+        else:
+            self.position_Y += random.randint(MAX_VALUE_CHANGE * -1, MAX_VALUE_CHANGE)
+            
     def render(self, display: Image.Image):
         if self.evolution_state:                            # do not update in egg state
             if self.time_until_next_update == 0:            # wait until every 60th frame until position update
-                self.time_until_next_update = -60
+                self.time_until_next_update = -5
+                self.get_next_sprite_position()
                 
-                change_position_X = random.randint(-2, 2)
-                self.position_X += change_position_X
-                self.position_Y += random.randint(-2, 2)
-                if change_position_X:                      # change orientation of image if travelling to right
-                    display.paste(ImageOps.mirror(self.sprite_0), (self.position_X, self.position_Y))
-                else:
-                    display.paste(self.sprite_0, (self.position_X, self.position_Y))
+            if self.facing_right:
+                display.paste(self.sprite_0, (self.position_X, self.position_Y))
             else:
-                self.time_until_next_update += 1
+                display.paste(ImageOps.mirror(self.sprite_0), (self.position_X, self.position_Y))
+            self.time_until_next_update += 1
         else:
             display.paste(self.sprite_0, (self.position_X, self.position_Y))
         
@@ -115,11 +138,13 @@ class DisplayTamaItem(DisplayItem):
 class BaseScreen(object):
     def __init__(self):
         self.display_content: Image.Image = Image.new("1", (128, 64))
+        self.display_content_clear = self.display_content.copy()
         self.render_list: list[DisplayItem] = []
         self.menu_position: int = 0
         self.max_menu_position: int
           
     def render(self) -> None: 
+        self.display_content = self.display_content_clear.copy()
         for display_item in self.render_list:
             display_item.render(self.display_content)
             
@@ -250,7 +275,7 @@ class Logic(object):
         
         main_screen.poop_display_bar.poop_on_screen += 1
         
-        self.next_pooping_interval += 5
+        self.next_pooping_interval += 30
         pooping_timer: threading.Timer = threading.Timer(self.next_pooping_interval - time.time(), self.cause_pooping)
         pooping_timer.start()
 
@@ -294,3 +319,4 @@ regulator: framerate_regulator = framerate_regulator(fps= 60)
 while True:
     with regulator:
         active_screen.render()
+        
