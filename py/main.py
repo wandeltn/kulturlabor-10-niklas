@@ -1,8 +1,8 @@
 import math
-from re import T
 import time
 import threading
-import random 
+import random
+from typing import Callable 
 import RPi.GPIO as GPIO
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 from luma.core.interface.serial import spi
@@ -157,6 +157,9 @@ class BaseScreen(object):
         
     def on_menu_position_changed(self) -> None:
         pass
+    
+    def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
+        return display
           
     def render(self) -> None: 
         self.display_content = self.display_content_clear.copy()
@@ -184,9 +187,10 @@ class BaseScreen(object):
              
             
 class SubDisplayMenu(DisplayItem):
-    def __init__(self, text_render_list: list[str]):
+    def __init__(self, text_render_list: list[str], x_axis_offset: int= 0):
         super().__init__()
         self.text_render_list: list[str] = text_render_list
+        self.x_axis_offset: int = x_axis_offset
         
         self.text_image = Image.new("L", (128, 64))
         self.clear_text_image: Image.Image = self.text_image.copy()
@@ -194,19 +198,18 @@ class SubDisplayMenu(DisplayItem):
     def render(self, display: Image.Image, menu_position: int):
         self.text_image = self.clear_text_image.copy()
         display_draw: ImageDraw.ImageDraw = ImageDraw.Draw(self.text_image)
-        
-        display_draw.text((0, 55), str(logic_class.calories_intake_value), (255))
-        
+        display_draw = active_screen.get_current_stats(display_draw)
+                
         list_index = 0
         for food_item in self.text_render_list:
             if list_index == menu_position:
                 display_draw.text(
-                    (50, (list_index * 8) - 1),                  # position of text
-                    "» " + food_item,                                        # text to be added
+                    (50, (list_index * 8) - 1 + self.x_axis_offset),        # position of text
+                    "» " + food_item,                                       # text to be added
                     (255))
             else:
                 display_draw.text(
-                    (50, (list_index * 8) - 1),                             # position of text
+                (50, (list_index * 8) - 1 + self.x_axis_offset),            # position of text
                     "  " + food_item,                                       # text to be added
                     (255))                                                  # color of the text
             list_index += 1
@@ -230,6 +233,10 @@ class SubScreenHunger(BaseScreen):
         self.max_menu_position = 7
         self.render_list.append(SubDisplayMenu(list(self.food_items_dict)))
         self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (0, 0, 16, 16), (0, 0)))
+        
+    def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
+        display.text((0, 55), str(logic_class.calories_intake_value), (255))
+        return display
     
     def on_button_B_pressed(self):
         if self.menu_position <= 6:
@@ -240,6 +247,37 @@ class SubScreenHunger(BaseScreen):
         else:
             global active_screen
             active_screen = main_screen
+            
+class SubScreenLight(BaseScreen):
+    def __init__(self):
+        super().__init__()
+        self.options_list: dict[str, Callable] = {
+            "Turn on": self.light_turn_on,
+            "Turn off": self.light_turn_off,
+            "Exit": self.exit
+        }
+        
+        self.menu_position = 0
+        self.max_menu_position = 2
+        
+        self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 24))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (16, 0, 32, 16), (0, 16)))
+
+    def light_turn_on(self):
+        global logic_class
+        logic_class.light_on = True
+    
+    def light_turn_off(self):
+        global logic_class
+        logic_class.light_on = False
+    
+    def exit(self):
+        global active_screen
+        active_screen = main_screen
+        
+    def on_button_B_pressed(self):
+        action = list(self.options_list.values())[self.menu_position]
+        action()
 
 
 class MainScreen(BaseScreen):
@@ -264,6 +302,8 @@ class MainScreen(BaseScreen):
         
         if self.menu_position == 0:
             active_screen = SubScreenHunger()
+        elif self.menu_position == 1:
+            active_screen = SubScreenLight()
                
     def on_button_B_pressed(self):
         self.submenu_dispatcher()
@@ -317,6 +357,9 @@ class Logic(object):
         self.last_calorie_needed: int = 2000
         self.sickness_value: int = 0
         self.weight_in_stones: int = 50
+        
+        self.sleeping: bool = False
+        self.light_on: bool = True
             
         # set up pooping timer interval
         self.next_pooping_interval = time.time()
