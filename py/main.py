@@ -184,6 +184,10 @@ class BaseScreen(object):
         else:
             self.menu_position -= 1
         self.on_menu_position_changed()
+    
+    def exit(self):
+        global active_screen
+        active_screen = main_screen
              
             
 class SubDisplayMenu(DisplayItem):
@@ -272,10 +276,6 @@ class SubScreenLight(BaseScreen):
     def light_turn_off(self):
         global logic_class
         logic_class.light_on = False
-    
-    def exit(self):
-        global active_screen
-        active_screen = main_screen
         
     def on_button_B_pressed(self):
         action = list(self.options_list.values())[self.menu_position]
@@ -357,10 +357,6 @@ class SubScreenPoop(BaseScreen):
         global main_screen
         main_screen.poop_display_bar.poop_on_screen = 0
         
-    def exit(self):
-        global active_screen
-        active_screen = main_screen
-        
     def on_button_B_pressed(self):
         action = list(self.options_list.values())[self.menu_position]
         action()
@@ -391,7 +387,26 @@ class SubScreenDicipline(BaseScreen):
         else:
             global active_screen
             active_screen = main_screen
+            
+            
+class SubScreenAttention(BaseScreen):
+    def __init__(self):
+        super().__init__()
         
+        self.options_list: dict[str, Callable] = {
+            "Exit": self.exit
+        }
+        
+        self.menu_position = 0
+        self.max_menu_position = len(self.options_list) - 1
+        x_text_position_offset: int = (64 - (len(self.options_list) * 8)) // 2
+        self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), x_text_position_offset, -22))
+        
+        
+    def on_button_B_pressed(self):
+        action = list(self.options_list.values())[self.menu_position]
+        action()
+    
 
 class MainScreen(BaseScreen):
     def __init__(self):
@@ -427,6 +442,8 @@ class MainScreen(BaseScreen):
             pass
         elif self.menu_position == 6:
             active_screen = SubScreenDicipline()
+        elif self.menu_position == 7:
+            active_screen = SubScreenAttention()
                
     def on_button_B_pressed(self):
         self.submenu_dispatcher()
@@ -457,17 +474,17 @@ class UserInput(object):
         # add interupt for button A
         GPIO.setmode(GPIO.BCM)# type: ignore
         GPIO.setup(BUTTON_A_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)# type: ignore
-        GPIO.add_event_detect(BUTTON_A_GPIO, GPIO.FALLING, callback=self.button_pressed_callback, bouncetime=button_bouncetime)# type: ignore
+        GPIO.add_event_detect(BUTTON_A_GPIO, GPIO.RISING, callback=self.button_pressed_callback, bouncetime=button_bouncetime)# type: ignore
 
         # add interupt for button B
         GPIO.setmode(GPIO.BCM)# type: ignore
         GPIO.setup(BUTTON_B_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)# type: ignore
-        GPIO.add_event_detect(BUTTON_B_GPIO, GPIO.FALLING, callback=self.button_pressed_callback, bouncetime=button_bouncetime)# type: ignore
+        GPIO.add_event_detect(BUTTON_B_GPIO, GPIO.RISING, callback=self.button_pressed_callback, bouncetime=button_bouncetime)# type: ignore
 
         # add interupt for button C
         GPIO.setmode(GPIO.BCM)# type: ignore
         GPIO.setup(BUTTON_C_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)# type: ignore
-        GPIO.add_event_detect(BUTTON_C_GPIO, GPIO.FALLING, callback=self.button_pressed_callback, bouncetime=button_bouncetime)# type: ignore
+        GPIO.add_event_detect(BUTTON_C_GPIO, GPIO.RISING, callback=self.button_pressed_callback, bouncetime=button_bouncetime)# type: ignore
         
 
 
