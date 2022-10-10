@@ -14,6 +14,7 @@ SPRITEMAP_MENU_PATH: str = "/home/pi/Downloads/py/img/image.png"
 SPRITEMAP_POOP_PATH: str = "/home/pi/Downloads/py/img/poop_menu_icon.png"
 SPRITEMAP_STONE_PATH: str = "/home/pi/Downloads/py/img/stone_icon.png"
 SPRITEMAP_EGG_PATH: str = "/home/pi/Downloads/py/img/spritemap_egg_stage.png"
+ARIAL_FONT_PATH: str = "/home/pi/Downloads/py/img/arial.ttf"
 
 BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
@@ -57,7 +58,7 @@ class DisplayHorizontalValueBar(DisplayItem):
         self.position: tuple[int, int, int, int] = position
         self.fill_height: int = fill_height
     
-    def render(self, display: Image.Image, _menu_position):
+    def render(self, display: Image.Image, _menu_position: int):
         display_draw = ImageDraw.Draw(display)
         display_draw.rectangle(self.position, "black", "white")
         display_draw.rectangle((self.position[0], self.position[1]) + (self.fill_height, self.position[3]), "white", "white")
@@ -213,11 +214,11 @@ class BaseScreen(object):
              
             
 class SubDisplayMenu(DisplayItem):
-    def __init__(self, text_render_list: list[str], x_axis_offset: int= 0, y_axis_offset: int= 0):
+    def __init__(self, text_render_list: list[str], y_axis_offset: int= 0, x_axis_offset: int= 0):
         super().__init__()
         self.text_render_list: list[str] = text_render_list
-        self.x_axis_offset: int = x_axis_offset
         self.y_axis_offset: int = y_axis_offset
+        self.x_axis_offset: int = x_axis_offset
         
         self.text_image = Image.new("L", (128, 64))
         self.clear_text_image: Image.Image = self.text_image.copy()
@@ -231,12 +232,12 @@ class SubDisplayMenu(DisplayItem):
         for food_item in self.text_render_list:
             if list_index == menu_position:
                 display_draw.text(
-                    (25 + self.y_axis_offset, (list_index * 8) - 1 + self.x_axis_offset),        # position of text
+                    (25 + self.x_axis_offset, (list_index * 8) - 1 + self.y_axis_offset),        # position of text
                     "» " + food_item,                                       # text to be added
                     (255))
             else:
                 display_draw.text(
-                    (25 + self.y_axis_offset, (list_index * 8) - 1 + self.x_axis_offset),            # position of text
+                    (25 + self.x_axis_offset, (list_index * 8) - 1 + self.y_axis_offset),            # position of text
                     "  " + food_item,                                       # text to be added
                     (255))                                                  # color of the text
             list_index += 1
@@ -404,6 +405,41 @@ class SubScreenHealth(BaseScreen):
     def __init__(self):
         super().__init__()
 
+        self.options_list: dict[str, Callable] = {
+            "Exit": self.exit
+        }
+
+        self.menu_position = 0
+        self.max_menu_position = 0
+        self.font = ImageFont.truetype(ARIAL_FONT_PATH, 8)
+        
+        self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 55, -22))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (64, 0, 80, 16), (112, 16)))
+        
+    def exit(self):
+        global active_screen
+        active_screen = main_screen
+        
+    def on_button_B_pressed(self):
+        action = list(self.options_list.values())[self.menu_position]
+        action()
+
+    def render(self) -> None: 
+        self.display_content = self.display_content_clear.copy()
+        for display_item in self.render_list:
+            display_item.render(self.display_content, self.menu_position)
+            
+        index: int = 0
+        logic_class_summary: dict[str, int] = logic_class.get_stats_summary()
+        display_draw: ImageDraw.ImageDraw = ImageDraw.Draw(self.display_content)
+        for display_item in logic_class_summary:
+            display_draw.text((5, index * 14), str(display_item), (255), font=self.font)
+            render_item: DisplayHorizontalValueBar = DisplayHorizontalValueBar((2, (index * 14) + 8, 102, (index * 14) + 12), logic_class_summary[display_item])
+            render_item.render(self.display_content, self.menu_position)
+            index += 1
+            
+        device.display(self.display_content)
+
 
 class SubScreenDicipline(BaseScreen):
     def __init__(self):
@@ -487,7 +523,7 @@ class MainScreen(BaseScreen):
         elif self.menu_position == 4:
             active_screen = SubScreenPoop()
         elif self.menu_position == 5:
-            pass
+            active_screen = SubScreenHealth()
         elif self.menu_position == 6:
             active_screen = SubScreenDicipline()
         elif self.menu_position == 7:
@@ -543,10 +579,10 @@ class Logic(object):
         
         self.calories_intake_value: int = 2000
         self.last_calorie_needed: int = 2000
-        self.sickness_value: int = 0
+        self.sickness_value: int = 50
         self.happyness_value: int = 50
         self.weight_in_stones: int = 50
-        self.dicipline_value: int = 0
+        self.dicipline_value: int = 50
         
         self.sleeping: bool = False
         self.light_on: bool = True
@@ -620,6 +656,14 @@ class Logic(object):
             
         self.next_weight_check_interval += 60
         threading.Timer(self.next_weight_check_interval - time.time(), self.update_weight).start()
+        
+    def get_stats_summary(self) -> dict[str, int]:
+        return {
+            "Sickness": self.sickness_value,
+            "Happyness": self.happyness_value,
+            "Weight": self.weight_in_stones,
+            "Dicipline": self.dicipline_value
+        }
 
 logic_class: Logic = Logic()
 
