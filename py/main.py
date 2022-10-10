@@ -187,10 +187,11 @@ class BaseScreen(object):
              
             
 class SubDisplayMenu(DisplayItem):
-    def __init__(self, text_render_list: list[str], x_axis_offset: int= 0):
+    def __init__(self, text_render_list: list[str], x_axis_offset: int= 0, y_axis_offset: int= 0):
         super().__init__()
         self.text_render_list: list[str] = text_render_list
         self.x_axis_offset: int = x_axis_offset
+        self.y_axis_offset: int = y_axis_offset
         
         self.text_image = Image.new("L", (128, 64))
         self.clear_text_image: Image.Image = self.text_image.copy()
@@ -204,12 +205,12 @@ class SubDisplayMenu(DisplayItem):
         for food_item in self.text_render_list:
             if list_index == menu_position:
                 display_draw.text(
-                    (50, (list_index * 8) - 1 + self.x_axis_offset),        # position of text
+                    (25 + self.y_axis_offset, (list_index * 8) - 1 + self.x_axis_offset),        # position of text
                     "» " + food_item,                                       # text to be added
                     (255))
             else:
                 display_draw.text(
-                (50, (list_index * 8) - 1 + self.x_axis_offset),            # position of text
+                    (25 + self.y_axis_offset, (list_index * 8) - 1 + self.x_axis_offset),            # position of text
                     "  " + food_item,                                       # text to be added
                     (255))                                                  # color of the text
             list_index += 1
@@ -349,7 +350,7 @@ class SubScreenPoop(BaseScreen):
         self.menu_position = 0
         self.max_menu_position = 1
         
-        self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 24))
+        self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 24, -22))
         self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (48, 0, 64, 16), (112, 0)))
         
     def clear_poop_from_screen(self):
@@ -364,6 +365,33 @@ class SubScreenPoop(BaseScreen):
         action = list(self.options_list.values())[self.menu_position]
         action()
 
+
+class SubScreenDicipline(BaseScreen):
+    def __init__(self):
+        super().__init__()
+        
+        self.options_list: dict[str, int] = {
+            "Time together": 10,
+            "Set expectations": 10, 
+            "Use concequences": 5,
+            "Do an activity": 5,
+            "Exit": 0
+        }
+        
+        self.menu_position = 0
+        self.max_menu_position = 4
+        
+        self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 12, -22))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (64, 0, 80, 16), (112, 16)))
+
+    def on_button_B_pressed(self):
+        global logic_class
+        if self.menu_position <= 3:
+            logic_class.dicipline_value += list(self.options_list.values())[self.menu_position]
+        else:
+            global active_screen
+            active_screen = main_screen
+        
 
 class MainScreen(BaseScreen):
     def __init__(self):
@@ -395,6 +423,10 @@ class MainScreen(BaseScreen):
             active_screen = SubScreenMedicine()
         elif self.menu_position == 4:
             active_screen = SubScreenPoop()
+        elif self.menu_position == 5:
+            pass
+        elif self.menu_position == 6:
+            active_screen = SubScreenDicipline()
                
     def on_button_B_pressed(self):
         self.submenu_dispatcher()
@@ -449,6 +481,7 @@ class Logic(object):
         self.sickness_value: int = 0
         self.happyness_value: int = 50
         self.weight_in_stones: int = 50
+        self.dicipline_value: int = 0
         
         self.sleeping: bool = False
         self.light_on: bool = True
