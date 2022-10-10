@@ -247,6 +247,7 @@ class SubScreenHunger(BaseScreen):
         else:
             global active_screen
             active_screen = main_screen
+    
             
 class SubScreenLight(BaseScreen):
     def __init__(self):
@@ -336,6 +337,34 @@ class SubScreenMedicine(BaseScreen):
             global active_screen
             active_screen = main_screen
 
+
+class SubScreenPoop(BaseScreen):
+    def __init__(self):
+        super().__init__()
+        
+        self.options_list: dict[str, Callable] = {
+            "Clear poop": self.clear_poop_from_screen,
+            "Exit": self.exit
+        }
+        self.menu_position = 0
+        self.max_menu_position = 1
+        
+        self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 24))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (48, 0, 64, 16), (112, 0)))
+        
+    def clear_poop_from_screen(self):
+        global main_screen
+        main_screen.poop_display_bar.poop_on_screen = 0
+        
+    def exit(self):
+        global active_screen
+        active_screen = main_screen
+        
+    def on_button_B_pressed(self):
+        action = list(self.options_list.values())[self.menu_position]
+        action()
+
+
 class MainScreen(BaseScreen):
     def __init__(self):
         super().__init__()
@@ -364,6 +393,8 @@ class MainScreen(BaseScreen):
             active_screen = SubScreenPlay()
         elif self.menu_position == 3:
             active_screen = SubScreenMedicine()
+        elif self.menu_position == 4:
+            active_screen = SubScreenPoop()
                
     def on_button_B_pressed(self):
         self.submenu_dispatcher()
