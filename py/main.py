@@ -310,8 +310,31 @@ class SubScreenPlay(BaseScreen):
             logic_class.happyness_value += list(self.options_list.values())[self.menu_position][1]
         else:
             global active_screen
-            active_screen = main_screen         
+            active_screen = main_screen
+            
+class SubScreenMedicine(BaseScreen):
+    def __init__(self):      
+        super().__init__()
+        
+        self.options_list: dict[str, int] = {
+            "Vaccination": 10,
+            "Medicine": 10, 
+            "Doctor": 5,
+            "Exit": 0
+        }
+        self.menu_position = 0
+        self.max_menu_position = 3
+        
+        self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 16))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (32, 0, 48, 16), (0, 48)))
 
+    def on_button_B_pressed(self):
+        global logic_class
+        if self.menu_position <= 2:
+            logic_class.sickness_value -= list(self.options_list.values())[self.menu_position]
+        else:
+            global active_screen
+            active_screen = main_screen
 
 class MainScreen(BaseScreen):
     def __init__(self):
@@ -339,6 +362,8 @@ class MainScreen(BaseScreen):
             active_screen = SubScreenLight()
         elif self.menu_position == 2:
             active_screen = SubScreenPlay()
+        elif self.menu_position == 3:
+            active_screen = SubScreenMedicine()
                
     def on_button_B_pressed(self):
         self.submenu_dispatcher()
