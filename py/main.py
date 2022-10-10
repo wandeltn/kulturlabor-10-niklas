@@ -40,6 +40,28 @@ class DisplaySprite(DisplayItem):
     def render(self, display: Image.Image, _menu_position: int):
         display.paste(self.sprite, self.position)
         
+        
+class DisplayVerticalValueBar(DisplayItem):
+    def __init__(self, position: tuple[int, int, int, int], fill_height: int):
+        self.position: tuple[int, int, int, int] = position
+        self.fill_height: int = fill_height
+    
+    def render(self, display: Image.Image, _menu_position):
+        display_draw = ImageDraw.Draw(display)
+        display_draw.rectangle(self.position, "black", "white")
+        display_draw.rectangle((self.position[0], self.fill_height) + (self.position[2], self.position[3]), "white", "white")
+        
+        
+class DisplayHorizontalValueBar(DisplayItem):
+    def __init__(self, position: tuple[int, int, int, int], fill_height: int):
+        self.position: tuple[int, int, int, int] = position
+        self.fill_height: int = fill_height
+    
+    def render(self, display: Image.Image, _menu_position):
+        display_draw = ImageDraw.Draw(display)
+        display_draw.rectangle(self.position, "black", "white")
+        display_draw.rectangle((self.position[0], self.position[1]) + (self.fill_height, self.position[3]), "white", "white")
+        
 
 class DisplayMenu(DisplayItem):
     def __init__(self, spritemap_index: int):
@@ -277,6 +299,10 @@ class SubScreenLight(BaseScreen):
         global logic_class
         logic_class.light_on = False
         
+    def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
+        display.text((0, 55), " " + str(logic_class.light_on), (255))
+        return display
+        
     def on_button_B_pressed(self):
         action = list(self.options_list.values())[self.menu_position]
         action()
@@ -303,13 +329,17 @@ class SubScreenPlay(BaseScreen):
         self.max_menu_position = 5
         
         self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 8))
-        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (16, 0, 32, 16), (0, 32)))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (32, 0, 48, 16), (0, 32)))
+    
+    def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
+        display.text((0, 0), " " + str(logic_class.happyness_value), (255))
+        return display
         
     def on_button_B_pressed(self):
         if self.menu_position <= 4:
             global logic_class
-            logic_class.sickness_value -= list(self.options_list.values())[self.menu_position][0]
-            logic_class.happyness_value += list(self.options_list.values())[self.menu_position][1]
+            logic_class.happyness_value += list(self.options_list.values())[self.menu_position][0]
+            logic_class.sickness_value -= list(self.options_list.values())[self.menu_position][1]
         else:
             global active_screen
             active_screen = main_screen
@@ -328,7 +358,11 @@ class SubScreenMedicine(BaseScreen):
         self.max_menu_position = 3
         
         self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 16))
-        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (32, 0, 48, 16), (0, 48)))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (48, 0, 64, 16), (0, 48)))
+        
+    def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
+        display.text((0, 0), " " + str(logic_class.sickness_value), (255))
+        return display
 
     def on_button_B_pressed(self):
         global logic_class
@@ -357,20 +391,29 @@ class SubScreenPoop(BaseScreen):
         global main_screen
         main_screen.poop_display_bar.poop_on_screen = 0
         
+    def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
+        display.text((120, 55),str(main_screen.poop_display_bar.poop_on_screen) + " ", (255))
+        return display
+        
     def on_button_B_pressed(self):
         action = list(self.options_list.values())[self.menu_position]
         action()
+        
+        
+class SubScreenHealth(BaseScreen):
+    def __init__(self):
+        super().__init__()
 
 
 class SubScreenDicipline(BaseScreen):
     def __init__(self):
-        super().__init__()
+        super().__init__()       
         
         self.options_list: dict[str, int] = {
-            "Time together": 10,
-            "Set expectations": 10, 
-            "Use concequences": 5,
-            "Do an activity": 5,
+            "Time together": 1,
+            "Set expectations": 1, 
+            "Use concequences": 2,
+            "Do an activity": 2,
             "Exit": 0
         }
         
@@ -379,6 +422,10 @@ class SubScreenDicipline(BaseScreen):
         
         self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 12, -22))
         self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (64, 0, 80, 16), (112, 16)))
+        
+    def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
+        display.text((110, 0),str(logic_class.dicipline_value) + " ", (255))
+        return display
 
     def on_button_B_pressed(self):
         global logic_class
@@ -401,6 +448,7 @@ class SubScreenAttention(BaseScreen):
         self.max_menu_position = len(self.options_list) - 1
         x_text_position_offset: int = (64 - (len(self.options_list) * 8)) // 2
         self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), x_text_position_offset, -22))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (96, 0, 128, 16), (112, 16)))
         
         
     def on_button_B_pressed(self):
