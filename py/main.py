@@ -14,7 +14,7 @@ SPRITEMAP_MENU_PATH: str = "/home/pi/Downloads/py/img/image.png"
 SPRITEMAP_POOP_PATH: str = "/home/pi/Downloads/py/img/poop_menu_icon.png"
 SPRITEMAP_STONE_PATH: str = "/home/pi/Downloads/py/img/stone_icon.png"
 SPRITEMAP_EGG_PATH: str = "/home/pi/Downloads/py/img/spritemap_egg_stage.png"
-ARIAL_FONT_PATH: str = "/home/pi/Downloads/py/img/arial.ttf"
+PIXEL_FONT_PATH: str = "/home/pi/Downloads/py/img/slkscre.ttf"
 
 BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
@@ -386,7 +386,7 @@ class SubScreenPoop(BaseScreen):
         self.max_menu_position = 1
         
         self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 24, -22))
-        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (48, 0, 64, 16), (112, 0)))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (64, 0, 80, 16), (112, 0)))
         
     def clear_poop_from_screen(self):
         global main_screen
@@ -411,10 +411,10 @@ class SubScreenHealth(BaseScreen):
 
         self.menu_position = 0
         self.max_menu_position = 0
-        self.font = ImageFont.truetype(ARIAL_FONT_PATH, 8)
+        self.font = ImageFont.truetype(PIXEL_FONT_PATH, 8)
         
         self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 55, -22))
-        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (64, 0, 80, 16), (112, 16)))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (80, 0, 96, 16), (112, 16)))
         
     def exit(self):
         global active_screen
@@ -457,7 +457,7 @@ class SubScreenDicipline(BaseScreen):
         self.max_menu_position = 4
         
         self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), 12, -22))
-        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (64, 0, 80, 16), (112, 16)))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (96, 0, 112, 16), (112, 32)))
         
     def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
         display.text((110, 0),str(logic_class.dicipline_value) + " ", (255))
@@ -484,7 +484,7 @@ class SubScreenAttention(BaseScreen):
         self.max_menu_position = len(self.options_list) - 1
         x_text_position_offset: int = (64 - (len(self.options_list) * 8)) // 2
         self.render_list.append(SubDisplayMenu(list(self.options_list.keys()), x_text_position_offset, -22))
-        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (96, 0, 128, 16), (112, 16)))
+        self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (112, 0, 128, 16), (112, 48)))
         
         
     def on_button_B_pressed(self):
