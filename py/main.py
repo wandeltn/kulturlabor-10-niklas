@@ -542,6 +542,9 @@ class UserInput(object):
     
     def button_pressed_callback(self, channel):
         print("Button pressed!" + str(channel))
+        
+        global logic_class
+        logic_class.turn_on_screen()
 
         if channel == BUTTON_A_GPIO:
             active_screen.on_button_A_pressed()
@@ -586,6 +589,12 @@ class Logic(object):
         
         self.sleeping: bool = False
         self.light_on: bool = True
+        self.screen_on: bool = False
+        
+        self.screen_sleep_time: int = 10
+        self.next_screen_timeout_interval: float = time.time()
+        timer = threading.Timer(self.next_screen_timeout_interval - time.time(), self.turn_off_screen)
+        self.screen_sleep_timer: threading.Timer = timer
             
         # set up pooping timer interval
         self.next_pooping_interval = time.time()
@@ -601,7 +610,7 @@ class Logic(object):
         
         # set up next weigth check
         self.next_weight_check_interval = time.time()
-        self.update_weight()
+        self.cause_update_weight()
         
     def get_polynomial_value(self) -> float:
         terms: list[float] = [
@@ -648,15 +657,38 @@ class Logic(object):
         self.next_sickness_interval += 1
         threading.Timer(self.next_sickness_interval - time.time(), self.cause_sickness).start()
         
-    def update_weight(self) -> None:
+    def cause_update_weight(self) -> None:
         if self.last_calorie_needed - 1500 >= self.calories_intake_value:
             self.weight_in_stones -= (self.last_calorie_needed - self.calories_intake_value) // 1500
         elif self.last_calorie_needed + 1500 <= self.calories_intake_value:
             self.weight_in_stones += (self.calories_intake_value - self.last_calorie_needed) // 1500 
             
         self.next_weight_check_interval += 60
-        threading.Timer(self.next_weight_check_interval - time.time(), self.update_weight).start()
+        threading.Timer(self.next_weight_check_interval - time.time(), self.cause_update_weight).start()
         
+    def set_screen_timeout(self) -> threading.Timer:
+        timer: threading.Timer = threading.Timer(self.next_screen_timeout_interval - time.time(), self.turn_off_screen)
+        timer.start()
+        return timer
+        
+    def turn_off_screen(self) -> None:
+        if self.screen_on:
+            global device
+            device.hide()
+            self.screen_on = False
+        
+    def turn_on_screen(self) -> None:
+        self.screen_sleep_timer.cancel()
+        self.next_screen_timeout_interval = time.time() + self.screen_sleep_time
+        timer: threading.Timer = threading.Timer(self.next_screen_timeout_interval - time.time(), self.turn_off_screen)
+        timer.start()
+        self.screen_sleep_timer = timer
+        
+        if not self.screen_on:
+            self.screen_on = True
+            global device
+            device.show()
+                
     def get_stats_summary(self) -> dict[str, int]:
         return {
             "Sickness": self.sickness_value,
@@ -675,10 +707,11 @@ active_screen: BaseScreen = main_screen
 
 UI = UserInput()
 
-regulator: framerate_regulator = framerate_regulator(fps= 60)
+regulator: framerate_regulator = framerate_regulator(fps= 30)
 
 
 while True:
     with regulator:
-        active_screen.render()
+        if logic_class.screen_on:
+            active_screen.render()
         
