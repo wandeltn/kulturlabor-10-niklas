@@ -39,6 +39,7 @@ class DisplayItem(object):
     def render(self, image: Image.Image, menu_position: int) -> None:
         pass
     
+    
 class DisplaySprite(DisplayItem):
     def __init__(self, path: str, spritemap_position: tuple[int, int, int, int], display_position: tuple[int, int]):
         super().__init__()
@@ -91,6 +92,7 @@ class DisplayMenu(DisplayItem):
         else:
             display.paste(self.sprite_unselected, (self.position_X, self.position_Y))
     
+    
 class DisplayPoopBar(DisplayItem):
     def __init__(self):
         super().__init__()
@@ -116,6 +118,8 @@ class DisplayStoneBar(DisplayItem):
         self.stones_on_screen: int = stones_on_screen
     
     def render(self, display: Image.Image, _menu_position: int):
+        global logic_class
+        self.stones_on_screen = round((logic_class.weight_value / 100) * 8)
         for stone_index in range(self.stones_on_screen):
             display.paste(self.sprite, (17, stone_index * 8))
             
@@ -274,15 +278,15 @@ class SubDisplayMenu(DisplayItem):
 class SubScreenHunger(BaseScreen):
     def __init__(self):
         super().__init__()
-        self.food_items_dict: dict[str, int] = {
-            "Burger": 520,
-            "Pasta": 280,
-            "Muffin": 440,
-            "Broccoli": 30,
-            "Salad": 235,
-            "Sushi": 150,
-            "Crepes": 180,
-            "Exit": 0
+        self.food_items_dict: dict[str, tuple[int, int]] = {
+            "Burger": (520, -2),
+            "Pasta": (280, -1),
+            "Muffin": (440, -2),
+            "Broccoli": (30, 2),
+            "Salad": (235, 3),
+            "Sushi": (150, 0),
+            "Crepes": (180, 2),
+            "Exit": (0, 0)
         }
         
         self.max_menu_position = 7
@@ -296,9 +300,9 @@ class SubScreenHunger(BaseScreen):
     def on_button_B_pressed(self):
         if self.menu_position <= 6:
             global logic_class
-            logic_class.calories_intake_value += list(self.food_items_dict.values())[self.menu_position]
-            if __debug__:
-                print("added calories: " + str(list(self.food_items_dict.values())[self.menu_position]))
+            logic_class.calories_intake_value += list(self.food_items_dict.values())[self.menu_position][0]
+            logic_class.diet_health_counter += list(self.food_items_dict.values())[self.menu_position][1]
+            logic_class.healthyness_value += logic_class.diet_health_counter
         else:
             global active_screen
             active_screen = main_screen
@@ -367,7 +371,7 @@ class SubScreenPlay(BaseScreen):
         if self.menu_position <= 4:
             global logic_class
             logic_class.happyness_value += list(self.options_list.values())[self.menu_position][0]
-            logic_class.sickness_value -= list(self.options_list.values())[self.menu_position][1]
+            logic_class.healthyness_value -= list(self.options_list.values())[self.menu_position][1]
         else:
             global active_screen
             active_screen = main_screen
@@ -389,13 +393,13 @@ class SubScreenMedicine(BaseScreen):
         self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (48, 0, 64, 16), (0, 48)))
         
     def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
-        display.text((0, 0), " " + str(logic_class.sickness_value), (255))
+        display.text((0, 0), " " + str(logic_class.healthyness_value), (255))
         return display
 
     def on_button_B_pressed(self):
         global logic_class
         if self.menu_position <= 2:
-            logic_class.sickness_value -= list(self.options_list.values())[self.menu_position]
+            logic_class.healthyness_value += list(self.options_list.values())[self.menu_position]
         else:
             global active_screen
             active_screen = main_screen
@@ -606,10 +610,11 @@ class Logic(object):
     def __init__(self) -> None:
         self.care_errors: int = 0
         self.birthday_time: float = time.time()
+        self.diet_health_counter: int = 0
         
         self.calories_intake_value: int = 2000
         self.last_calorie_needed: int = 2000
-        self.sickness_value: int = 50
+        self.healthyness_value: int = 50
         self.happyness_value: int = 50
         self.weight_value: int = 50
         self.dicipline_value: int = 50
@@ -678,19 +683,19 @@ class Logic(object):
         if main_screen.poop_display_bar.poop_on_screen >= 3:
         # add random sickness: more poop -> more sickness
             if random.randint(1, 10) < main_screen.poop_display_bar.poop_on_screen:
-                self.sickness_value += math.floor(main_screen.poop_display_bar.poop_on_screen / 2)
+                self.healthyness_value += math.floor(main_screen.poop_display_bar.poop_on_screen / 2)
         elif random.randint(1, 30) == 30:
-            self.sickness_value += 5
+            self.healthyness_value += 5
         self.next_sickness_interval += 1
         threading.Timer(self.next_sickness_interval - time.time(), self.cause_sickness).start()
         
     def cause_update_weight(self) -> None:
-        if self.last_calorie_needed - 1500 >= self.calories_intake_value:
+        if self.last_calorie_needed - 500 >= self.calories_intake_value:
             self.weight_value -= (self.last_calorie_needed - self.calories_intake_value) // 1500
-        elif self.last_calorie_needed + 1500 <= self.calories_intake_value:
+        elif self.last_calorie_needed + 500 <= self.calories_intake_value:
             self.weight_value += (self.calories_intake_value - self.last_calorie_needed) // 1500 
             
-        self.next_weight_check_interval += 60
+        self.next_weight_check_interval += 1
         threading.Timer(self.next_weight_check_interval - time.time(), self.cause_update_weight).start()
         
     def set_screen_timeout(self) -> threading.Timer:
@@ -718,7 +723,7 @@ class Logic(object):
                 
     def get_stats_summary(self) -> dict[str, int]:
         return {
-            "Sickness": self.sickness_value,
+            "Healthyness": self.healthyness_value,
             "Happyness": self.happyness_value,
             "Weight": self.weight_value,
             "Dicipline": self.dicipline_value
