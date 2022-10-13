@@ -16,6 +16,15 @@ SPRITEMAP_STONE_PATH: str = "/home/pi/Downloads/py/img/stone_icon.png"
 SPRITEMAP_EGG_PATH: str = "/home/pi/Downloads/py/img/spritemap_egg_stage.png"
 PIXEL_FONT_PATH: str = "/home/pi/Downloads/py/img/slkscre.ttf"
 
+BASE_PATH: str = "/home/pi/Downloads/py/img/"
+SPRITEMAP_EVOLUTION_STAGES: list[str] = [
+    BASE_PATH + "spritemap_egg_stage.png",
+    BASE_PATH + "spritemap_baby_stage.png",
+    BASE_PATH + "spritemap_teen_stage.png",
+    BASE_PATH + "spritemap_adult_stage_test.png",
+    BASE_PATH + "spritemap_senior_stage.png"
+]
+
 BUTTON_A_GPIO: int = 21
 BUTTON_B_GPIO: int = 20
 BUTTON_C_GPIO: int = 16
@@ -113,9 +122,7 @@ class DisplayStoneBar(DisplayItem):
 
 class DisplayTamaItem(DisplayItem):
     def __init__(self):
-        self.evolution_state: int = 1
-        self.evolution_state_spritemap_index_X: int = 1
-        self.evolution_state_spritemap_index_Y: int = 1
+        self.evolution_state: int = 0
         
         self.time_until_next_update: int = -30
         
@@ -123,13 +130,33 @@ class DisplayTamaItem(DisplayItem):
         self.position_Y: int = 0
         self.facing_right: bool = False
         
-        spritemap: Image.Image = Image.open(SPRITEMAP_EGG_PATH)
+        spritemap: Image.Image = Image.open(SPRITEMAP_EVOLUTION_STAGES[self.evolution_state])
+        
+        self.sprite_0: Image.Image = spritemap.crop((0, 0, 48, 48))
+        
+        threading.Timer(10, self.evolve).start()
+        
+    def evolve(self) -> None:
+        spritemap: Image.Image
+        position_X: int = 0
+        position_Y: int = 0
+        
+        spritemap = Image.open(SPRITEMAP_EVOLUTION_STAGES[self.evolution_state])
+        width, height = spritemap.size
+    
+        position_X = random.randint(0, (width // 48))
+        position_Y = random.randint(0, (height // 96))
         
         self.sprite_0: Image.Image = spritemap.crop((
-            self.evolution_state_spritemap_index_X * 48,
-            self.evolution_state_spritemap_index_Y * 48,
-            (self.evolution_state_spritemap_index_X + 1) * 48,
-            (self.evolution_state_spritemap_index_Y + 1) * 48))
+            position_X * 48,
+            position_Y * 48,
+            (position_X + 1) * 48,
+            (position_Y + 1) * 48))
+        
+        self.evolution_state += 1
+        if self.evolution_state <= 4:       
+            threading.Timer(10, self.evolve).start()
+        
         
     def get_next_sprite_position(self):
         MAX_VALUE_CHANGE: int = 3
@@ -248,13 +275,13 @@ class SubScreenHunger(BaseScreen):
     def __init__(self):
         super().__init__()
         self.food_items_dict: dict[str, int] = {
-            "Burger": 1000,
-            "Pasta": 1000,
-            "Muffin": 1000,
-            "Broccoli": 1000,
-            "Salad": 1000,
-            "Sushi": 1000,
-            "Crepes": 1000,
+            "Burger": 520,
+            "Pasta": 280,
+            "Muffin": 440,
+            "Broccoli": 30,
+            "Salad": 235,
+            "Sushi": 150,
+            "Crepes": 180,
             "Exit": 0
         }
         
@@ -584,7 +611,7 @@ class Logic(object):
         self.last_calorie_needed: int = 2000
         self.sickness_value: int = 50
         self.happyness_value: int = 50
-        self.weight_in_stones: int = 50
+        self.weight_value: int = 50
         self.dicipline_value: int = 50
         
         self.sleeping: bool = False
@@ -650,7 +677,7 @@ class Logic(object):
     def cause_sickness(self) -> None:
         if main_screen.poop_display_bar.poop_on_screen >= 3:
         # add random sickness: more poop -> more sickness
-            if random.randint(1, 10) > main_screen.poop_display_bar.poop_on_screen:
+            if random.randint(1, 10) < main_screen.poop_display_bar.poop_on_screen:
                 self.sickness_value += math.floor(main_screen.poop_display_bar.poop_on_screen / 2)
         elif random.randint(1, 30) == 30:
             self.sickness_value += 5
@@ -659,9 +686,9 @@ class Logic(object):
         
     def cause_update_weight(self) -> None:
         if self.last_calorie_needed - 1500 >= self.calories_intake_value:
-            self.weight_in_stones -= (self.last_calorie_needed - self.calories_intake_value) // 1500
+            self.weight_value -= (self.last_calorie_needed - self.calories_intake_value) // 1500
         elif self.last_calorie_needed + 1500 <= self.calories_intake_value:
-            self.weight_in_stones += (self.calories_intake_value - self.last_calorie_needed) // 1500 
+            self.weight_value += (self.calories_intake_value - self.last_calorie_needed) // 1500 
             
         self.next_weight_check_interval += 60
         threading.Timer(self.next_weight_check_interval - time.time(), self.cause_update_weight).start()
@@ -693,7 +720,7 @@ class Logic(object):
         return {
             "Sickness": self.sickness_value,
             "Happyness": self.happyness_value,
-            "Weight": self.weight_in_stones,
+            "Weight": self.weight_value,
             "Dicipline": self.dicipline_value
         }
 
