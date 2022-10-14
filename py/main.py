@@ -138,7 +138,7 @@ class DisplayTamaItem(DisplayItem):
         
         self.sprite_0: Image.Image = spritemap.crop((0, 0, 48, 48))
         
-        threading.Timer(10, self.evolve).start()
+        threading.Timer(3600, self.evolve).start()
         
     def evolve(self) -> None:
         spritemap: Image.Image
@@ -158,8 +158,9 @@ class DisplayTamaItem(DisplayItem):
             (position_Y + 1) * 48))
         
         self.evolution_state += 1
-        if self.evolution_state <= 4:       
-            threading.Timer(10, self.evolve).start()
+        if self.evolution_state <= 4:
+            global logic_class    
+            threading.Timer((logic_class.get_polynomial_value() * 30), self.evolve).start()
         
         
     def get_next_sprite_position(self):
@@ -188,7 +189,7 @@ class DisplayTamaItem(DisplayItem):
             
     def render(self, display: Image.Image, _menu_position: int):
         if self.evolution_state:                            # do not update in egg state
-            if self.time_until_next_update == 0:            # wait until every 60th frame until position update
+            if self.time_until_next_update == 0:            # wait until every 30th frame until position update
                 self.time_until_next_update = -30
                 self.get_next_sprite_position()
                 
@@ -274,6 +275,7 @@ class SubDisplayMenu(DisplayItem):
             list_index += 1
         
         display.paste(self.text_image)
+
 
 class SubScreenHunger(BaseScreen):
     def __init__(self):
@@ -612,8 +614,7 @@ class Logic(object):
         self.birthday_time: float = time.time()
         self.diet_health_counter: int = 0
         
-        self.calories_intake_value: int = 2000
-        self.last_calorie_needed: int = 2000
+        self.calories_intake_value: int = 0
         self.healthyness_value: int = 50
         self.happyness_value: int = 50
         self.weight_value: int = 50
@@ -623,7 +624,7 @@ class Logic(object):
         self.light_on: bool = True
         self.screen_on: bool = False
         
-        self.screen_sleep_time: int = 10
+        self.screen_sleep_time: int = 20
         self.next_screen_timeout_interval: float = time.time()
         timer = threading.Timer(self.next_screen_timeout_interval - time.time(), self.turn_off_screen)
         self.screen_sleep_timer: threading.Timer = timer
@@ -690,10 +691,10 @@ class Logic(object):
         threading.Timer(self.next_sickness_interval - time.time(), self.cause_sickness).start()
         
     def cause_update_weight(self) -> None:
-        if self.last_calorie_needed - 500 >= self.calories_intake_value:
-            self.weight_value -= (self.last_calorie_needed - self.calories_intake_value) // 1500
-        elif self.last_calorie_needed + 500 <= self.calories_intake_value:
-            self.weight_value += (self.calories_intake_value - self.last_calorie_needed) // 1500 
+        if -500 >= self.calories_intake_value:
+            self.weight_value += self.calories_intake_value // 1500
+        elif 500 <= self.calories_intake_value:
+            self.weight_value += self.calories_intake_value // 1500 
             
         self.next_weight_check_interval += 1
         threading.Timer(self.next_weight_check_interval - time.time(), self.cause_update_weight).start()
