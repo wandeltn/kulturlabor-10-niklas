@@ -41,7 +41,19 @@ class DisplayItem(object):
     
     
 class DisplaySprite(DisplayItem):
+    """display a chosen sprite on a given locaiton on the screen
+
+    Args:
+        DisplayItem (Dipsla): A displayable dubclass of the DisplayItem parent
+    """
     def __init__(self, path: str, spritemap_position: tuple[int, int, int, int], display_position: tuple[int, int]):
+        """Initialize the DisplaySprite class. The class is a subclass of the DisplayItem class, this makes this a displayable class
+
+        Args:
+            path (str): path of where to find the spritemap to display a section of
+            spritemap_position (tuple[int, int, int, int]): where to find the image to sisplay on the spritemap. Upper left and lower right corners
+            display_position (tuple[int, int]): where to paste the cut image on the display
+        """
         super().__init__()
         spritemap: Image.Image = Image.open(path)
         self.sprite: Image.Image = spritemap.crop(spritemap_position)
@@ -49,15 +61,33 @@ class DisplaySprite(DisplayItem):
         self.position = display_position 
         
     def render(self, display: Image.Image, _menu_position: int):
+        """paste the finished, cut image onto the chosen locaiton on the screen
+
+        Args:
+            display (Image.Image): Image on whisch to paste the image
+            _menu_position (int): not used
+        """
         display.paste(self.sprite, self.position)
         
         
 class DisplayVerticalValueBar(DisplayItem):
     def __init__(self, position: tuple[int, int, int, int], fill_height: int):
+        """Initialize the VerticalValueBar, this will build a class which will display a vertical progressbar onto the display on call of the render method
+
+        Args:
+            position (tuple[int, int, int, int]): where to paste the ValueBar on the display
+            fill_height (int): until which y position on the screen to fill the ValueBar
+        """
         self.position: tuple[int, int, int, int] = position
         self.fill_height: int = fill_height
     
     def render(self, display: Image.Image, _menu_position):
+        """render the ValueBar onto the given Image
+
+        Args:
+            display (Image.Image): the image for the ValueBar to be displayed on
+            _menu_position (int): not used in this context
+        """
         display_draw = ImageDraw.Draw(display)
         display_draw.rectangle(self.position, "black", "white")
         display_draw.rectangle((self.position[0], self.fill_height) + (self.position[2], self.position[3]), "white", "white")
@@ -65,10 +95,22 @@ class DisplayVerticalValueBar(DisplayItem):
         
 class DisplayHorizontalValueBar(DisplayItem):
     def __init__(self, position: tuple[int, int, int, int], fill_height: int):
+        """Initialize the VerticalValueBar, this will build a class which will display a vertical progressbar onto the display on call of the render method
+
+        Args:
+            position (tuple[int, int, int, int]): where on the screen the ValueBar schould be rendered to. Upper left corner
+            fill_height (int): until which x value to fill the ValueBar to
+        """
         self.position: tuple[int, int, int, int] = position
         self.fill_height: int = fill_height
     
     def render(self, display: Image.Image, _menu_position: int):
+        """render the ValueBar to the given Image
+
+        Args:
+            display (Image.Image): the image for the ValueBar to be displayed on
+            _menu_position (int): not used in this context
+        """
         display_draw = ImageDraw.Draw(display)
         display_draw.rectangle(self.position, "black", "white")
         display_draw.rectangle((self.position[0], self.position[1]) + (self.fill_height, self.position[3]), "white", "white")
@@ -76,6 +118,11 @@ class DisplayHorizontalValueBar(DisplayItem):
 
 class DisplayMenu(DisplayItem):
     def __init__(self, spritemap_index: int):
+        """generate a main menu item to be navigated over by the buttons
+
+        Args:
+            spritemap_index (int): which item of the spritemap to display, hereby also giving the position of the image
+        """
         super().__init__()
         self.spritemap_index = spritemap_index
         
@@ -87,6 +134,12 @@ class DisplayMenu(DisplayItem):
         self.position_Y: int = (spritemap_index % 4) * 16
        
     def render(self, display: Image.Image, menu_position: int):
+        """render the single item in the given position, also checking if has to display as inverted
+
+        Args:
+            display (Image.Image): Image to paste the menu item to
+            menu_position (int): which item of the menu is currently selected, given to display as inverted as needed
+        """
         if self.spritemap_index == menu_position:
             display.paste(self.sprite_selected, (self.position_X, self.position_Y))
         else:
@@ -95,6 +148,8 @@ class DisplayMenu(DisplayItem):
     
 class DisplayPoopBar(DisplayItem):
     def __init__(self):
+        """generate a poop menu bar on the right side of the screen, also saves how many poop images to display
+        """
         super().__init__()
         self.poop_on_screen: int = 0
         
@@ -103,6 +158,12 @@ class DisplayPoopBar(DisplayItem):
         self.sprite_selected: Image.Image = spritemap.crop((5, 0, 10, 6))
     
     def render(self, display: Image.Image, _menu_position: int):
+        """render the correct amount of poop images to the screen
+
+        Args:
+            display (Image.Image): the screen to paste the images to
+            _menu_position (int): not used in this context
+        """
         for poop_index in range(self.poop_on_screen):
             if self.selected:
                 display.paste(self.sprite_selected, (106, poop_index * 8))
@@ -112,12 +173,23 @@ class DisplayPoopBar(DisplayItem):
 
 class DisplayStoneBar(DisplayItem):
     def __init__(self, stones_on_screen: int = 4):
+        """generate a stone menu bar on the left of the screen to show the weight of the tama
+
+        Args:
+            stones_on_screen (int, optional): how many stones to start displaying with, before gathering the data. Defaults to 4.
+        """
         super().__init__()
         self.sprite: Image.Image = Image.open(SPRITEMAP_STONE_PATH)
         
         self.stones_on_screen: int = stones_on_screen
     
     def render(self, display: Image.Image, _menu_position: int):
+        """render the correct amount of stones to the screen
+
+        Args:
+            display (Image.Image): the screen to paste the stones to
+            _menu_position (int): not used in this context
+        """
         global logic_class
         self.stones_on_screen = round((logic_class.weight_value / 100) * 8)
         for stone_index in range(self.stones_on_screen):
@@ -125,7 +197,14 @@ class DisplayStoneBar(DisplayItem):
             
 
 class DisplayTamaItem(DisplayItem):
+    """Generate the main tama in the middle of the main menu
+
+    Args:
+        DisplayItem (DisplayItem): Subclass of the displayable DisplayItem class, therefore can be rendered
+    """
     def __init__(self):
+        """generate the tama by openign the spritemap. Also sets the first evolution timer
+        """
         self.evolution_state: int = 0
         
         self.time_until_next_update: int = -30
@@ -141,6 +220,9 @@ class DisplayTamaItem(DisplayItem):
         threading.Timer(3600, self.evolve).start()
         
     def evolve(self) -> None:
+        """random rvolution stage advance of the tama
+        TODO: Weighted evolution based on care errors
+        """
         spritemap: Image.Image
         position_X: int = 0
         position_Y: int = 0
@@ -164,6 +246,8 @@ class DisplayTamaItem(DisplayItem):
         
         
     def get_next_sprite_position(self):
+        """generate the next random position within the bounding boxes for the tama to move to
+        """
         MAX_VALUE_CHANGE: int = 3
         # position_X
         if self.position_X - 26 <= 0:
@@ -188,6 +272,12 @@ class DisplayTamaItem(DisplayItem):
             self.position_Y += random.randint(MAX_VALUE_CHANGE * -1, MAX_VALUE_CHANGE)
             
     def render(self, display: Image.Image, _menu_position: int):
+        """render the tama in the randomly generated position on the screen
+
+        Args:
+            display (Image.Image): screen to render the tama to
+            _menu_position (int): not used in this context
+        """
         if self.evolution_state:                            # do not update in egg state
             if self.time_until_next_update == 0:            # wait until every 30th frame until position update
                 self.time_until_next_update = -30
@@ -203,6 +293,11 @@ class DisplayTamaItem(DisplayItem):
                    
         
 class BaseScreen(object):
+    """BaseClass for all classes containing a user interactable menu. NOT to be created as own instance
+
+    Args:
+        object (object): doesnt inherit anything special
+    """
     def __init__(self):
         self.display_content: Image.Image = Image.new("1", (128, 64))
         self.display_content_clear = self.display_content.copy()
@@ -246,7 +341,19 @@ class BaseScreen(object):
              
             
 class SubDisplayMenu(DisplayItem):
+    """Baseclass for all the submenus in the UI
+
+    Args:
+        DisplayItem (DisplayItem): is able to be rendered onto the screen
+    """
     def __init__(self, text_render_list: list[str], y_axis_offset: int= 0, x_axis_offset: int= 0):
+        """generate the new image for the screen
+
+        Args:
+            text_render_list (list[str]): list of options the user can navigate through
+            y_axis_offset (int, optional): y axis offset of the menu. Defaults to 0.
+            x_axis_offset (int, optional): x axis offset of the menu. Defaults to 0.
+        """
         super().__init__()
         self.text_render_list: list[str] = text_render_list
         self.y_axis_offset: int = y_axis_offset
@@ -256,6 +363,12 @@ class SubDisplayMenu(DisplayItem):
         self.clear_text_image: Image.Image = self.text_image.copy()
         
     def render(self, display: Image.Image, menu_position: int):
+        """display the submenu onto the display
+
+        Args:
+            display (Image.Image): screen to render the submenu to
+            menu_position (int): which item in the list is to be displayed highlighted
+        """
         self.text_image = self.clear_text_image.copy()
         display_draw: ImageDraw.ImageDraw = ImageDraw.Draw(self.text_image)
         display_draw = active_screen.get_current_stats(display_draw)
@@ -278,7 +391,14 @@ class SubDisplayMenu(DisplayItem):
 
 
 class SubScreenHunger(BaseScreen):
+    """Subscreen to select item for the tama to eat
+
+    Args:
+        BaseScreen (BaseScreen): Inherits from the BaseScreen so can not be natively rendered
+    """
     def __init__(self):
+        """set up options to be rendered as selectables on screen
+        """
         super().__init__()
         self.food_items_dict: dict[str, tuple[int, int]] = {
             "Burger": (520, -2),
@@ -296,10 +416,21 @@ class SubScreenHunger(BaseScreen):
         self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (0, 0, 16, 16), (0, 0)))
         
     def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
+        """get the current hunger value to be displayed in the bottom left corner of the screen
+
+        Args:
+            display (ImageDraw.ImageDraw): display to write the value to
+
+        Returns:
+            ImageDraw.ImageDraw: New display with the new text on it
+        """
         display.text((0, 55), str(logic_class.calories_intake_value), (255))
         return display
     
     def on_button_B_pressed(self):
+        """handle what to do when the middle button is pressed
+        TODO: animation or delay after eating to prevent over feeding
+        """
         if self.menu_position <= 6:
             global logic_class
             logic_class.calories_intake_value += list(self.food_items_dict.values())[self.menu_position][0]
@@ -311,7 +442,14 @@ class SubScreenHunger(BaseScreen):
     
             
 class SubScreenLight(BaseScreen):
+    """Subscreen for the user to select the status of the light to enable the tama to sleep
+
+    Args:
+        BaseScreen (BaseScreen): Can not be natively rendered
+    """
     def __init__(self):
+        """initialize the light menu options
+        """
         super().__init__()
         self.options_list: dict[str, Callable] = {
             "Turn on": self.light_turn_on,
@@ -326,18 +464,32 @@ class SubScreenLight(BaseScreen):
         self.render_list.append(DisplaySprite(SPRITEMAP_MENU_PATH, (16, 0, 32, 16), (0, 16)))
 
     def light_turn_on(self):
+        """turn the light_on variable to True
+        """
         global logic_class
         logic_class.light_on = True
     
     def light_turn_off(self):
+        """turn the light_on variable to False
+        """
         global logic_class
         logic_class.light_on = False
         
     def get_current_stats(self, display: ImageDraw.ImageDraw) -> ImageDraw.ImageDraw:
+        """display the current status of the light in the botton left corner of the screen
+
+        Args:
+            display (ImageDraw.ImageDraw): the screen for the text to be rendered to
+
+        Returns:
+            ImageDraw.ImageDraw: the new image containing the new text
+        """
         display.text((0, 55), " " + str(logic_class.light_on), (255))
         return display
         
     def on_button_B_pressed(self):
+        """execute the assgned funtction in case of pressing the middle button
+        """
         action = list(self.options_list.values())[self.menu_position]
         action()
         
