@@ -33,6 +33,9 @@ serial: spi = spi()
 device: ssd1306 = ssd1306(serial)
 
 class DisplayItem(object):
+    """
+    Base Class for any item to be displayed by iteration over the render function. Should NOT be created by instancing this class.
+    """
     def __init__(self):
         self.selected: bool = False
         
@@ -44,7 +47,7 @@ class DisplaySprite(DisplayItem):
     """display a chosen sprite on a given locaiton on the screen
 
     Args:
-        DisplayItem (Dipsla): A displayable dubclass of the DisplayItem parent
+        DisplayItem (DisplayItem): A displayable subclass of the DisplayItem parent
     """
     def __init__(self, path: str, spritemap_position: tuple[int, int, int, int], display_position: tuple[int, int]):
         """Initialize the DisplaySprite class. The class is a subclass of the DisplayItem class, this makes this a displayable class
@@ -556,7 +559,8 @@ class SubScreenPlay(BaseScreen):
         else:
             global active_screen
             active_screen = main_screen
-            
+
+   
 class SubScreenMedicine(BaseScreen):
     """sub screen to manage the sickness of the tama
 
@@ -972,6 +976,10 @@ class Logic(object):
         """
         self.cause_update_weight()
         
+        # set up logging timer interval
+        self.next_log_to_csv_interval = time.time()
+        self.write_status_to_csv()
+        
     def get_polynomial_value(self) -> float:
         """get the value of the polynomial curve to gather values for:
         1. hunger
@@ -1096,11 +1104,60 @@ class Logic(object):
             "Dicipline": self.dicipline_value
         }
 
+    def write_status_to_csv(self) -> None:
+        global main_screen
+        with open("/home/pi/Downloads/logs/log.csv", "a") as log_file:
+            log_file.write(
+                str(time.time()) + ", " +
+                str(self.birthday_time)                          + ", " +
+                str(self.care_errors)                            + ", " +
+                str(main_screen.poop_display_bar.poop_on_screen) + ", " +
+                str(self.diet_health_counter)                    + ", " +
+                str(self.calories_intake_value)                  + ", " +
+                str(self.healthyness_value)                      + ", " +
+                str(self.happyness_value)                        + ", " +
+                str(self.weight_value)                           + ", " +
+                str(self.dicipline_value)                        + ", " +
+                str(self.sleeping)                               + ", " +
+                str(self.light_on)                               + ", " +
+                str(self.screen_on)                              + ", " +
+                ""                                               + ", " +
+                str(self.next_pooping_interval)                  + ", " +
+                str(self.next_hunger_interval)                   + ", " +
+                str(self.next_sickness_interval)                 + ", " +
+                str(self.next_weight_check_interval)             + ", " +
+                "\n"
+            )
+        self.next_log_to_csv_interval += 5
+        timer: threading.Timer = threading.Timer(self.next_log_to_csv_interval - time.time(), self.write_status_to_csv)
+        timer.start()
+
+
+
+with open("/home/pi/Downloads/logs/log.csv", "w") as log_file:
+    log_file.write(
+        "Current Time" + ", " +
+        "Birthday Time" + ", " +
+        "Care errors" + ", " +
+        "poop on screen" + ", " +
+        "diet heath counter" + ", " +
+        "calories intake value" + ", " +
+        "health value" + ", " +
+        "happyness value" + ", " +
+        "weight value" + ", " +
+        "dicipline value" + ", " +
+        "sleeping" + ", " +
+        "light on" + ", " +
+        "screen on" + ", " +
+        ""  + ", " +
+        "next pooping interval" + ", " +
+        "next hunger interval" + ", " +
+        "next sickness interval" + ", " +
+        "next weight check interval" + ", " +
+        "\n"
+    )
+
 logic_class: Logic = Logic()
-
-
-test_image: Image.Image = Image.new("1", (128, 64))
-
 
 active_screen: BaseScreen = main_screen
 
@@ -1113,4 +1170,3 @@ while True:
     with regulator:
         if logic_class.screen_on:
             active_screen.render()
-        
