@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef DisplayMenu_H
 #define DisplayMenu_H
 
@@ -9,7 +7,7 @@
 
 using namespace std;
 
-class DisplayMenu {
+class SubMenu {
     public:
         virtual void onMenuPositionChanged();
         virtual void drawCurrentStats();
@@ -19,11 +17,10 @@ class DisplayMenu {
         void onButtonCPressed();
 
         void render(Adafruit_SSD1306 &display);
-        void testdrawbitmap(Adafruit_SSD1306 &display);
 
     private:
-        vector<Renderable> render_list;
-        
+        unsigned short int current_menu_position;
+        unsigned short int max_menu_position;
 };
 
 #endif
