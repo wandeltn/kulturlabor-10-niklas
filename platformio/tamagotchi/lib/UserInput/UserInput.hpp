@@ -1,23 +1,20 @@
 #pragma once
 
-#include <Button2.h>
-
 #ifndef UserInput_H
 #define UserInput_H
+
+#include <SPI.h>
 
 class UserInput 
 {
     public:
         void begin();
-        void loop();
-        
+
+        void ICACHE_RAM_ATTR onButtonAPressed();
+        void ICACHE_RAM_ATTR onButtonBPressed();
+        void ICACHE_RAM_ATTR onButtonCPressed();
 
     private:
-        Button2 buttonA, buttonB, buttonC;
-
-        static void onButtonAPressed(Button2& btn);
-        static void onButtonBPressed(Button2& btn);
-        static void onButtonCPressed(Button2& btn);
         
 };
 

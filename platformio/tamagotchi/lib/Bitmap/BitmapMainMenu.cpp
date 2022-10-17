@@ -48,3 +48,14 @@ const unsigned char PROGMEM BitmapMainMenu::attention_menu_icon[32] = {
 	0xff, 0xff, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01, 0x88, 0x01, 0x81, 0x01, 0xa0, 0x39, 0xa0, 0x0d, 
 	0x90, 0x05, 0x8e, 0x05, 0x80, 0x41, 0x80, 0x01, 0x80, 0x11, 0x80, 0x01, 0x80, 0x01, 0xff, 0xff, 
 };
+
+const unsigned char* BitmapMainMenu::options_list[8] = {
+	BitmapMainMenu::food_menu_icon,
+	BitmapMainMenu::light_menu_icon,
+	BitmapMainMenu::play_menu_icon,
+	BitmapMainMenu::medicine_menu_icon,
+	BitmapMainMenu::poop_menu_icon,
+	BitmapMainMenu::stats_menu_icon,
+	BitmapMainMenu::dicipline_menu_icon,
+	BitmapMainMenu::attention_menu_icon
+};

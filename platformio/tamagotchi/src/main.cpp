@@ -27,8 +27,8 @@ Display display(
 
 BitmapMainMenu MainMenuIcons;
 
-int current_menu_position;
-int max_menu_position;
+unsigned short int current_menu_position;
+unsigned short int max_menu_position;
 
 
 void loop() {
@@ -42,11 +42,24 @@ void setup() {
         Serial.println(F("SSD1306 allocation failed"));
         for(;;); // Don't proceed, loop forever
     }    
+    display.display();
+    delay(1000);
     // Clear the buffer
     display.clearDisplay();
 
+    static const unsigned char* options_list[8] = {
+	MainMenuIcons.food_menu_icon,
+	MainMenuIcons.light_menu_icon,
+	MainMenuIcons.play_menu_icon,
+	MainMenuIcons.medicine_menu_icon,
+	MainMenuIcons.poop_menu_icon,
+	MainMenuIcons.stats_menu_icon,
+	MainMenuIcons.dicipline_menu_icon,
+	MainMenuIcons.attention_menu_icon
+    };
+
     current_menu_position = 3;
-    max_menu_position = 8;
+    max_menu_position = std::size(MainMenuIcons.options_list);
 
     for(unsigned short int i = 0; i <= max_menu_position; i++)
     {
@@ -55,22 +68,24 @@ void setup() {
             display.drawInvertBitmapColor(
                 floor(i / 4) * 112,
                 (i % 4) * 16,
-                MainMenuIcons.medicine_menu_icon,
+                MainMenuIcons.options_list[i],
                 16,
                 16,
                 SSD1306_WHITE
             );
         } else {
+
             display.drawBitmap(
                 floor(i / 4) * 112,
                 (i % 4) * 16,
-                MainMenuIcons.medicine_menu_icon,
+                MainMenuIcons.options_list[i],
                 16,
                 16,
                 SSD1306_WHITE
             );
         };
     };
+
 
     // Show the display buffer on the screen. You MUST call display() after
     // drawing commands to make them visible on screen!

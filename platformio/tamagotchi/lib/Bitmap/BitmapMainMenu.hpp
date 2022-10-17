@@ -14,6 +14,8 @@ class BitmapMainMenu {
 		static const unsigned char PROGMEM dicipline_menu_icon[32];
 		static const unsigned char PROGMEM attention_menu_icon[32];
 
+		static const unsigned char* options_list[8];
+
 };
 
 #endif

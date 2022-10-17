@@ -1,33 +1,23 @@
 #include "UserInput.hpp"
 
+#define BUTTON_A    D0
+#define BUTTON_B    D6
+#define BUTTON_C    D2
 
 
-void UserInput::onButtonAPressed(Button2& btn) {
+void ICACHE_RAM_ATTR UserInput::onButtonAPressed() {
     Serial.println("button A callback");
 }
 
-void UserInput::onButtonBPressed(Button2& btn) {
+void ICACHE_RAM_ATTR UserInput::onButtonBPressed() {
     Serial.println("button B callback");
 }
 
-void UserInput::onButtonCPressed(Button2& btn) {
+void ICACHE_RAM_ATTR UserInput::onButtonCPressed() {
     Serial.println("button C callback");
 }
 
 
 void UserInput::begin() {
-    buttonA.begin(D0, 2U, false, false);
-    buttonA.setClickHandler(onButtonAPressed);
 
-    buttonB.begin(D6, 2U, false, false);
-    buttonB.setClickHandler(onButtonBPressed);
-    
-    buttonC.begin(D2, 2U, false, false);
-    buttonC.setClickHandler(onButtonCPressed);
-}
-
-void UserInput::loop() {
-    buttonA.loop();
-    buttonB.loop();
-    buttonC.loop();
 }
