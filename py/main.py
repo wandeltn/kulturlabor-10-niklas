@@ -913,7 +913,7 @@ class Logic(object):
         
         self.calories_intake_value: int = 0
         """how many calories the tama needs to survive.
-        Negative values mean it has to eat more if it doesnt it will lose in weght. 
+        Negative values means it has to eat more if it doesnt it will lose in weght. 
         Positive values over a specific value means it will gain in weight.
         """
         self.healthyness_value: int = 50
