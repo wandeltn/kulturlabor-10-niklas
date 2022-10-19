@@ -5,9 +5,9 @@
 #include <BaseScreen.hpp>
 
 
-class MainScreen: public Renderable, public BaseScreen {
+class MainScreen: public BaseScreen {
     public:
-        void render(Display display, unsigned short int current_menu_position);
+        MainScreen();
     private:
 
 };

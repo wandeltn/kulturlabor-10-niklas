@@ -3,7 +3,6 @@
 #include <cmath>
 #include <vector>
 #include <SubMenu.hpp>
-#include <Bitmaps.hpp>
 #include <UserInput.hpp>
 #include <BaseScreen.hpp>
 #include <MainScreen.hpp>
@@ -32,7 +31,7 @@ Display display(
 
 static UserInput userInput;
 
-vector<Renderable> render_list;
+
 BaseScreen* active_screen;
 
 void loop() {

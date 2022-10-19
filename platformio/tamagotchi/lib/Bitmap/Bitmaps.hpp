@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef Bitmaps_H
 #define Bitmaps_H
 
