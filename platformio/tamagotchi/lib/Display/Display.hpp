@@ -1,5 +1,7 @@
-#ifndef GFX_H
-#define GFX_H
+#pragma once
+
+#ifndef Display_H
+#define Display_H
 
 #include <Adafruit_SSD1306.h>
 

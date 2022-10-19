@@ -1,5 +1,5 @@
-#ifndef DisplayMenu_H
-#define DisplayMenu_H
+#ifndef SubMenu_H
+#define SubMenu_H
 
 #include <Renderable.hpp>
 

@@ -3,11 +3,12 @@
 #include <cmath>
 #include <vector>
 #include <SubMenu.hpp>
-#include <BitmapMainMenu.hpp>
+#include <Bitmaps.hpp>
 #include <UserInput.hpp>
 #include <BaseScreen.hpp>
 #include <MainScreen.hpp>
 #include <Display.hpp>
+#include <Renderable.hpp>
 
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -32,12 +33,13 @@ Display display(
 static UserInput userInput;
 
 vector<Renderable> render_list;
-BaseScreen active_screen;
+BaseScreen* active_screen;
 
 void loop() {
     if(userInput.last_menu_positon != userInput.current_menu_position) {
-        active_screen.render(display, userInput.current_menu_position);
-
+        display.clearDisplay();
+        active_screen->render(display, userInput.current_menu_position);
+        display.display();
         userInput.last_menu_positon = userInput.current_menu_position;
     } else if (userInput.button_B_pressed) {
         
@@ -62,8 +64,7 @@ void setup() {
     display.clearDisplay();
 
     // init code
-    MainScreen mainScreen;
-    active_screen = mainScreen;
+    active_screen = new MainScreen();
 
     display.display();    
 }

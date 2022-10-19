@@ -4,6 +4,7 @@
 #define Renderable_H
 
 #include <vector>
+#include <Display.hpp>
 
 using namespace std;
 
