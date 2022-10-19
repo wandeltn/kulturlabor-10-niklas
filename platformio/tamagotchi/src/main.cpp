@@ -4,6 +4,7 @@
 #include <SubMenu.hpp>
 #include <BitmapMainMenu.hpp>
 #include <Display.hpp>
+#include <UserInput.hpp>
 
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -12,7 +13,7 @@
 // Declaration for SSD1306 display connected using software SPI (default case):
 #define OLED_MOSI  D7
 #define OLED_CLK   D5
-#define OLED_DC    D1
+#define OLED_DC    D0
 #define OLED_CS    D8
 #define OLED_RESET D4
 Display display(
@@ -25,7 +26,8 @@ Display display(
     OLED_CS
 );
 
-BitmapMainMenu MainMenuIcons;
+static BitmapMainMenu MainMenuIcons;
+static UserInput userInput;
 
 unsigned short int current_menu_position;
 unsigned short int max_menu_position;
@@ -37,6 +39,10 @@ void loop() {
 void setup() {
     Serial.begin(9600);
 
+    pinMode(D1, INPUT_PULLUP);
+    pinMode(D6, INPUT_PULLUP);
+    pinMode(D2, INPUT_PULLUP);
+
     // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
     if(!display.begin(SSD1306_SWITCHCAPVCC)) {
         Serial.println(F("SSD1306 allocation failed"));
@@ -47,21 +53,7 @@ void setup() {
     // Clear the buffer
     display.clearDisplay();
 
-    static const unsigned char* options_list[8] = {
-	MainMenuIcons.food_menu_icon,
-	MainMenuIcons.light_menu_icon,
-	MainMenuIcons.play_menu_icon,
-	MainMenuIcons.medicine_menu_icon,
-	MainMenuIcons.poop_menu_icon,
-	MainMenuIcons.stats_menu_icon,
-	MainMenuIcons.dicipline_menu_icon,
-	MainMenuIcons.attention_menu_icon
-    };
-
-    current_menu_position = 3;
-    max_menu_position = std::size(MainMenuIcons.options_list);
-
-    for(unsigned short int i = 0; i <= max_menu_position; i++)
+    for(unsigned short int i = 0; i <= userInput.max_menu_position; i++)
     {
         if(i == current_menu_position) 
         {
