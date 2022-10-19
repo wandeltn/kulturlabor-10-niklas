@@ -1,6 +1,10 @@
 {
     "clockify.tracking.workspaceId": "6331d0c0270a591229e1f7f6",
     "files.associations": {
-        "cmath": "cpp"
-    }
+        "cmath": "cpp",
+        "vector": "cpp"
+    },
+    "C_Cpp.codeAnalysis.clangTidy.checks.disabled": [
+        "clang-diagnostic-error"
+    ]
 }

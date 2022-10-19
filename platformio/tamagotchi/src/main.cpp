@@ -1,10 +1,13 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <cmath>
+#include <vector>
 #include <SubMenu.hpp>
 #include <BitmapMainMenu.hpp>
-#include <Display.hpp>
 #include <UserInput.hpp>
+#include <BaseScreen.hpp>
+#include <MainScreen.hpp>
+#include <Display.hpp>
 
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -26,14 +29,19 @@ Display display(
     OLED_CS
 );
 
-static BitmapMainMenu MainMenuIcons;
 static UserInput userInput;
 
-unsigned short int current_menu_position;
-unsigned short int max_menu_position;
-
+vector<Renderable> render_list;
+BaseScreen active_screen;
 
 void loop() {
+    if(userInput.last_menu_positon != userInput.current_menu_position) {
+        active_screen.render(display, userInput.current_menu_position);
+
+        userInput.last_menu_positon = userInput.current_menu_position;
+    } else if (userInput.button_B_pressed) {
+        
+    }
 }
 
 void setup() {
@@ -53,36 +61,9 @@ void setup() {
     // Clear the buffer
     display.clearDisplay();
 
-    for(unsigned short int i = 0; i <= userInput.max_menu_position; i++)
-    {
-        if(i == current_menu_position) 
-        {
-            display.drawInvertBitmapColor(
-                floor(i / 4) * 112,
-                (i % 4) * 16,
-                MainMenuIcons.options_list[i],
-                16,
-                16,
-                SSD1306_WHITE
-            );
-        } else {
+    // init code
+    MainScreen mainScreen;
+    active_screen = mainScreen;
 
-            display.drawBitmap(
-                floor(i / 4) * 112,
-                (i % 4) * 16,
-                MainMenuIcons.options_list[i],
-                16,
-                16,
-                SSD1306_WHITE
-            );
-        };
-    };
-
-
-    // Show the display buffer on the screen. You MUST call display() after
-    // drawing commands to make them visible on screen!
-    display.display();
-    delay(2000);
-
-    
+    display.display();    
 }

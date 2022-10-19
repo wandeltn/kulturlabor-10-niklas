@@ -1,8 +1,3 @@
-//
-// !!! WARNING !!! AUTO-GENERATED FILE!
-// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
-// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
-//
 {
     "configurations": [
         {
@@ -59,7 +54,8 @@
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_enc28j60/src",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5100/src",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5500/src",
-                ""
+                "",
+                "${workspaceFolder}/lib/BaseScreen"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,

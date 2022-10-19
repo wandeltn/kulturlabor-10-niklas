@@ -9,11 +9,10 @@ using namespace std;
 
 class Renderable {
 public:    
-    virtual void render();
-
+    virtual void selectCurrentOption(unsigned short int current_menu_position);
+    virtual void render(Display &display, unsigned short int current_menu_position);     
 private:
-    unsigned short int current_menu_position;
-    unsigned short int max_menu_position;
+    
 };
 
 #endif

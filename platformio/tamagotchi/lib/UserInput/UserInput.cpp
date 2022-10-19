@@ -6,36 +6,52 @@
 
 UserInput::UserInput() {
     attachInterrupt(digitalPinToInterrupt(BUTTON_A), onButtonAPressed, FALLING);
-    attachInterrupt(digitalPinToInterrupt(BUTTON_B), onButtonBPressed, LOW);
-    attachInterrupt(digitalPinToInterrupt(BUTTON_C), onButtonCPressed, LOW);
+    attachInterrupt(digitalPinToInterrupt(BUTTON_B), onButtonBPressed, FALLING);
+    attachInterrupt(digitalPinToInterrupt(BUTTON_C), onButtonCPressed, FALLING);
 }
 
 void UserInput::onButtonAPressed() {
     button_time = millis();
     if (button_time - last_button_time > 250)
     {
-        Serial.println(++current_menu_position);
+        if (++current_menu_position > max_menu_position) {
+            current_menu_position = 0;
+        }
+        Serial.println(current_menu_position);
         last_button_time = button_time;
     }
 }
 
-void IRAM_ATTR UserInput::onButtonBPressed() {
-    Serial.println("button B callback");
-}
-
-void IRAM_ATTR UserInput::onButtonCPressed() {
+void UserInput::onButtonBPressed() {
         button_time = millis();
     if (button_time - last_button_time > 250)
     {
-        Serial.println(--current_menu_position);
+        button_B_pressed = true;
+        Serial.println(current_menu_position);
+        last_button_time = button_time;
+    }
+}
+
+void UserInput::onButtonCPressed() {
+        button_time = millis();
+    if (button_time - last_button_time > 250)
+    {
+        if (current_menu_position == 0) {
+            current_menu_position = max_menu_position;
+        } else {
+            current_menu_position--;
+        }
+        Serial.println(current_menu_position);
         last_button_time = button_time;
     }
 }
 
 
-unsigned long UserInput::button_time = 0;
 unsigned long UserInput::last_button_time = 0;
+unsigned long UserInput::button_time = 0;
 
-unsigned short int UserInput::current_menu_position = 0;
 unsigned short int UserInput::max_menu_position = 7;
-unsigned short int UserInput::last_menu_positon = 0;
+unsigned short int UserInput::current_menu_position = 0;
+unsigned short int UserInput::last_menu_positon = 1;
+
+bool UserInput::button_B_pressed = false;
