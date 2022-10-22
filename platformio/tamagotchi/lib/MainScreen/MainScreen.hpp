@@ -8,7 +8,8 @@
 class MainScreen: public BaseScreen {
     public:
         MainScreen();
-        void onButtonBPressed(unsigned short int current_menu_position);
+        void onButtonBPressed();
+
     private:
 
 };

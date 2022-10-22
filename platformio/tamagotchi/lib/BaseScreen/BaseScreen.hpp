@@ -7,13 +7,17 @@
 
 class BaseScreen {
     public:
-        BaseScreen();
-        void render(Display &display, unsigned short int current_menu_position);
-        virtual void onButtonBPressed(unsigned short int current_menu_position) = 0;
-    
+        BaseScreen(unsigned char max_menu_position);
+        void render(Display &display);
+
+        virtual void onButtonAPressed();
+        virtual void onButtonBPressed() = 0;
+        virtual void onButtonCPressed();
+
     protected:
         std::vector<Renderable*> render_list;
-
+        unsigned short int current_menu_position;
+        unsigned char max_menu_position_;
     private:
 };
 

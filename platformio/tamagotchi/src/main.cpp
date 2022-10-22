@@ -10,6 +10,7 @@
 #include <Renderable.hpp>
 #include <Timer.hpp>
 #include <Timeable.hpp>
+#include <TamaStatus.hpp>
 
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -31,6 +32,7 @@ Display display(
     OLED_CS
 );
 
+static TamaStatus tamaStatus{};
 static UserInput userInput;
 
 Timer timer{};
@@ -48,12 +50,12 @@ Timeable test_timer{
 void loop() {
     if(schedule_rerender) {
         display.clearDisplay();
-        active_screen->render(display, userInput.current_menu_position);
+        active_screen->render(display);
         display.display();
         schedule_rerender = false;
     } else if (userInput.button_B_pressed) {
         Serial.println("B pressed");
-        active_screen->onButtonBPressed(userInput.current_menu_position);
+        active_screen->onButtonBPressed();
         userInput.button_B_pressed = false;
         schedule_rerender = true;
     } else {
@@ -77,7 +79,7 @@ void setup() {
     delay(1000);
     // Clear the buffer
     display.clearDisplay();
-
+    display.dim(true);
     // init code
     active_screen = new MainScreen();
     timer.attach(&test_timer);

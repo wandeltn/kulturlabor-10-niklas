@@ -3,10 +3,7 @@
 #ifndef Renderable_H
 #define Renderable_H
 
-#include <vector>
 #include <Display.hpp>
-
-using namespace std;
 
 class Renderable {
 public:    

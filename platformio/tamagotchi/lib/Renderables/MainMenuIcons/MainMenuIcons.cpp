@@ -1,9 +1,6 @@
 #include "./MainMenuIcons.hpp"
 #include <Bitmaps.hpp>
 
-void MainMenuIcons::selectCurrentOption(unsigned short int current_menu_position) {
-
-}
 
 void MainMenuIcons::render(Display &display, unsigned short int current_menu_position) {
     for(unsigned short int i = 0; i <= 8; i++)

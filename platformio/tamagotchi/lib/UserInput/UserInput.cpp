@@ -1,10 +1,12 @@
 #include "UserInput.hpp"
+#include <BaseScreen.hpp>
 
 #define BUTTON_A    D1
 #define BUTTON_B    D6
 #define BUTTON_C    D2
 
 extern bool schedule_rerender;
+extern BaseScreen* active_screen;
 
 UserInput::UserInput() {
     attachInterrupt(digitalPinToInterrupt(BUTTON_A), onButtonAPressed, FALLING);
@@ -16,9 +18,7 @@ void UserInput::onButtonAPressed() {
     button_time = millis();
     if (button_time - last_button_time > 250)
     {
-        if (++current_menu_position > max_menu_position) {
-            current_menu_position = 0;
-        }
+        active_screen->onButtonAPressed();
         schedule_rerender = true;
         last_button_time = button_time;
     }
@@ -37,11 +37,7 @@ void UserInput::onButtonCPressed() {
         button_time = millis();
     if (button_time - last_button_time > 250)
     {
-        if (current_menu_position == 0) {
-            current_menu_position = max_menu_position;
-        } else {
-            current_menu_position--;
-        }
+        active_screen->onButtonCPressed();
         last_button_time = button_time;
         schedule_rerender = true;
     }

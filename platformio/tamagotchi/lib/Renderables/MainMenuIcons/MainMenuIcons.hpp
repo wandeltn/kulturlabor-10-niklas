@@ -6,7 +6,6 @@
 #include <Renderable.hpp>
 
 class MainMenuIcons: public Renderable {
-    void selectCurrentOption(unsigned short int current_menu_position);
     void render(Display &display, unsigned short int current_menu_position);   
 };
 
