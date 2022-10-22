@@ -8,6 +8,8 @@
 #include <MainScreen.hpp>
 #include <Display.hpp>
 #include <Renderable.hpp>
+#include <Timer.hpp>
+#include <Timeable.hpp>
 
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -31,17 +33,31 @@ Display display(
 
 static UserInput userInput;
 
-
+Timer timer{};
 BaseScreen* active_screen;
 
+bool schedule_rerender;
+short int test_value = 0;
+
+Timeable test_timer{
+    call_time: 10,
+    linked_value: &test_value,
+    payload: 5
+};
+
 void loop() {
-    if(userInput.last_menu_positon != userInput.current_menu_position) {
+    if(schedule_rerender) {
         display.clearDisplay();
         active_screen->render(display, userInput.current_menu_position);
         display.display();
-        userInput.last_menu_positon = userInput.current_menu_position;
+        schedule_rerender = false;
     } else if (userInput.button_B_pressed) {
-        
+        Serial.println("B pressed");
+        active_screen->onButtonBPressed(userInput.current_menu_position);
+        userInput.button_B_pressed = false;
+        schedule_rerender = true;
+    } else {
+        timer.check_timer_list();
     }
 }
 
@@ -64,6 +80,8 @@ void setup() {
 
     // init code
     active_screen = new MainScreen();
+    timer.attach(&test_timer);
+    schedule_rerender = true;
 
     display.display();    
 }

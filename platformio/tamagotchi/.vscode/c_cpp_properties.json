@@ -1,3 +1,8 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
     "configurations": [
         {
@@ -6,17 +11,21 @@
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/include",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/src",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/UserInput",
+                "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Timer",
+                "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Timeable",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/SubMenu",
+                "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/FoodScreen",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/MainScreen",
+                "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Renderables",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Bitmap",
+                "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/ImageFormat",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/BaseScreen",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Renderable",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Display",
-                "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi//lib/Renderables/MainMenuIcons",
+                "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/ESP8266TimerInterrupt/src",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/Adafruit SSD1306",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/Adafruit GFX Library",
                 "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/Adafruit BusIO",
-                "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/Ticker",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/Wire",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/SPI",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include",
@@ -24,7 +33,6 @@
                 "C:/Users/Niklas/.platformio/packages/toolchain-xtensa/include",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/variants/nodemcu",
-                "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Renderables",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM",
@@ -58,7 +66,7 @@
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_enc28j60/src",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5100/src",
                 "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5500/src",
-                "",
+                ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
@@ -66,16 +74,21 @@
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/include",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/src",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/UserInput",
+                    "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Timer",
+                    "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Timeable",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/SubMenu",
+                    "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/FoodScreen",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/MainScreen",
+                    "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Renderables",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Bitmap",
+                    "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/ImageFormat",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/BaseScreen",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Renderable",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Display",
+                    "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/ESP8266TimerInterrupt/src",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/Adafruit SSD1306",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/Adafruit GFX Library",
                     "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/Adafruit BusIO",
-                    "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/.pio/libdeps/nodemcuv2/Ticker",
                     "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/Wire",
                     "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/SPI",
                     "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include",
@@ -83,7 +96,6 @@
                     "C:/Users/Niklas/.platformio/packages/toolchain-xtensa/include",
                     "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include",
                     "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/variants/nodemcu",
-                    "C:/Users/Niklas/source/repos/wandeltn/Kulturlabor/platformio/tamagotchi/lib/Renderables",
                     "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA",
                     "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src",
                     "C:/Users/Niklas/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM",

@@ -4,6 +4,8 @@
 #define BUTTON_B    D6
 #define BUTTON_C    D2
 
+extern bool schedule_rerender;
+
 UserInput::UserInput() {
     attachInterrupt(digitalPinToInterrupt(BUTTON_A), onButtonAPressed, FALLING);
     attachInterrupt(digitalPinToInterrupt(BUTTON_B), onButtonBPressed, FALLING);
@@ -17,7 +19,7 @@ void UserInput::onButtonAPressed() {
         if (++current_menu_position > max_menu_position) {
             current_menu_position = 0;
         }
-        Serial.println(current_menu_position);
+        schedule_rerender = true;
         last_button_time = button_time;
     }
 }
@@ -27,7 +29,6 @@ void UserInput::onButtonBPressed() {
     if (button_time - last_button_time > 250)
     {
         button_B_pressed = true;
-        Serial.println(current_menu_position);
         last_button_time = button_time;
     }
 }
@@ -41,8 +42,8 @@ void UserInput::onButtonCPressed() {
         } else {
             current_menu_position--;
         }
-        Serial.println(current_menu_position);
         last_button_time = button_time;
+        schedule_rerender = true;
     }
 }
 

@@ -1,13 +1,11 @@
-#ifndef MainScreen_H
-#define MainScreen_H
+#ifndef FoodScreen_H
+#define FoodScreen_H
 
-#include <Renderable.hpp>
 #include <BaseScreen.hpp>
 
-
-class MainScreen: public BaseScreen {
+class FoodScreen: public BaseScreen {
     public:
-        MainScreen();
+        FoodScreen();
         void onButtonBPressed(unsigned short int current_menu_position);
     private:
 

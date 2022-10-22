@@ -30,4 +30,5 @@ void MainMenuIcons::render(Display &display, unsigned short int current_menu_pos
             );
         };
     };
+    Serial.println("mainscreen rendered");
 }

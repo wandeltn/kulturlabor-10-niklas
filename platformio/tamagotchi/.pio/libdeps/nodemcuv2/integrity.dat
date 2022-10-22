@@ -1,7 +1,7 @@
-sstaub/Ticker@^4.4.0
-mbed-nkhorman/Adafruit_GFX@0.0.0+sha.7fb1d4d3525d
 SPI
 Wire
-adafruit/Adafruit SSD1306@^2.5.7
+khoih-prog/ESP8266TimerInterrupt@^1.6.0
 adafruit/Adafruit GFX Library@^1.11.3
+mbed-nkhorman/Adafruit_GFX@0.0.0+sha.7fb1d4d3525d
 adafruit/Adafruit BusIO@^1.13.2
+adafruit/Adafruit SSD1306@^2.5.7
