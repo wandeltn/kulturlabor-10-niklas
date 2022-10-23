@@ -11,6 +11,7 @@ class TamaStatus {
         static short int health;
         static short int dicipline;
         static short int weight;
+        static bool light_on;
         static void add_diet_counter(short int amount);
         static void toggle_light();
         static void toggle_light(bool on);
@@ -27,13 +28,10 @@ class TamaStatus {
 
         static double getPolynomialValue();
 
-        static Timeable poop_timeable;
-
     private:
         static short int diet_health_counter;
         static short int care_errors;
         static bool sleeping;
-        static bool light_on;
 };
 
 #endif // __TAMASTATUS_H__

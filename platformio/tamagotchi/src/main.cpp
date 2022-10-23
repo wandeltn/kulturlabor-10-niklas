@@ -41,15 +41,8 @@ static TamaStatus tamaStatus{};
 BaseScreen* active_screen;
 
 bool screen_on = true;
-bool schedule_rerender;
-short int test_value = 0;
+bool schedule_rerender = true;
 
-Timeable test_timer{
-    call_time: 10000,
-    linked_value: &test_value,
-    payload: 5,
-    tamaStatus.clear_poop
-};
 
 static UserInput userInput;
 
@@ -65,7 +58,6 @@ void loop() {
             active_screen->onButtonBPressed();
             userInput.button_B_pressed = false;
             schedule_rerender = true;
-            Serial.println(test_value);
         } else {
             timer.check_timer_list();
         }
@@ -97,8 +89,6 @@ void setup() {
     display.dim(true);
     // init code
     active_screen = new MainScreen();
-    timer.attach(&test_timer);
-    schedule_rerender = true;
 
     display.display();    
 }

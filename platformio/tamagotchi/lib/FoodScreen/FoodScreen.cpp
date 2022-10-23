@@ -1,5 +1,6 @@
 #include <FoodScreen.hpp>
 #include "DisplayBitmap/DisplayBitmap.hpp"
+#include <StatsDisplay.hpp>
 #include <Bitmaps.hpp>
 #include <MainScreen.hpp>
 #include "SubScreenOptions/SubScreenOptions.hpp"
@@ -13,6 +14,7 @@ FoodScreen::FoodScreen(): BaseScreen(7) {
 
     render_list.push_back(new SubScreenOptions{display_options, (unsigned char)(sizeof(display_options) / sizeof(display_options[0]))});
     render_list.push_back(new DisplayBitmap{&Bitmaps::food_menu_icon_image, 0, 0});
+    render_list.push_back(new StatsDisplay{&tamaStatus.hunger, 0, 56});
 }
 
 void FoodScreen::onButtonBPressed() {
