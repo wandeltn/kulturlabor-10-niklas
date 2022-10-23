@@ -12,7 +12,6 @@ class RAMProgressBar: public Renderable {
             unsigned short int h
         );
         void render(Display& display, unsigned short int current_menu_position);
-        void selectCurrentOption(unsigned short int current_menu_position);
     private:
         static unsigned short int positionX, positionY, width, height;
 };

@@ -44,13 +44,17 @@ void TamaStatus::toggle_light(bool on)
 
 void TamaStatus::clear_poop()
 {
+    #ifdef DEBUG
     Serial.println("clearing poop");
+    #endif
     poop_on_screen = 0;
 }
 
 void TamaStatus::updatePoopTimer()
 {
+    #ifdef DEBUG
     Serial.println("Setting new poop Timeable");
+    #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             millis() + POOP_INTERVAL_TIME_MS - 500,
@@ -64,7 +68,9 @@ void TamaStatus::updatePoopTimer()
 
 void TamaStatus::updateHungerTimer()
 {
+    #ifdef DEBUG
     Serial.println("Setting new hunger Timeable");
+    #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             millis() + HUNGER_INTERVAL_TIME_MS - 500,
@@ -78,7 +84,9 @@ void TamaStatus::updateHungerTimer()
 
 void TamaStatus::updateHappynessTimer()
 {
+    #ifdef DEBUG
     Serial.println("Setting new happyness Timeable");
+    #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             millis() + POOP_INTERVAL_TIME_MS - 500,
@@ -93,7 +101,9 @@ void TamaStatus::updateHappynessTimer()
 void TamaStatus::updateHealthTimer()
 {
     // TODO: correct sickness generation
+    #ifdef DEBUG
     Serial.println("Setting new sickness Timeable");
+    #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             millis() + HEALTH_INTERVAL_TIME_MS - 500,
@@ -107,7 +117,9 @@ void TamaStatus::updateHealthTimer()
 
 void TamaStatus::updateDiciplineTimer()
 {
+    #ifdef DEBUG
     Serial.println("Setting new dicipline Timeable");
+    #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             millis() + DICIPLINE_INTERVAL_TIME_MS - 500,
@@ -126,8 +138,9 @@ void TamaStatus::updateWeghtCheckTImer()
     } else if ( 500 <= hunger) {
         weight += hunger; // 1500 
     }
-
+    #ifdef DEBUG
     Serial.println("Setting new weightCheck Timeable");
+    #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             millis() + WEIGHT_CHECK_INTERVAL_TIME_MS - 500,
@@ -142,7 +155,9 @@ void TamaStatus::updateWeghtCheckTImer()
 void TamaStatus::updateSleepTimer()
 {
     sleeping = !sleeping;
+    #ifdef DEBUG
     Serial.println("Setting new sleep Timeable");
+    #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             millis() + SLEEP_INTERVAL_TIME_MS - 500,
@@ -156,7 +171,9 @@ void TamaStatus::updateSleepTimer()
 
 void TamaStatus::updateDeathTimer()
 {
+    #ifdef DEBUG
     Serial.println("Setting new deathCheck Timeable");
+    #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             millis() + DEATH_UPDATE_INTERVAL_TIME_MS - 500,

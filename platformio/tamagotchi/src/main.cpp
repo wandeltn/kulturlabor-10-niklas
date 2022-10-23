@@ -13,7 +13,6 @@
 #include <Timeable.hpp>
 #include <TamaStatus.hpp>
 
-
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
@@ -54,7 +53,9 @@ void loop() {
             display.display();
             schedule_rerender = false;
         } else if (userInput.button_B_pressed) {
+            #ifdef DEBUG
             Serial.println("B pressed");
+            #endif
             active_screen->onButtonBPressed();
             userInput.button_B_pressed = false;
             schedule_rerender = true;
@@ -68,10 +69,12 @@ void loop() {
 
 void setup() {
     Serial.begin(9600);
+    #ifdef DEBUG
     Serial.print("cpu freq: ");
     Serial.println(ESP.getCpuFreqMHz());
     Serial.print("heap free:");
     Serial.println(ESP.getFreeHeap());
+    #endif
 
     pinMode(D1, INPUT_PULLUP);
     pinMode(D6, INPUT_PULLUP);
@@ -79,7 +82,9 @@ void setup() {
 
     // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
     if(!display.begin(SSD1306_SWITCHCAPVCC)) {
+        #ifdef DEBUG
         Serial.println(F("SSD1306 allocation failed"));
+        #endif
         for(;;); // Don't proceed, loop forever
     }    
     display.display();

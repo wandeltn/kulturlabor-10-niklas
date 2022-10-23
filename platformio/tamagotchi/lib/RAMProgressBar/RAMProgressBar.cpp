@@ -9,7 +9,9 @@ RAMProgressBar::RAMProgressBar(
             unsigned short int w,
             unsigned short int h)
 {
+    #ifdef DEBUG
     Serial.println("inside RAMProgressBar constructor");
+    #endif
     positionX = x;
     positionY = y;
     width = w;
@@ -18,7 +20,9 @@ RAMProgressBar::RAMProgressBar(
 
 void RAMProgressBar::render(Display& display, unsigned short int current_menu_position)
 {
+    #ifdef DEBUG
     Serial.println("inside render RAMProgressBar");
+    #endif
     display.drawRect(
         positionX,
         positionY,
@@ -26,8 +30,10 @@ void RAMProgressBar::render(Display& display, unsigned short int current_menu_po
         height,
         SSD1306_WHITE
     );
+    #ifdef DEBUG
     Serial.print("RAM bar fill height: ");
     Serial.println(ESP.getFreeHeap() / 81920.0 * width);
+    #endif
     display.fillRect(
         positionX,
         positionY,
@@ -36,12 +42,9 @@ void RAMProgressBar::render(Display& display, unsigned short int current_menu_po
         SSD1306_WHITE
     );
 
+    #ifdef DEBUG
     Serial.println("exiting render RAMProgressBar");
-}
-
-void RAMProgressBar::selectCurrentOption(unsigned short int current_menu_position)
-{
-    
+    #endif
 }
 
 

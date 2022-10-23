@@ -27,5 +27,7 @@ void MainMenuIcons::render(Display &display, unsigned short int current_menu_pos
             );
         };
     };
+    #ifdef DEBUG
     Serial.println("mainscreen rendered");
+    #endif
 }

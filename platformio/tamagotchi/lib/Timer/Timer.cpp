@@ -21,7 +21,9 @@ void Timer::cancel(Timeable* timer)
 void Timer::check_timer_list() {
     for (Timeable* list_item : timer_list) {;
         if (list_item->call_time <= millis()) { 
+            #ifdef DEBUG
             Serial.println("finished timer");
+            #endif
             *list_item->linked_value += list_item->payload;
             list_item->notifier();
             timer_list.erase(std::remove(

@@ -43,8 +43,10 @@ void UserInput::onButtonBPressed() {
         button_time = millis();
     if (button_time - last_button_time > 250)
     {
-        resetScreenOff();
+        if (screen_on) {
         button_B_pressed = true;
+        }
+        resetScreenOff();
         screen_on = true;
         last_button_time = button_time;
     }
