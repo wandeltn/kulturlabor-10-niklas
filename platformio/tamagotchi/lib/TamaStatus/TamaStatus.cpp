@@ -1,17 +1,13 @@
 #include <TamaStatus.hpp>
 #include <Timer.hpp>
 #include <SPI.h>
+#include <functional>
 
 extern Timer timer;
 
-static Timeable poop_timeable = {
-    1000,
-    &TamaStatus::poop_on_screen,
-    1
-};
-
 TamaStatus::TamaStatus()
 {
+
     timer.attach(&poop_timeable);
 }
 
@@ -45,10 +41,16 @@ void TamaStatus::clear_poop()
 short int TamaStatus::happyness = 0;
 short int TamaStatus::health = 0;
 short int TamaStatus::hunger = 0;
-short int TamaStatus::poop_on_screen = 0;
-short int TamaStatus::dicipline;
-short int TamaStatus::weight;
-short int TamaStatus::diet_health_counter;
-short int TamaStatus::care_errors;
-bool TamaStatus::sleeping;
-bool TamaStatus::light_on;
+short int TamaStatus::poop_on_screen = 4;
+short int TamaStatus::dicipline = 0;
+short int TamaStatus::weight = 50;
+short int TamaStatus::diet_health_counter = 0;
+short int TamaStatus::care_errors = 0;
+bool TamaStatus::sleeping = false;
+bool TamaStatus::light_on = false;
+Timeable TamaStatus::poop_timeable = {
+    10000,
+    &poop_on_screen,
+    1, 
+    std::function<void()>(TamaStatus::clear_poop)
+};

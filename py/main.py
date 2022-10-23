@@ -1170,3 +1170,7 @@ while True:
     with regulator:
         if logic_class.screen_on:
             active_screen.render()
+
+
+
+Euch trotzdem viel Spaß und einen schönen Urlaub ;-)

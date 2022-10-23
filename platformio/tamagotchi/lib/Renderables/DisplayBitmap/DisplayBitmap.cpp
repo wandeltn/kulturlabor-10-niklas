@@ -12,8 +12,8 @@ DisplayBitmap::DisplayBitmap(const ImageFormat* image, unsigned short int positi
 void DisplayBitmap::render(Display &display, unsigned short int current_menu_position)
 {
     display.drawBitmap(
-        position_X,
-        position_Y,
+        0,
+        0,
         Bitmaps::attention_menu_icon,
         display_bitmap->width,
         display_bitmap->length,

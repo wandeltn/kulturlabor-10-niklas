@@ -1,17 +1,23 @@
 #include <MainScreen.hpp>
 #include "../Renderables/MainMenuIcons/MainMenuIcons.hpp"
+#include <IconsBar.hpp>
+#include <Bitmaps.hpp>
+#include <TamaStatus.hpp>
 #include <FoodScreen.hpp>
 #include <LightScreen.hpp>
 #include <PlayScreen.hpp>
 #include <MedicineScreen.hpp>
 #include <PoopScreen.hpp>
 #include <DiciplineScreen.hpp>
+#include <SettingsScreen.hpp>
 
 extern BaseScreen* active_screen;
+extern TamaStatus tamaStatus;
 
 MainScreen::MainScreen(): BaseScreen(7) {
     render_list.push_back(new MainMenuIcons());
-
+    render_list.push_back(new IconsBar{&Bitmaps::poop_icon_image, &tamaStatus.poop_on_screen, 105});
+    render_list.push_back(new IconsBar{&Bitmaps::stone_icon_image, &tamaStatus.weight, 17, true});
 }
 
 void MainScreen::onButtonBPressed() {
@@ -41,6 +47,10 @@ void MainScreen::onButtonBPressed() {
     case 6:
         Serial.println("getting new DiciplineScreen");
         active_screen = new DiciplineScreen{};
+        break;
+    case 7:
+        Serial.println("getting new SettingsScreen");
+        active_screen = new SettingsScreen{};
         break;
     default:
         active_screen = new MainScreen{};

@@ -1,3 +1,4 @@
+#include <ESP8266WiFi.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <cmath>
@@ -42,7 +43,7 @@ bool schedule_rerender;
 short int test_value = 0;
 
 Timeable test_timer{
-    call_time: 10,
+    call_time: 10000,
     linked_value: &test_value,
     payload: 5
 };
@@ -58,6 +59,7 @@ void loop() {
         active_screen->onButtonBPressed();
         userInput.button_B_pressed = false;
         schedule_rerender = true;
+        Serial.println(test_value);
     } else {
         timer.check_timer_list();
     }
@@ -65,6 +67,10 @@ void loop() {
 
 void setup() {
     Serial.begin(9600);
+    Serial.print("cpu freq: ");
+    Serial.println(ESP.getCpuFreqMHz());
+    Serial.print("heap free:");
+    Serial.println(ESP.getFreeHeap());
 
     pinMode(D1, INPUT_PULLUP);
     pinMode(D6, INPUT_PULLUP);

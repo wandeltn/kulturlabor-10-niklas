@@ -108,6 +108,27 @@ namespace Bitmaps {
 		attention_menu_icon
 	};
 
+	inline constexpr unsigned char poop_icon [6] PROGMEM = {
+	// 'poopicon, 6x6px
+	0x48, 0x90, 0x48, 0x30, 0x78, 0xfc
+	};
+
+	inline constexpr ImageFormat poop_icon_image {
+        width: 6,
+        height: 6,
+        data: poop_icon
+    };
+
+	inline constexpr unsigned char stone_icon [6] PROGMEM = {
+	// 'stone, 6x6px
+	0x78, 0xfc, 0xfc, 0xfc, 0x78, 0x00
+	};
+
+	inline constexpr ImageFormat stone_icon_image {
+        width: 6,
+        height: 6,
+        data: stone_icon
+    };
 };
 
 #endif
