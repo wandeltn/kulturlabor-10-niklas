@@ -12,7 +12,7 @@ DiciplineScreen::DiciplineScreen(): BaseScreen(4) {
     Serial.println("inside DiciplineScreen constructor");
 
     render_list.push_back(new SubScreenOptions{display_options, (unsigned char)(sizeof(display_options) / sizeof(display_options[0]))});
-    render_list.push_back(new DisplayBitmap{&Bitmaps::food_menu_icon_image, 0, 0});
+    render_list.push_back(new DisplayBitmap{&Bitmaps::dicipline_menu_icon_image, 112, 32});
 }
 
 void DiciplineScreen::onButtonBPressed() {

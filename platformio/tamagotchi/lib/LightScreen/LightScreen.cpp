@@ -16,7 +16,7 @@ LightScreen::LightScreen(): BaseScreen(2)
         display_options,
         (unsigned char)(sizeof(display_options) / sizeof(display_options[0]))
     });
-    render_list.push_back(new DisplayBitmap{&Bitmaps::light_menu_icon_image, 0, 0});
+    render_list.push_back(new DisplayBitmap{&Bitmaps::light_menu_icon_image, 0, 16});
 }
 
 void LightScreen::onButtonBPressed()

@@ -12,7 +12,7 @@ PlayScreen::PlayScreen(): BaseScreen(5) {
     Serial.println("inside PlayScreen constructor");
 
     render_list.push_back(new SubScreenOptions{display_options, (unsigned char)(sizeof(display_options) / sizeof(display_options[0]))});
-    render_list.push_back(new DisplayBitmap{&Bitmaps::food_menu_icon_image, 0, 32});
+    render_list.push_back(new DisplayBitmap{&Bitmaps::play_menu_icon_image, 0, 32});
 }
 
 void PlayScreen::onButtonBPressed() {

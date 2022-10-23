@@ -7,6 +7,7 @@
 class Timer {
     public:        
         void attach(Timeable* timer);
+        void cancel(Timeable* timer);
         void check_timer_list();
     private:
         std::vector<Timeable*> timer_list;

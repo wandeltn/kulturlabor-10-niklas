@@ -5,7 +5,7 @@
 struct Timeable
 {
     public:
-        unsigned int call_time;
+        unsigned long int call_time;
         short int* linked_value;
         short int payload;
         //std::function<void()> notifier;

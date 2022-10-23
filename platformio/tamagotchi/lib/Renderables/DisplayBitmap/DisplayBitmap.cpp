@@ -12,11 +12,11 @@ DisplayBitmap::DisplayBitmap(const ImageFormat* image, unsigned short int positi
 void DisplayBitmap::render(Display &display, unsigned short int current_menu_position)
 {
     display.drawBitmap(
-        0,
-        0,
-        Bitmaps::attention_menu_icon,
+        position_X,
+        position_Y,
+        display_bitmap->data,
         display_bitmap->width,
-        display_bitmap->length,
+        display_bitmap->height,
         SSD1306_WHITE
     );
     Serial.println((int)display_bitmap->data);

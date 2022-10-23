@@ -4,6 +4,7 @@
 #define UserInput_H
 
 #include <SPI.h>
+#include <Timeable.hpp>
 
 class UserInput 
 {
@@ -15,7 +16,10 @@ class UserInput
 
         static unsigned short int max_menu_position;
         static unsigned short int current_menu_position;
-        static unsigned short int last_menu_positon;
+        static unsigned short int screen_off_time;
+        static short int screen_off_times;
+        static Timeable screen_off_timer;
+        
 
         static bool button_B_pressed;
 
@@ -23,6 +27,8 @@ class UserInput
         static void onButtonBPressed() IRAM_ATTR;
         static void onButtonCPressed() IRAM_ATTR;
 
+        static void turnOffScreen();
+        static void resetScreenOff();
     private:
     
 };

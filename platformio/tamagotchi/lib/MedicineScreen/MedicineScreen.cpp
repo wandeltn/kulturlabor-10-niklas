@@ -16,7 +16,7 @@ MedicineScreen::MedicineScreen(): BaseScreen(3) {
         (unsigned char)(sizeof(display_options) / sizeof(display_options[0]))
         }
     );
-    render_list.push_back(new DisplayBitmap{&Bitmaps::medicine_menu_icon_image, 0, 0});
+    render_list.push_back(new DisplayBitmap{&Bitmaps::medicine_menu_icon_image, 0, 48});
 }
 
 void MedicineScreen::onButtonBPressed() {

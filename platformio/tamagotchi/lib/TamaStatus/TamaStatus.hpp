@@ -16,6 +16,17 @@ class TamaStatus {
         static void toggle_light(bool on);
         static void clear_poop();
 
+        static void updatePoopTimer();
+        static void updateHungerTimer();
+        static void updateHappynessTimer();
+        static void updateHealthTimer();
+        static void updateDiciplineTimer();
+        static void updateWeghtCheckTImer();
+        static void updateSleepTimer();
+        static void updateDeathTimer();
+
+        static double getPolynomialValue();
+
         static Timeable poop_timeable;
 
     private:

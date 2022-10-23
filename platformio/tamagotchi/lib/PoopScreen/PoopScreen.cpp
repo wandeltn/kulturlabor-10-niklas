@@ -12,7 +12,7 @@ PoopScreen::PoopScreen(): BaseScreen(1) {
     Serial.println("inside PoopScreen constructor");
 
     render_list.push_back(new SubScreenOptions{display_options, (unsigned char)(sizeof(display_options) / sizeof(display_options[0]))});
-    render_list.push_back(new DisplayBitmap{&Bitmaps::food_menu_icon_image, 0, 0});
+    render_list.push_back(new DisplayBitmap{&Bitmaps::poop_menu_icon_image, 112, 0});
 }
 
 void PoopScreen::onButtonBPressed() {

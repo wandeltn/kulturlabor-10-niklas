@@ -1,5 +1,6 @@
 #include <Timer.hpp>
 #include <SPI.h>
+#include <algorithm>
 
 extern bool schedule_rerender;
 
@@ -7,23 +8,28 @@ void Timer::attach(Timeable* timer) {
     timer_list.push_back(timer);
 }
 
+void Timer::cancel(Timeable* timer)
+{
+    timer_list.erase(std::remove(
+        timer_list.begin(),
+        timer_list.end(),
+        timer),
+        timer_list.end()
+    );
+}
+
 void Timer::check_timer_list() {
     for (Timeable* list_item : timer_list) {;
-        Serial.println("checking timer");
-        Serial.print("list_item call time: ");
-        Serial.println(list_item->call_time);
-        Serial.println(millis());
         if (list_item->call_time <= millis()) { 
             Serial.println("finished timer");
             *list_item->linked_value += list_item->payload;
-            Serial.print("calling notifier: ");
-           // if (list_item->notifier) {
-           //     Serial.println("notifier");
-           // }
-            Serial.print("Pointer:");
-            Serial.println((int)list_item->notifier);
             list_item->notifier();
-            Serial.println("scheduling rerender");
+            timer_list.erase(std::remove(
+                timer_list.begin(),
+                timer_list.end(),
+                list_item),
+                timer_list.end()
+            );
             schedule_rerender = true;
         }
     }

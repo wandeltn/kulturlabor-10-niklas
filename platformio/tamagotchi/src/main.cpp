@@ -33,14 +33,14 @@ Display display(
     OLED_CS
 );
 
-static UserInput userInput;
-
 Timer timer{};
+
 
 static TamaStatus tamaStatus{};
 
 BaseScreen* active_screen;
 
+bool screen_on = true;
 bool schedule_rerender;
 short int test_value = 0;
 
@@ -51,18 +51,24 @@ Timeable test_timer{
     tamaStatus.clear_poop
 };
 
+static UserInput userInput;
+
 void loop() {
-    if(schedule_rerender) {
-        display.clearDisplay();
-        active_screen->render(display);
-        display.display();
-        schedule_rerender = false;
-    } else if (userInput.button_B_pressed) {
-        Serial.println("B pressed");
-        active_screen->onButtonBPressed();
-        userInput.button_B_pressed = false;
-        schedule_rerender = true;
-        Serial.println(test_value);
+    if (screen_on) {
+        if(schedule_rerender) {
+            display.clearDisplay();
+            active_screen->render(display);
+            display.display();
+            schedule_rerender = false;
+        } else if (userInput.button_B_pressed) {
+            Serial.println("B pressed");
+            active_screen->onButtonBPressed();
+            userInput.button_B_pressed = false;
+            schedule_rerender = true;
+            Serial.println(test_value);
+        } else {
+            timer.check_timer_list();
+        }
     } else {
         timer.check_timer_list();
     }
