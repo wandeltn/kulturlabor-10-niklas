@@ -27,7 +27,7 @@ StatsScreen::StatsScreen(): BaseScreen(1)
         "Dicipline",
         "Weight"
     };
-    for (int index = 0; index < (sizeof(bar_list) / sizeof(bar_list[0])); index++) {
+    for (unsigned int index = 0; index < (sizeof(bar_list) / sizeof(bar_list[0])); index++) {
         render_list.push_back(new DisplayText{15, index * 14, bar_list[index]});
     }
 }

@@ -11,6 +11,7 @@
 #include <StatsScreen.hpp>
 #include <DiciplineScreen.hpp>
 #include <SettingsScreen.hpp>
+#include <Tama.hpp>
 
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
@@ -19,6 +20,7 @@ MainScreen::MainScreen(): BaseScreen(7) {
     render_list.push_back(new MainMenuIcons());
     render_list.push_back(new IconsBar{&Bitmaps::poop_icon_image, &tamaStatus.poop_on_screen, 105});
     render_list.push_back(new IconsBar{&Bitmaps::stone_icon_image, &tamaStatus.weight, 17, true});
+    render_list.push_back(new Tama{});
 }
 
 void MainScreen::onButtonBPressed() {

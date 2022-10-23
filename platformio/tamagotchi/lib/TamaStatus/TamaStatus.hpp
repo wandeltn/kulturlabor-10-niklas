@@ -2,6 +2,7 @@
 #define __TAMASTATUS_H__
 
 #include <Timeable.hpp>
+#include <ImageFormat.hpp>
 class TamaStatus {
     public:
         TamaStatus();
@@ -28,6 +29,7 @@ class TamaStatus {
 
         static double getPolynomialValue();
 
+        static ImageFormat current_display_state;
     private:
         static short int diet_health_counter;
         static short int care_errors;

@@ -2,6 +2,7 @@
 #include <Timer.hpp>
 #include <SPI.h>
 #include <functional>
+#include <Bitmaps.hpp>
 
 extern Timer timer;
 
@@ -212,3 +213,4 @@ short int TamaStatus::diet_health_counter = 0;
 short int TamaStatus::care_errors = 0;
 bool TamaStatus::sleeping = false;
 bool TamaStatus::light_on = false;
+ImageFormat TamaStatus::current_display_state = Bitmaps::Tama::EggStage::egg_up_image;
