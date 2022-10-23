@@ -7,7 +7,6 @@ extern Timer timer;
 
 TamaStatus::TamaStatus()
 {
-
     timer.attach(&poop_timeable);
 }
 
@@ -35,6 +34,7 @@ void TamaStatus::toggle_light(bool on)
 
 void TamaStatus::clear_poop()
 {
+    Serial.println("clearing poop");
     poop_on_screen = 0;
 }
 
@@ -49,8 +49,9 @@ short int TamaStatus::care_errors = 0;
 bool TamaStatus::sleeping = false;
 bool TamaStatus::light_on = false;
 Timeable TamaStatus::poop_timeable = {
-    10000,
+    12000,
     &poop_on_screen,
-    1, 
-    std::function<void()>(TamaStatus::clear_poop)
+    1,
+    .notifier = TamaStatus::clear_poop
+    //std::function<void()>(TamaStatus::clear_poop)
 };

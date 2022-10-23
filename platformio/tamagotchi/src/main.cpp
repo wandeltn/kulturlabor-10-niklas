@@ -33,10 +33,12 @@ Display display(
     OLED_CS
 );
 
-static TamaStatus tamaStatus{};
 static UserInput userInput;
 
 Timer timer{};
+
+static TamaStatus tamaStatus{};
+
 BaseScreen* active_screen;
 
 bool schedule_rerender;
@@ -45,7 +47,8 @@ short int test_value = 0;
 Timeable test_timer{
     call_time: 10000,
     linked_value: &test_value,
-    payload: 5
+    payload: 5,
+    tamaStatus.clear_poop
 };
 
 void loop() {
