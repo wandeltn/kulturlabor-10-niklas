@@ -10,7 +10,9 @@ extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
 MedicineScreen::MedicineScreen(): BaseScreen(3) {
+    #ifdef DEBUG
     Serial.println("inside MedicineScreen constructor");
+    #endif
 
     render_list.push_back(new SubScreenOptions{
         display_options, 
@@ -45,8 +47,10 @@ void MedicineScreen::onButtonBPressed() {
         active_screen = new MainScreen();
         break;
     }
+    #ifdef DEBUG
     Serial.print("changed health value to: ");
     Serial.println(tamaStatus.health);
     Serial.print("changed happyness vlaue to: ");
     Serial.println(tamaStatus.happyness);
+    #endif
 }

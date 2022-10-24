@@ -6,7 +6,9 @@ ProgressBar::ProgressBar(unsigned short int x,
     unsigned short int h,
     short int fill_height)
 {
+    #ifdef DEBUG
     Serial.println("inside RAMProgressBar constructor");
+    #endif
     positionX = x;
     positionY = y;
     width = w;

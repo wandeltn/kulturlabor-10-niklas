@@ -3,7 +3,9 @@
 
 DisplayBitmap::DisplayBitmap(const ImageFormat* image, unsigned short int positionX, unsigned short int positionY)
 {
+    #ifdef DEBUG
     Serial.println("inside DisplayBitmap constructor");
+    #endif
     display_bitmap = image;
     position_X = positionX;
     position_Y = positionY;
@@ -19,8 +21,10 @@ void DisplayBitmap::render(Display &display, unsigned short int current_menu_pos
         display_bitmap->height,
         SSD1306_WHITE
     );
+    #ifdef DEBUG
     Serial.println((int)display_bitmap->data);
     Serial.println(display_bitmap->width);
     Serial.println(display_bitmap->height);
     Serial.println("finished bitmap render");
+    #endif
 }

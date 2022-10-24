@@ -10,7 +10,9 @@ extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
 PlayScreen::PlayScreen(): BaseScreen(5) {
+    #ifdef DEBUG
     Serial.println("inside PlayScreen constructor");
+    #endif
 
     render_list.push_back(new SubScreenOptions{display_options, (unsigned char)(sizeof(display_options) / sizeof(display_options[0]))});
     render_list.push_back(new DisplayBitmap{&Bitmaps::play_menu_icon_image, 0, 32});
@@ -56,10 +58,12 @@ void PlayScreen::onButtonBPressed() {
         active_screen = new MainScreen();
         break;
     }
+    #ifdef DEBUG
     Serial.print("changed hunger value to: ");
     Serial.println(tamaStatus.hunger);
     Serial.print("changed happyness vlaue to: ");
     Serial.println(tamaStatus.happyness);
     Serial.print("changed health value to: ");
     Serial.println(tamaStatus.health);
+    #endif
 }

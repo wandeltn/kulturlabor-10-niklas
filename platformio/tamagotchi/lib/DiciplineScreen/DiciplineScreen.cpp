@@ -9,7 +9,9 @@ extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
 DiciplineScreen::DiciplineScreen(): BaseScreen(4) {
+    #ifdef DEBUG
     Serial.println("inside DiciplineScreen constructor");
+    #endif
 
     render_list.push_back(new SubScreenOptions{display_options, (unsigned char)(sizeof(display_options) / sizeof(display_options[0]))});
     render_list.push_back(new DisplayBitmap{&Bitmaps::dicipline_menu_icon_image, 112, 32});
@@ -43,8 +45,10 @@ void DiciplineScreen::onButtonBPressed() {
         active_screen = new MainScreen();
         break;
     }
+    #ifdef DEBUG
     Serial.print("changed dicipline value to: ");
     Serial.println(tamaStatus.dicipline);
     Serial.print("changed health value to: ");
     Serial.println(tamaStatus.health);
+    #endif
 }

@@ -24,6 +24,8 @@ void FoodScreenOptions::render(Display& display, unsigned short int current_menu
         display.setCursor(10, option_index * 8);
         display.print(display_options[option_index]);
     }
+    #ifdef DEBUG
     Serial.println("inside render FoodScreenOptions");
     Serial.println("Finished FoodScreenOptions render");
+    #endif
 }

@@ -11,7 +11,9 @@ extern TamaStatus tamaStatus;
 
 LightScreen::LightScreen(): BaseScreen(2)
 {
+    #ifdef DEBUG
     Serial.println("inside LightScreen constructor");
+    #endif
 
     render_list.push_back(new SubScreenOptions{
         display_options,
@@ -28,11 +30,15 @@ void LightScreen::onButtonBPressed()
     {
     case 0:
         tamaStatus.toggle_light(true);
+        #ifdef DEBUG
         Serial.println("turned on light");
+        #endif
         break;
     case 1:
         tamaStatus.toggle_light(false);
+        #ifdef DEBUG
         Serial.println("turned off light"); 
+        #endif
         break;
     default:
         delete active_screen;

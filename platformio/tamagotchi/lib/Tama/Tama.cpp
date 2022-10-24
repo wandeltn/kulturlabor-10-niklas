@@ -9,7 +9,9 @@ extern bool screen_on;
 
 Tama::Tama()
 {
-    Serial.println("inside Tama constructor");
+    #ifdef DEBUG
+    Serial.pirntln("inside Tama constructor");
+    #endif
 }
 
 void Tama::render(Display &display, unsigned short int current_menu_position)

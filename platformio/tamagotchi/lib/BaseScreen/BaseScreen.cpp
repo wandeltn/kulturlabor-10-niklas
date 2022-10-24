@@ -5,7 +5,9 @@ BaseScreen::BaseScreen(unsigned char max_menu_position):
     current_menu_position{0}, 
     max_menu_position_{max_menu_position} 
 {
+    #ifdef DEBUG
     Serial.println(F("Inside BaseScreen constructor"));
+    #endif
 }
 
 BaseScreen::~BaseScreen() {

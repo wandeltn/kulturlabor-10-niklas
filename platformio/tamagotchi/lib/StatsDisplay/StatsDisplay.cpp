@@ -2,7 +2,9 @@
 
 StatsDisplay::StatsDisplay(short int* value, unsigned short int positionX, unsigned short int positionY)
 {
+    #ifdef DEBUG
     Serial.println("inside StatsDisplay constructor");
+    #endif
     use_alt_display = 0;
     display_value = value;
     position_X = positionX;
@@ -11,7 +13,9 @@ StatsDisplay::StatsDisplay(short int* value, unsigned short int positionX, unsig
 
 StatsDisplay::StatsDisplay(bool* value, unsigned short int positionX, unsigned short int positionY)
 {
+    #ifdef DEBUG
     Serial.println("inside StatsDisplay bool constructor");
+    #endif
     use_alt_display = 1;
     display_value_bool = value;
     position_X = positionX;
@@ -25,8 +29,6 @@ void StatsDisplay::render(Display &display, unsigned short int current_menu_posi
     case 0:
         display.setCursor(position_X, position_Y);
         display.print(*display_value);
-        Serial.print("printed value: ");
-        Serial.println(*display_value);
         break;
     case 1:
         display.setCursor(position_X, position_Y);
@@ -35,8 +37,6 @@ void StatsDisplay::render(Display &display, unsigned short int current_menu_posi
         } else {
             display.print("OFF");
         }
-        Serial.print("printed value: ");
-        Serial.println(*display_value_bool);
     default:
         break;
     }

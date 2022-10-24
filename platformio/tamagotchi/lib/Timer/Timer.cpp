@@ -26,6 +26,7 @@ void Timer::check_timer_list() {
             #endif
             *list_item->linked_value += list_item->payload;
             list_item->notifier();
+            delete list_item;
             timer_list.erase(std::remove(
                 timer_list.begin(),
                 timer_list.end(),

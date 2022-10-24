@@ -18,13 +18,7 @@ UserInput::UserInput() {
     attachInterrupt(digitalPinToInterrupt(BUTTON_B), onButtonBPressed, FALLING);
     attachInterrupt(digitalPinToInterrupt(BUTTON_C), onButtonCPressed, FALLING);
 
-    screen_off_timer = {
-        .call_time = millis() + screen_off_time,
-        .linked_value = &screen_off_times,
-        .payload = 0,
-        .notifier = turnOffScreen
-    };
-    timer.attach(&screen_off_timer);
+    timer.attach(screen_off_timer);
 }
 
 void UserInput::onButtonAPressed() {
@@ -73,10 +67,17 @@ void UserInput::turnOffScreen()
 
 void UserInput::resetScreenOff()
 {   
-    screen_off_timer.call_time = millis() + screen_off_time;
-    if (!screen_on) {
-        timer.attach(&screen_off_timer);
+    if (screen_on) {
+        timer.cancel(screen_off_timer);
+        delete screen_off_timer;
     }
+    screen_off_timer = new Timeable{ 
+        .call_time = millis() + screen_off_time,
+        .linked_value = &screen_off_times,
+        .payload = 0,
+        .notifier = &turnOffScreen
+    };
+    timer.attach(screen_off_timer);
 }
 
 
@@ -89,9 +90,9 @@ unsigned short int UserInput::screen_off_time = 5000;
 
 short int UserInput::screen_off_times = 0;
 bool UserInput::button_B_pressed = false;
-Timeable UserInput::screen_off_timer = {
+Timeable* UserInput::screen_off_timer = new Timeable{
     .call_time = millis() + screen_off_time,
     .linked_value = &screen_off_times,
     .payload = 0,
-    .notifier = turnOffScreen
+    .notifier = &turnOffScreen
 };

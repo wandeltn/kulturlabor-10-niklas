@@ -6,7 +6,9 @@ extern TamaStatus tamaStatus;
 
 IconsBar::IconsBar(const ImageFormat* image, short int* amount, unsigned short int positionX)
 {
+    #ifdef DEBUG
     Serial.println("inside IconsBar constructor");
+    #endif
     display_bitmap = image;
     position_X = positionX;
     icon_amount = amount;
@@ -15,7 +17,9 @@ IconsBar::IconsBar(const ImageFormat* image, short int* amount, unsigned short i
 
 IconsBar::IconsBar(const ImageFormat* image, short int* amount, unsigned short int positionX, bool convert)
 {
+    #ifdef DEBUG
     Serial.println("inside IconsBar constructor");
+    #endif
     display_bitmap = image;
     position_X = positionX;
     icon_amount = amount;

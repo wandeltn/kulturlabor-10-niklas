@@ -194,12 +194,16 @@ void TamaStatus::updatePositionTimer()
         jumping = true;
         velocity = {(double)random(-5, 5), -20};
     }
+    #ifdef DEBUG
     Serial.println("getting new jump pos");
+    #endif
     updateJump();
 
+    #ifdef DEBUG
     Serial.println("setting new timer");
+    #endif
     timer.attach(new Timeable{
-        .call_time = millis() + 500,
+        .call_time = millis() + 0,
         .linked_value = &care_errors,
         .payload = 0,
         .notifier = &updatePositionTimer

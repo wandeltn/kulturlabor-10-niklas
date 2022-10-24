@@ -17,9 +17,7 @@ class UserInput
         static unsigned short int max_menu_position;
         static unsigned short int current_menu_position;
         static unsigned short int screen_off_time;
-        static short int screen_off_times;
-        static Timeable screen_off_timer;
-        
+        static short int screen_off_times;        
 
         static bool button_B_pressed;
 
@@ -30,7 +28,7 @@ class UserInput
         static void turnOffScreen();
         static void resetScreenOff();
     private:
-    
+        static Timeable* screen_off_timer;
 };
 
 #endif
