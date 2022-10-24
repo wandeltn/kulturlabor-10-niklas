@@ -8,6 +8,7 @@
 class BaseScreen {
     public:
         BaseScreen(unsigned char max_menu_position);
+        virtual ~BaseScreen();
         void render(Display &display);
 
         virtual void onButtonAPressed();

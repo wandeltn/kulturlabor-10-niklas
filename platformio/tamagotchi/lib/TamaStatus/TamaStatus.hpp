@@ -3,6 +3,7 @@
 
 #include <Timeable.hpp>
 #include <ImageFormat.hpp>
+#include <Vector2.hpp>
 class TamaStatus {
     public:
         TamaStatus();
@@ -26,14 +27,20 @@ class TamaStatus {
         static void updateWeghtCheckTImer();
         static void updateSleepTimer();
         static void updateDeathTimer();
+        static void updatePositionTimer();
 
+        static void updateJump();
         static double getPolynomialValue();
 
         static ImageFormat current_display_state;
+        static Vector2 position;
+        static Vector2 velocity;
     private:
+        static constexpr double gravity = 9.8;
         static short int diet_health_counter;
         static short int care_errors;
         static bool sleeping;
+        static bool jumping;
 };
 
 #endif // __TAMASTATUS_H__

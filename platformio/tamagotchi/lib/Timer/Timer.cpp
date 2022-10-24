@@ -36,3 +36,8 @@ void Timer::check_timer_list() {
         }
     }
 }
+
+short Timer::get_timer_amount()
+{
+    return timer_list.size();
+}

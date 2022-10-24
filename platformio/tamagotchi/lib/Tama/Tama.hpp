@@ -3,14 +3,12 @@
 
 #include <Renderable.hpp>
 #include <Display.hpp>
+#include <Vector2.hpp>
 
 class Tama: public Renderable {
     public:
         Tama();
         void render(Display &display, unsigned short int current_menu_position);
-        static void updateMovement();
-
-        static short int position_X, position_Y;
     private:
 };
 

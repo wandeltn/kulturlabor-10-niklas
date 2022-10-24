@@ -7,6 +7,15 @@ BaseScreen::BaseScreen(unsigned char max_menu_position):
 {
     Serial.println(F("Inside BaseScreen constructor"));
 }
+
+BaseScreen::~BaseScreen() {
+    for (unsigned int index = 0; index < render_list.size(); index++)
+    {
+        delete render_list[index];
+    }
+    
+}
+
 void BaseScreen::render(Display &display)
 {
 	for (Renderable* element: render_list) {
