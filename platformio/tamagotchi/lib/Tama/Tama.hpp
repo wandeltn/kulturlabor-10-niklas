@@ -8,8 +8,7 @@ class Tama: public Renderable {
     public:
         Tama();
         void render(Display &display, unsigned short int current_menu_position);
-        static void updateMovementX();
-        static void updateMovementY();
+        static void updateMovement();
 
         static short int position_X, position_Y;
     private:
