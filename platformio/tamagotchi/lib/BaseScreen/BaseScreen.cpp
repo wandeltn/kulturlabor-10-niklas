@@ -9,11 +9,10 @@ BaseScreen::BaseScreen(unsigned char max_menu_position):
 }
 
 BaseScreen::~BaseScreen() {
-    for (unsigned int index = 0; index < render_list.size(); index++)
-    {
-        delete render_list[index];
+    for ( Renderable* render_item : render_list) {
+        delete render_item;
     }
-    
+    render_list.clear();
 }
 
 void BaseScreen::render(Display &display)
