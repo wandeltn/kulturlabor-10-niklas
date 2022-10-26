@@ -3,8 +3,10 @@
 #include <SPI.h>
 #include <functional>
 #include <Bitmaps.hpp>
+#include <iterator>
 
 extern Timer timer;
+extern bool screen_on;
 
 #define POOP_INTERVAL_TIME_MS           13000
 #define HUNGER_INTERVAL_TIME_MS         12000
@@ -12,7 +14,7 @@ extern Timer timer;
 #define HEALTH_INTERVAL_TIME_MS         20000
 #define DICIPLINE_INTERVAL_TIME_MS      11000
 #define WEIGHT_CHECK_INTERVAL_TIME_MS   50000
-#define SLEEP_INTERVAL_TIME_MS          60000
+#define SLEEP_INTERVAL_TIME_MS          10000
 #define DEATH_UPDATE_INTERVAL_TIME_MS   100000
 
 TamaStatus::TamaStatus()
@@ -72,6 +74,9 @@ void TamaStatus::updateHungerTimer()
 {
     #ifdef DEBUG
     Serial.println("Setting new hunger Timeable");
+    Serial.print("poly function: ");
+    Serial.println(getPolynomialValue());
+    Serial.println((int)(round(getPolynomialValue()) * -1));
     #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
@@ -157,6 +162,7 @@ void TamaStatus::updateWeghtCheckTImer()
 void TamaStatus::updateSleepTimer()
 {
     sleeping = !sleeping;
+    updatePositionTimer();
     #ifdef DEBUG
     Serial.println("Setting new sleep Timeable");
     #endif
@@ -189,51 +195,67 @@ void TamaStatus::updateDeathTimer()
 
 void TamaStatus::updatePositionTimer()
 { 
-    //position.x += movementX;
-    if (!jumping) {
+    if (!jumping && !sleeping){
         jumping = true;
-        velocity = {(double)random(-5, 5), -20};
+        velocity = {(double)random(-10, 10), -20};
+    } else {
+        velocity = {0, velocity.y};
     }
     #ifdef DEBUG
     Serial.println("getting new jump pos");
     #endif
-    updateJump();
+    updateJump();    
 
     #ifdef DEBUG
     Serial.println("setting new timer");
     #endif
+    if (screen_on && !sleeping) {
+        timer.attach(new Timeable{
+            .call_time = millis() + 0,
+            .linked_value = &care_errors,
+            .payload = 0,
+            .notifier = &updatePositionTimer
+        }); 
+    }
+}
+
+void TamaStatus::updateEvolutionTimer()
+{
+    Serial.println("evolving");
+    current_display_state = Bitmaps::Tama::evolution_list[evolution_state][random(Bitmaps::Tama::state_count[evolution_state] - 1)];
     timer.attach(new Timeable{
-        .call_time = millis() + 0,
-        .linked_value = &care_errors,
-        .payload = 0,
-        .notifier = &updatePositionTimer
+        .call_time = millis() + 3000,
+        //.call_time = (unsigned long)(millis() + round(getPolynomialValue() * 30 * 1000)),
+        .linked_value = &evolution_state,
+        .payload = 1,
+        .notifier = &updateEvolutionTimer
     });
 }
 
 void TamaStatus::updateJump()
 {
-    double delta = 0.1; // time delta [s]
+        double delta = 0.1; // time delta [s]
 
-    velocity.x = velocity.x + delta * 0.0; // V_f = V_i + a * t
-    velocity.y = velocity.y + delta * gravity; // V_f = V_i + a * t
-    position.x = position.x + delta * velocity.x; // distance [m] = speed [m/s] * time [s]
-    position.y = position.y + delta * velocity.y; // distance [m] = speed [m/s] * time [s]
-    
-    if (position.x >= 62 || position.x <= 20) {
-        velocity.x *= -1;
-    }
+        velocity.x = velocity.x + delta * 0.0; // V_f = V_i + a * t
+        velocity.y = velocity.y + delta * gravity; // V_f = V_i + a * t
+        position.x = position.x + delta * velocity.x; // distance [m] = speed [m/s] * time [s]
+        position.y = position.y + delta * velocity.y; // distance [m] = speed [m/s] * time [s]
+        
+        if (position.x >= 62 || position.x <= 20) {
+            velocity.x *= -1;
+        }
 
-    if (position.y >= 16.0)
-    {
-        position.y = 16.0;
-        jumping = false;
-    }
-    #ifdef DEBUG
-    Serial.print("pos X: ");
-    Serial.println(position.x);
-    Serial.print("pos Y: ");
-    Serial.println(position.y);
-    #endif
+        if (position.y >= 16.0)
+        {
+            position.y = 16.0;
+            jumping = false;
+        }
+        #ifdef DEBUG
+        Serial.print("pos X: ");
+        Serial.println(position.x);
+        Serial.print("pos Y: ");
+        Serial.println(position.y);
+        #endif
 }
 
 double TamaStatus::getPolynomialValue()
@@ -244,13 +266,13 @@ double TamaStatus::getPolynomialValue()
         -5.5089670016536930e-009,
         1.3956521653067459e-015
     };
-    int t = 0;
+    double t = 1;
     double result = 0;
     for (unsigned int c = 0; c < (sizeof(terms) / sizeof(terms[0])); c++) {
         result += terms[c] * t;
         t *= millis() / 1000; // convert millis to seconds
     }
-    return result * 1000; // convert back to millis
+    return result; // convert back to millis
 }
 
 short int TamaStatus::happyness = 0;
@@ -261,6 +283,7 @@ short int TamaStatus::dicipline = 0;
 short int TamaStatus::weight = 50;
 short int TamaStatus::diet_health_counter = 0;
 short int TamaStatus::care_errors = 0;
+short int TamaStatus::evolution_state = 0;
 
 Vector2 TamaStatus::position = {
     .x = 40, 

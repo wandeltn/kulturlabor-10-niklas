@@ -28,6 +28,7 @@ class TamaStatus {
         static void updateSleepTimer();
         static void updateDeathTimer();
         static void updatePositionTimer();
+        static void updateEvolutionTimer();
 
         static void updateJump();
         static double getPolynomialValue();
@@ -39,6 +40,7 @@ class TamaStatus {
         static constexpr double gravity = 9.8;
         static short int diet_health_counter;
         static short int care_errors;
+        static short int evolution_state;
         static bool sleeping;
         static bool jumping;
 };

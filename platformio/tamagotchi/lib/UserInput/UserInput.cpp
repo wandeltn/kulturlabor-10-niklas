@@ -2,6 +2,7 @@
 #include <BaseScreen.hpp>
 #include <Timer.hpp>
 #include <Display.hpp>
+#include <TamaStatus.hpp>
 
 #define BUTTON_A    D1
 #define BUTTON_B    D6
@@ -12,6 +13,7 @@ extern bool schedule_rerender;
 extern bool screen_on;
 extern BaseScreen* active_screen;
 extern Display display;
+extern TamaStatus tamaStatus;
 
 UserInput::UserInput() {
     attachInterrupt(digitalPinToInterrupt(BUTTON_A), onButtonAPressed, FALLING);
@@ -26,8 +28,8 @@ void UserInput::onButtonAPressed() {
     if (button_time - last_button_time > 250)
     {
         active_screen->onButtonAPressed();
-        resetScreenOff();
         screen_on = true;
+        resetScreenOff();
         schedule_rerender = true;
         last_button_time = button_time;
     }
@@ -38,10 +40,10 @@ void UserInput::onButtonBPressed() {
     if (button_time - last_button_time > 250)
     {
         if (screen_on) {
-        button_B_pressed = true;
+            button_B_pressed = true;
         }
-        resetScreenOff();
         screen_on = true;
+        resetScreenOff();
         last_button_time = button_time;
     }
 }
@@ -51,8 +53,8 @@ void UserInput::onButtonCPressed() {
     if (button_time - last_button_time > 250)
     {
         active_screen->onButtonCPressed();
-        resetScreenOff();
         screen_on = true;
+        resetScreenOff();
         schedule_rerender = true;
         last_button_time = button_time;
     }
@@ -70,6 +72,9 @@ void UserInput::resetScreenOff()
     if (screen_on) {
         timer.cancel(screen_off_timer);
         delete screen_off_timer;
+    } else {
+        Serial.println("update position timer on screen on");
+        tamaStatus.updatePositionTimer();
     }
     screen_off_timer = new Timeable{ 
         .call_time = millis() + screen_off_time,
