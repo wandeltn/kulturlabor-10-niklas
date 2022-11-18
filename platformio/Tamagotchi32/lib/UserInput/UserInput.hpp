@@ -21,9 +21,9 @@ class UserInput
 
         static bool button_B_pressed;
 
-        static void onButtonAPressed() IRAM_ATTR;
-        static void onButtonBPressed() IRAM_ATTR;
-        static void onButtonCPressed() IRAM_ATTR;
+        static void IRAM_ATTR onButtonAPressed();
+        static void IRAM_ATTR onButtonBPressed();
+        static void IRAM_ATTR onButtonCPressed();
 
         static void turnOffScreen();
         static void resetScreenOff();

@@ -1,6 +1,5 @@
 #include <RAMProgressBar.hpp>
 #include <string>
-#include <ESP8266WiFi.h>
 
 
 RAMProgressBar::RAMProgressBar(

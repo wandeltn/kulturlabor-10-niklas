@@ -7,13 +7,7 @@ class DiciplineScreen: public BaseScreen {
     public:
         DiciplineScreen();
         void onButtonBPressed();
-        inline static const char* display_options[5] = {
-        "  Time together",
-        "  Set expectations",
-        "  Use concequences",
-        "  Do an activity",
-        "  Exit"
-        };
+        static const char* display_options[5];
     private:
 };
 

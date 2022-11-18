@@ -4,9 +4,9 @@
 #include <Display.hpp>
 #include <TamaStatus.hpp>
 
-#define BUTTON_A    D1
-#define BUTTON_B    D6
-#define BUTTON_C    D2
+#define BUTTON_A    GPIO_NUM_12
+#define BUTTON_B    GPIO_NUM_13
+#define BUTTON_C    GPIO_NUM_14
 
 extern Timer timer;
 extern bool schedule_rerender;
@@ -16,15 +16,15 @@ extern Display display;
 extern TamaStatus tamaStatus;
 
 UserInput::UserInput() {
-    attachInterrupt(digitalPinToInterrupt(BUTTON_A), onButtonAPressed, FALLING);
-    attachInterrupt(digitalPinToInterrupt(BUTTON_B), onButtonBPressed, FALLING);
-    attachInterrupt(digitalPinToInterrupt(BUTTON_C), onButtonCPressed, FALLING);
+    attachInterrupt(digitalPinToInterrupt(BUTTON_A), onButtonAPressed, CHANGE);
+    // attachInterrupt(digitalPinToInterrupt(BUTTON_B), onButtonBPressed, GPIO_PIN_INTR_ANYEDGE);
+    // attachInterrupt(digitalPinToInterrupt(BUTTON_C), onButtonCPressed, GPIO_PIN_INTR_ANYEDGE);
 
     timer.attach(screen_off_timer);
 }
 
 void UserInput::onButtonAPressed() {
-    button_time = millis();
+    Serial.println(F("Button A pressed!"));
     if (button_time - last_button_time > 250)
     {
         active_screen->onButtonAPressed();
@@ -36,7 +36,7 @@ void UserInput::onButtonAPressed() {
 }
 
 void UserInput::onButtonBPressed() {
-        button_time = millis();
+    button_time = millis();
     if (button_time - last_button_time > 250)
     {
         if (screen_on) {

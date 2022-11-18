@@ -19,8 +19,10 @@ void Timer::cancel(Timeable* timer)
 }
 
 void Timer::check_timer_list() {
+    time_t now;
+    time(&now);
     for (Timeable* list_item : timer_list) {;
-        if (list_item->call_time <= millis()) { 
+        if (list_item->call_time <= now) { 
             #ifdef DEBUG
             Serial.println("finished timer");
             #endif

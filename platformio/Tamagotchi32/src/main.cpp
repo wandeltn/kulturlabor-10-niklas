@@ -15,11 +15,11 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 // Declaration for SSD1306 display connected using software SPI (default case):
-#define OLED_MOSI  D7
-#define OLED_CLK   D5
-#define OLED_DC    D0
-#define OLED_CS    D8
-#define OLED_RESET D4
+#define OLED_MOSI  35
+#define OLED_CLK   36
+#define OLED_DC    6
+#define OLED_CS    34
+#define OLED_RESET 7
 Display display(
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
@@ -74,9 +74,9 @@ void setup() {
     Serial.println(ESP.getFreeHeap());
     #endif
 
-    pinMode(D1, INPUT_PULLUP);
-    pinMode(D6, INPUT_PULLUP);
-    pinMode(D2, INPUT_PULLUP);
+    pinMode(12, INPUT_PULLUP);
+    // pinMode(13, INPUT_PULLUP);
+    // pinMode(14, INPUT_PULLUP);
 
     // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
     if(!display.begin(SSD1306_SWITCHCAPVCC)) {

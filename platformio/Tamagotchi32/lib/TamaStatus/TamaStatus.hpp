@@ -14,6 +14,9 @@ class TamaStatus {
         static short int dicipline;
         static short int weight;
         static bool light_on;
+
+        static unsigned long random(unsigned long start, unsigned long end);
+
         static void add_diet_counter(short int amount);
         static void toggle_light();
         static void toggle_light(bool on);

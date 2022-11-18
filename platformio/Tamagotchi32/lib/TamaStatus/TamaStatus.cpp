@@ -4,6 +4,7 @@
 #include <functional>
 #include <Bitmaps.hpp>
 #include <iterator>
+#include <math.h>
 
 extern Timer timer;
 extern bool screen_on;
@@ -28,6 +29,13 @@ TamaStatus::TamaStatus()
     updateSleepTimer();
     updateDeathTimer();
     updatePositionTimer();
+}
+
+unsigned long TamaStatus::random(unsigned long start, unsigned long end)
+{
+    unsigned long max_number = end - start;
+
+    return (unsigned long)(max_number / UINT32_MAX * esp_random()) + start; 
 }
 
 void TamaStatus::add_diet_counter(short int amount)
@@ -60,9 +68,9 @@ void TamaStatus::updatePoopTimer()
     Serial.println("Setting new poop Timeable");
     #endif
     timer.attach(new Timeable{
-        .call_time = (unsigned long)(random(
-            millis() + POOP_INTERVAL_TIME_MS - 500,
-            millis() + POOP_INTERVAL_TIME_MS + 500
+        .call_time = (unsigned long)(esp_random(
+            // esp_timer_get_time() + POOP_INTERVAL_TIME_MS - 500,
+            // esp_timer_get_time() + POOP_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &poop_on_screen,
         .payload = 1,
@@ -76,12 +84,13 @@ void TamaStatus::updateHungerTimer()
     Serial.println("Setting new hunger Timeable");
     Serial.print("poly function: ");
     Serial.println(getPolynomialValue());
-    Serial.println((int)(round(getPolynomialValue()) * -1));
     #endif
+    time_t now;
+    time(&now);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + HUNGER_INTERVAL_TIME_MS - 500,
-            millis() + HUNGER_INTERVAL_TIME_MS + 500
+            now + HUNGER_INTERVAL_TIME_MS - 500,
+            now + HUNGER_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &hunger,
         .payload = (short)(round(getPolynomialValue()) * -1),
@@ -94,10 +103,12 @@ void TamaStatus::updateHappynessTimer()
     #ifdef DEBUG
     Serial.println("Setting new happyness Timeable");
     #endif
+    time_t now;
+    time(&now);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + POOP_INTERVAL_TIME_MS - 500,
-            millis() + POOP_INTERVAL_TIME_MS + 500
+            now + POOP_INTERVAL_TIME_MS - 500,
+            now + POOP_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &happyness,
         .payload = -10,
@@ -111,10 +122,12 @@ void TamaStatus::updateHealthTimer()
     #ifdef DEBUG
     Serial.println("Setting new sickness Timeable");
     #endif
+    time_t now;
+    time(&now);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + HEALTH_INTERVAL_TIME_MS - 500,
-            millis() + HEALTH_INTERVAL_TIME_MS + 500
+            now + HEALTH_INTERVAL_TIME_MS - 500,
+            now + HEALTH_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &health,
         .payload = -10,
@@ -127,10 +140,12 @@ void TamaStatus::updateDiciplineTimer()
     #ifdef DEBUG
     Serial.println("Setting new dicipline Timeable");
     #endif
+    time_t now;
+    time(&now);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + DICIPLINE_INTERVAL_TIME_MS - 500,
-            millis() + DICIPLINE_INTERVAL_TIME_MS + 500
+            now + DICIPLINE_INTERVAL_TIME_MS - 500,
+            now + DICIPLINE_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &dicipline,
         .payload = -5,
@@ -148,10 +163,12 @@ void TamaStatus::updateWeghtCheckTImer()
     #ifdef DEBUG
     Serial.println("Setting new weightCheck Timeable");
     #endif
+    time_t now;
+    time(&now);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + WEIGHT_CHECK_INTERVAL_TIME_MS - 500,
-            millis() + WEIGHT_CHECK_INTERVAL_TIME_MS + 500
+            now + WEIGHT_CHECK_INTERVAL_TIME_MS - 500,
+            now + WEIGHT_CHECK_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &weight,
         .payload = 0,
@@ -166,10 +183,12 @@ void TamaStatus::updateSleepTimer()
     #ifdef DEBUG
     Serial.println("Setting new sleep Timeable");
     #endif
+    time_t now;
+    time(&now);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + SLEEP_INTERVAL_TIME_MS - 500,
-            millis() + SLEEP_INTERVAL_TIME_MS + 500
+            now + SLEEP_INTERVAL_TIME_MS - 500,
+            now + SLEEP_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &health,
         .payload = 5,
@@ -182,10 +201,12 @@ void TamaStatus::updateDeathTimer()
     #ifdef DEBUG
     Serial.println("Setting new deathCheck Timeable");
     #endif
+    time_t now;
+    time(&now);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + DEATH_UPDATE_INTERVAL_TIME_MS - 500,
-            millis() + DEATH_UPDATE_INTERVAL_TIME_MS + 500
+            now + DEATH_UPDATE_INTERVAL_TIME_MS - 500,
+            now + DEATH_UPDATE_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &weight,
         .payload = 0,
@@ -209,9 +230,11 @@ void TamaStatus::updatePositionTimer()
     #ifdef DEBUG
     Serial.println("setting new timer");
     #endif
+    time_t now;
+    time(&now);
     if (screen_on && !sleeping) {
         timer.attach(new Timeable{
-            .call_time = millis() + 0,
+            .call_time = (unsigned long)(now) + 0,
             .linked_value = &care_errors,
             .payload = 0,
             .notifier = &updatePositionTimer
@@ -221,10 +244,11 @@ void TamaStatus::updatePositionTimer()
 
 void TamaStatus::updateEvolutionTimer()
 {
-    Serial.println("evolving");
-    current_display_state = Bitmaps::Tama::evolution_list[evolution_state][random(Bitmaps::Tama::state_count[evolution_state] - 1)];
+    time_t now;
+    time(&now);
+    current_display_state = Bitmaps::Tama::evolution_list[evolution_state][random(0, Bitmaps::Tama::state_count[evolution_state] - 1)];
     timer.attach(new Timeable{
-        .call_time = millis() + 3000,
+        .call_time = (unsigned long)(now) + 3000,
         //.call_time = (unsigned long)(millis() + round(getPolynomialValue() * 30 * 1000)),
         .linked_value = &evolution_state,
         .payload = 1,
@@ -260,6 +284,8 @@ void TamaStatus::updateJump()
 
 double TamaStatus::getPolynomialValue()
 {
+    time_t now;
+    time(&now);
     double terms[4] = {
         9.9999999999997874e+002,
         5.9151704397609030e-003,
@@ -270,7 +296,7 @@ double TamaStatus::getPolynomialValue()
     double result = 0;
     for (unsigned int c = 0; c < (sizeof(terms) / sizeof(terms[0])); c++) {
         result += terms[c] * t;
-        t *= millis() / 1000; // convert millis to seconds
+        t *= now / 1000; // convert millis to seconds
     }
     return result; // convert back to millis
 }
