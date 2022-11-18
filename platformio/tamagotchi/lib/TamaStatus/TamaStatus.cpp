@@ -28,6 +28,7 @@ TamaStatus::TamaStatus()
     updateSleepTimer();
     updateDeathTimer();
     updatePositionTimer();
+    updateEvolutionTimer();
 }
 
 void TamaStatus::add_diet_counter(short int amount)
@@ -222,14 +223,15 @@ void TamaStatus::updatePositionTimer()
 void TamaStatus::updateEvolutionTimer()
 {
     Serial.println("evolving");
-    current_display_state = Bitmaps::Tama::evolution_list[evolution_state][random(Bitmaps::Tama::state_count[evolution_state] - 1)];
-    timer.attach(new Timeable{
-        .call_time = millis() + 3000,
-        //.call_time = (unsigned long)(millis() + round(getPolynomialValue() * 30 * 1000)),
-        .linked_value = &evolution_state,
-        .payload = 1,
-        .notifier = &updateEvolutionTimer
-    });
+    if (evolution_state < 5) {
+        current_display_state = Bitmaps::Tama::evolution_list[evolution_state][random(Bitmaps::Tama::state_count[evolution_state] - 1)];
+        timer.attach(new Timeable{
+            .call_time = (unsigned long)(millis() + round(getPolynomialValue() * 30 * 1000)),
+            .linked_value = &evolution_state,
+            .payload = 1,
+            .notifier = &updateEvolutionTimer
+        });
+    }
 }
 
 void TamaStatus::updateJump()
