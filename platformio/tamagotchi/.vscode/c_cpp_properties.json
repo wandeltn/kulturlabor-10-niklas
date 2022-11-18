@@ -165,7 +165,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60104",
+                "PLATFORMIO=60105",
                 "ESP8266",
                 "ARDUINO_ARCH_ESP8266",
                 "ARDUINO_ESP8266_NODEMCU_ESP12E",
@@ -187,7 +187,7 @@
             ],
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "compilerPath": "C:/Users/Niklas/.platformio/packages/toolchain-xtensa/bin/xtensa-lx106-elf-gcc.exe",
+            "compilerPath": "C:/Users/wandeltn/.platformio/packages/toolchain-xtensa/bin/xtensa-lx106-elf-gcc.exe",
             "compilerArgs": [
                 "-mlongcalls",
                 "-mtext-section-literals",
