@@ -1,5 +1,21 @@
 #include <SPI.h>
 #include <Wire.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <UMS3.h>
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  Serial.println("Test");
+}
+
+#include <SPI.h>
+#include <Wire.h>
 #include <UMS3.h>
 #include <cmath>
 #include <vector>
@@ -44,7 +60,8 @@ BaseScreen* active_screen;
 bool screen_on = true;
 bool schedule_rerender = true;
 
-extern UserInput userInput;
+
+static UserInput userInput;
 
 void loop() {
     Serial.println("at start of loop in main");
@@ -70,10 +87,19 @@ void loop() {
 }
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     ums3.begin();
-    ums3.setLDO2Power(true);
-    ums3.setPixelBrightness(100);
+    #ifdef DEBUG
+    Serial.print("cpu freq: ");
+    Serial.println(ESP.getCpuFreqMHz());
+    Serial.print("heap free:");
+    Serial.println(ESP.getFreeHeap());
+    #endif
+
+    pinMode(12, INPUT_PULLUP);
+    pinMode(13, INPUT_PULLUP);
+    pinMode(14, INPUT_PULLUP);
+
     // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
     if(!display.begin(SSD1306_SWITCHCAPVCC)) {
         #ifdef DEBUG
@@ -81,15 +107,8 @@ void setup() {
         #endif
         for(;;); // Don't proceed, loop forever
     }    
-    Serial.println("setting pinmodes");
-    pinMode(12, INPUT_PULLUP);
-    pinMode(13, INPUT_PULLUP);
-    pinMode(14, INPUT_PULLUP);
-    userInput.begin();
-    
     display.display();
     delay(1000);
-
     // Clear the buffer
     display.clearDisplay();
     display.dim(true);

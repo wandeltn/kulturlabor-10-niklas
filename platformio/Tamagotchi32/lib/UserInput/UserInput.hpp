@@ -11,6 +11,8 @@ class UserInput
     public:
         UserInput();
 
+        static void begin();
+
         static unsigned long last_button_time;
         static unsigned long button_time;
 
@@ -21,9 +23,9 @@ class UserInput
 
         static bool button_B_pressed;
 
-        static void IRAM_ATTR onButtonAPressed();
-        static void IRAM_ATTR onButtonBPressed();
-        static void IRAM_ATTR onButtonCPressed();
+        static void ARDUINO_ISR_ATTR onButtonAPressed();
+        static void ARDUINO_ISR_ATTR onButtonBPressed();
+        static void ARDUINO_ISR_ATTR onButtonCPressed();
 
         static void turnOffScreen();
         static void resetScreenOff();

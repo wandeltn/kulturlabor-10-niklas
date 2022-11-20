@@ -1,6 +1,7 @@
+#include <SPI.h>
+#include <UMS3.h>
 #include <TamaStatus.hpp>
 #include <Timer.hpp>
-#include <SPI.h>
 #include <functional>
 #include <Bitmaps.hpp>
 #include <iterator>

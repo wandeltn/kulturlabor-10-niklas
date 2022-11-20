@@ -1,6 +1,7 @@
 #include <Timer.hpp>
 #include <SPI.h>
 #include <algorithm>
+#include <UMS3.h>
 
 extern bool schedule_rerender;
 
@@ -19,10 +20,8 @@ void Timer::cancel(Timeable* timer)
 }
 
 void Timer::check_timer_list() {
-    time_t now;
-    time(&now);
     for (Timeable* list_item : timer_list) {;
-        if (list_item->call_time <= now) { 
+        if (list_item->call_time <= millis()) { 
             #ifdef DEBUG
             Serial.println("finished timer");
             #endif

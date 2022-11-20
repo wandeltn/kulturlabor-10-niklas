@@ -1,12 +1,13 @@
+#include <UMS3.h>
 #include "UserInput.hpp"
 #include <BaseScreen.hpp>
 #include <Timer.hpp>
 #include <Display.hpp>
 #include <TamaStatus.hpp>
 
-#define BUTTON_A    GPIO_NUM_12
-#define BUTTON_B    GPIO_NUM_13
-#define BUTTON_C    GPIO_NUM_14
+#define BUTTON_A    12
+#define BUTTON_B    13
+#define BUTTON_C    14
 
 extern Timer timer;
 extern bool schedule_rerender;
@@ -14,17 +15,22 @@ extern bool screen_on;
 extern BaseScreen* active_screen;
 extern Display display;
 extern TamaStatus tamaStatus;
+extern UMS3 ums3;
 
 UserInput::UserInput() {
-    attachInterrupt(digitalPinToInterrupt(BUTTON_A), onButtonAPressed, CHANGE);
-    // attachInterrupt(digitalPinToInterrupt(BUTTON_B), onButtonBPressed, GPIO_PIN_INTR_ANYEDGE);
-    // attachInterrupt(digitalPinToInterrupt(BUTTON_C), onButtonCPressed, GPIO_PIN_INTR_ANYEDGE);
+}
 
-    timer.attach(screen_off_timer);
+void UserInput::begin()
+{
+    ums3.setPixelColor(ums3.colorWheel(180));
+    Serial.println("attaching interrupts");
+    attachInterrupt(BUTTON_A, onButtonAPressed, FALLING);
+    attachInterrupt(BUTTON_B, onButtonBPressed, FALLING);
+    attachInterrupt(BUTTON_C, onButtonCPressed, FALLING);
 }
 
 void UserInput::onButtonAPressed() {
-    Serial.println(F("Button A pressed!"));
+    Serial.println("Button A pressed!");
     if (button_time - last_button_time > 250)
     {
         active_screen->onButtonAPressed();
@@ -36,6 +42,7 @@ void UserInput::onButtonAPressed() {
 }
 
 void UserInput::onButtonBPressed() {
+    Serial.println("Button A pressed!");
     button_time = millis();
     if (button_time - last_button_time > 250)
     {
@@ -49,7 +56,8 @@ void UserInput::onButtonBPressed() {
 }
 
 void UserInput::onButtonCPressed() {
-        button_time = millis();
+    Serial.println("Button A pressed!");
+    button_time = millis();
     if (button_time - last_button_time > 250)
     {
         active_screen->onButtonCPressed();
