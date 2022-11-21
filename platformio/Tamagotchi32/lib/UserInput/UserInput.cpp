@@ -5,7 +5,7 @@
 #include <Display.hpp>
 #include <TamaStatus.hpp>
 
-#define BUTTON_A    12
+#define BUTTON_A    0
 #define BUTTON_B    13
 #define BUTTON_C    14
 
@@ -23,14 +23,15 @@ UserInput::UserInput() {
 void UserInput::begin()
 {
     ums3.setPixelColor(ums3.colorWheel(180));
-    Serial.println("attaching interrupts");
-    attachInterrupt(BUTTON_A, onButtonAPressed, FALLING);
-    attachInterrupt(BUTTON_B, onButtonBPressed, FALLING);
-    attachInterrupt(BUTTON_C, onButtonCPressed, FALLING);
+    // Serial.println("attaching interrupts");
+    // attachInterrupt(BUTTON_A, onButtonAPressed, FALLING);
+    // attachInterrupt(BUTTON_B, onButtonBPressed, FALLING);
+    // attachInterrupt(BUTTON_C, onButtonCPressed, FALLING);
 }
 
 void UserInput::onButtonAPressed() {
     Serial.println("Button A pressed!");
+    button_time = millis();
     if (button_time - last_button_time > 250)
     {
         active_screen->onButtonAPressed();

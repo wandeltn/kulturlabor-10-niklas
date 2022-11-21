@@ -47,7 +47,6 @@ bool schedule_rerender = true;
 extern UserInput userInput;
 
 void loop() {
-    Serial.println("at start of loop in main");
     if (screen_on) {
         if(schedule_rerender) {
             display.clearDisplay();
@@ -86,6 +85,9 @@ void setup() {
     pinMode(13, INPUT_PULLUP);
     pinMode(14, INPUT_PULLUP);
     userInput.begin();
+    attachInterrupt(12, userInput.onButtonAPressed, FALLING);
+    attachInterrupt(13, userInput.onButtonBPressed, FALLING);
+    attachInterrupt(14, userInput.onButtonCPressed, FALLING);
     
     display.display();
     delay(1000);
