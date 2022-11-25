@@ -81,13 +81,8 @@ void setup() {
         for(;;); // Don't proceed, loop forever
     }    
     Serial.println("setting pinmodes");
-    pinMode(12, INPUT_PULLUP);
-    pinMode(13, INPUT_PULLUP);
-    pinMode(14, INPUT_PULLUP);
+
     userInput.begin();
-    attachInterrupt(12, userInput.onButtonAPressed, FALLING);
-    attachInterrupt(13, userInput.onButtonBPressed, FALLING);
-    attachInterrupt(14, userInput.onButtonCPressed, FALLING);
     
     display.display();
     delay(1000);
