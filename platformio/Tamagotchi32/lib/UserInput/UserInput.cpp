@@ -5,6 +5,8 @@
 #include <Display.hpp>
 #include <TamaStatus.hpp>
 
+#define DEMO_MODE
+
 #define BUTTON_A    0
 #define BUTTON_B    13
 #define BUTTON_C    14
@@ -22,11 +24,14 @@ UserInput::UserInput() {
 
 void UserInput::begin()
 {
+    pinMode(12, INPUT_PULLUP);
+    pinMode(13, INPUT_PULLUP);
+    pinMode(14, INPUT_PULLUP);
+
+    attachInterrupt(12, onButtonAPressed, FALLING);
+    attachInterrupt(13, onButtonBPressed, FALLING);
+    attachInterrupt(14, onButtonCPressed, FALLING);
     ums3.setPixelColor(ums3.colorWheel(180));
-    // Serial.println("attaching interrupts");
-    // attachInterrupt(BUTTON_A, onButtonAPressed, FALLING);
-    // attachInterrupt(BUTTON_B, onButtonBPressed, FALLING);
-    // attachInterrupt(BUTTON_C, onButtonCPressed, FALLING);
 }
 
 void UserInput::onButtonAPressed() {
@@ -36,7 +41,9 @@ void UserInput::onButtonAPressed() {
     {
         active_screen->onButtonAPressed();
         screen_on = true;
+        #ifndef DEMO_MODE
         resetScreenOff();
+        #endif
         schedule_rerender = true;
         last_button_time = button_time;
     }
@@ -51,7 +58,9 @@ void UserInput::onButtonBPressed() {
             button_B_pressed = true;
         }
         screen_on = true;
+        #ifndef DEMO_MODE
         resetScreenOff();
+        #endif
         last_button_time = button_time;
     }
 }
@@ -63,7 +72,9 @@ void UserInput::onButtonCPressed() {
     {
         active_screen->onButtonCPressed();
         screen_on = true;
+        #ifndef DEMO_MODE
         resetScreenOff();
+        #endif
         schedule_rerender = true;
         last_button_time = button_time;
     }
@@ -76,6 +87,7 @@ void UserInput::turnOffScreen()
     display.display();
 }
 
+#ifndef DEMO_MODE
 void UserInput::resetScreenOff()
 {   
     if (screen_on) {
@@ -93,6 +105,7 @@ void UserInput::resetScreenOff()
     };
     timer.attach(screen_off_timer);
 }
+#endif
 
 
 unsigned long UserInput::last_button_time = 0;
@@ -104,9 +117,12 @@ unsigned short int UserInput::screen_off_time = 5000;
 
 short int UserInput::screen_off_times = 0;
 bool UserInput::button_B_pressed = false;
+
+#ifndef DEMO_MODE
 Timeable* UserInput::screen_off_timer = new Timeable{
     .call_time = millis() + screen_off_time,
     .linked_value = &screen_off_times,
     .payload = 0,
     .notifier = &turnOffScreen
 };
+#endif
