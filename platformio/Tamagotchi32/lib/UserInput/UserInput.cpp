@@ -28,10 +28,11 @@ void UserInput::begin()
     pinMode(13, INPUT_PULLUP);
     pinMode(14, INPUT_PULLUP);
 
+    ums3.setPixelColor(ums3.colorWheel(180));
+    
     attachInterrupt(12, onButtonAPressed, FALLING);
     attachInterrupt(13, onButtonBPressed, FALLING);
     attachInterrupt(14, onButtonCPressed, FALLING);
-    ums3.setPixelColor(ums3.colorWheel(180));
 }
 
 void UserInput::onButtonAPressed() {

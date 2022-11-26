@@ -11,6 +11,19 @@
 #include <ImageFormat.hpp>
 
 namespace Bitmaps {
+	namespace Battery {
+		inline constexpr unsigned char charging_icon[3] {
+			// 'charging_icon, 2x3px
+			0x80, 0xc0, 0x40
+		};
+
+		inline constexpr ImageFormat charging_icon_image {
+			width: 2,
+			height: 3,
+			data: charging_icon
+		};
+	}
+
 	inline constexpr unsigned char food_menu_icon[32] = {
 		// 'food_main_menu, 16x16px
 		0xff, 0xff, 0x80, 0x01, 0xaa, 0x61, 0xaa, 0x61, 0xaa, 0x71, 0xbe, 0x71, 0x9c, 0x71, 0x9c, 0x79, 
