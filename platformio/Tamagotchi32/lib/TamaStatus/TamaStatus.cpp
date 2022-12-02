@@ -5,6 +5,7 @@
 #include <Bitmaps.hpp>
 #include <iterator>
 #include <math.h>
+#include <HardwareSerial.h>
 
 extern Timer timer;
 extern bool screen_on;
@@ -31,11 +32,11 @@ TamaStatus::TamaStatus()
     updatePositionTimer();
 }
 
-unsigned long TamaStatus::random(unsigned long start, unsigned long end)
+long TamaStatus::random(long start, long end)
 {
-    unsigned long max_number = end - start;
+    long max_number = end - start;
 
-    return (unsigned long)(max_number / UINT32_MAX * esp_random()) + start; 
+    return (long)(max_number / UINT32_MAX * esp_random()) + start; 
 }
 
 void TamaStatus::add_diet_counter(short int amount)
@@ -219,22 +220,23 @@ void TamaStatus::updatePositionTimer()
     if (!jumping && !sleeping){
         jumping = true;
         velocity = {(double)random(-10, 10), -20};
-    } else {
-        velocity = {0, velocity.y};
+        // velocity = {0, (double)random(-5, -20)};
+        // velocity = {0, -20};
     }
     #ifdef DEBUG
     Serial.println("getting new jump pos");
+    Serial.println(random(10, 20) - 30);
+    Serial.println(esp_random());
     #endif
+    Serial.println(random(-10, -20));
     updateJump();    
 
     #ifdef DEBUG
     Serial.println("setting new timer");
     #endif
-    time_t now;
-    time(&now);
     if (screen_on && !sleeping) {
         timer.attach(new Timeable{
-            .call_time = (unsigned long)(now) + 0,
+            .call_time = millis() + 10,
             .linked_value = &care_errors,
             .payload = 0,
             .notifier = &updatePositionTimer
@@ -265,9 +267,9 @@ void TamaStatus::updateJump()
         position.x = position.x + delta * velocity.x; // distance [m] = speed [m/s] * time [s]
         position.y = position.y + delta * velocity.y; // distance [m] = speed [m/s] * time [s]
         
-        if (position.x >= 62 || position.x <= 20) {
-            velocity.x *= -1;
-        }
+        // if (position.x >= 62 || position.x <= 20) {
+        //     velocity.x *= -1;
+        // }
 
         if (position.y >= 16.0)
         {

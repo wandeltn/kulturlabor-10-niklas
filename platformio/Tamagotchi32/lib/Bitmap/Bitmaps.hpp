@@ -3,10 +3,6 @@
 #ifndef Bitmaps_H
 #define Bitmaps_H
 
-#ifndef PROGMEM
-#define PROGMEM ICACHE_RODATA_ATTR
-#endif
-
 #include <SPI.h>
 #include <ImageFormat.hpp>
 

@@ -9,8 +9,8 @@ class BatteryIndicator: public Renderable {
         void render(Display &display, unsigned short int current_menu_position);
     private:
         inline float getChargePercent();
-        short int position_X;
-        short int position_Y;
+        unsigned short int position_X;
+        unsigned short int position_Y;
         static inline float charge_level;
 };
 
