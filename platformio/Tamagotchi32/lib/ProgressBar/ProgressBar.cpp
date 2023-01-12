@@ -13,7 +13,11 @@ ProgressBar::ProgressBar(unsigned short int x,
     positionY = y;
     width = w;
     height = h;
-    display_fill_height = fill_height;
+    if (fill_height > width) {
+        display_fill_height = width;
+    } else {
+        display_fill_height = fill_height;
+    }
 }
 
 void ProgressBar::render(Display& display, unsigned short int current_menu_position)

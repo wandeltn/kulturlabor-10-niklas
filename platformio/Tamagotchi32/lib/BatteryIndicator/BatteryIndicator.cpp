@@ -14,7 +14,7 @@ BatteryIndicator::BatteryIndicator(short int positionX, short int positionY) {
 
 void BatteryIndicator::render(Display &display, unsigned short int current_menu_position) {
     // ProgressBar BatteryBar = ProgressBar{position_X + 1, position_Y, 6, 3, (short int)(round(getChargePercent() / 25))};
-    ProgressBar BatteryBar = ProgressBar{position_X + 1, position_Y, 6, 3, 0};
+    ProgressBar BatteryBar = ProgressBar{(unsigned short)(position_X + 1), position_Y, 6, 3, 0};
     BatteryBar.render(display, current_menu_position);
     display.drawPixel(position_X, position_Y + 1, SSD1306_WHITE);
     if (ums3.getVbusPresent()) {

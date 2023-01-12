@@ -474,11 +474,11 @@ namespace Bitmaps {
 		};
 
 		inline constexpr unsigned short int state_count[5] = {
-			2,
-			2,
-			2,
-			2,
-			2
+			2,		// egg stage
+			2,		// baby stage
+			2,		// teen stage
+			2,		// adult stage
+			2		// senior stage
 		};
 
 
