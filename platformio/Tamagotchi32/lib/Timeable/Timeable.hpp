@@ -8,7 +8,7 @@ struct Timeable
         ~Timeable();
 
         unsigned long int call_time;
-        short int* linked_value;
+        int16_t* linked_value;
         short int payload;
         //std::function<void()> notifier;
         void(*notifier)();

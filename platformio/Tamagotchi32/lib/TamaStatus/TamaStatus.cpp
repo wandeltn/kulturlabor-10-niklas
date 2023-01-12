@@ -6,9 +6,11 @@
 #include <iterator>
 #include <HardwareSerial.h>
 #include <UMS3.h>
+#include <storage/settings_nvs.h>
 
 extern Timer timer;
 extern bool screen_on;
+extern esp_err_t nvsError;
 
 #define POOP_INTERVAL_TIME_MS           13000
 #define HUNGER_INTERVAL_TIME_MS         12000
@@ -21,6 +23,50 @@ extern bool screen_on;
 
 TamaStatus::TamaStatus()
 {
+
+};
+
+void TamaStatus::begin()
+{
+    nvsError = nvs_flash_init();
+    if (nvsError == ESP_ERR_NVS_NO_FREE_PAGES || nvsError == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        // NVS partition was truncated and needs to be erased
+        // Retry nvs_flash_init
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        nvsError = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK( nvsError );
+
+        // Open
+    printf("\n");
+    printf("Opening Non-Volatile Storage (NVS) handle to Read only... ");
+    nvs_handle_t my_handle;
+    nvsError = nvs_open("storage", NVS_READONLY, &my_handle);
+    if (nvsError != ESP_OK) {
+        printf("Error (%s) opening NVS handle!\n", esp_err_to_name(nvsError));
+    } else {
+        printf("Done\n");
+
+
+        /* Read from NVS:     */
+        printf("Reading length of first User Message from NVS ... ");
+
+        nvsError = nvs_get_i16(my_handle, "evolution_state", &evolution_state);
+        switch (nvsError) {
+            case ESP_OK:
+                printf("Done\n");
+                printf("First User Message = %d\n", evolution_state);
+                break;
+            case ESP_ERR_NVS_NOT_FOUND:
+                printf("The value is not initialized yet!\n");
+                break;
+            default :
+                printf("Error (%s) reading!\n", esp_err_to_name(nvsError));
+        }
+    // Close
+    nvs_close(my_handle);
+    }
+    
     updatePoopTimer();
     updateHungerTimer();
     updateHappynessTimer();
@@ -31,6 +77,36 @@ TamaStatus::TamaStatus()
     updateDeathTimer();
     updateEvolutionTimer();
     updatePositionTimer();
+}
+
+void TamaStatus::end()
+{
+    // Open
+   printf("\n");
+   printf("Opening Non-Volatile Storage (NVS) handle to Write ... ");
+   nvs_handle_t my_handle;
+   nvsError = nvs_open("storage", NVS_READWRITE, &my_handle);
+   if (nvsError != ESP_OK) {
+       printf("Error (%s) opening NVS handle!\n", esp_err_to_name(nvsError));
+   } else {
+        printf("Done\n");
+        // Write value into the NVS
+        printf("Updating the length of first User Message in NVS ... ");
+
+        nvsError = nvs_set_i16(my_handle, "evolution_state", evolution_state);
+        printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
+
+        // Commit written value.
+        // After setting any values, nvs_commit() must be called to ensure changes are written
+        // to flash storage. Implementations may write to storage at other times,
+        // but this is not guaranteed.
+        printf("Committing updates in NVS ... ");
+        nvsError = nvs_commit(my_handle);
+        printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
+
+        // Close
+        nvs_close(my_handle);
+   }
 }
 
 // long TamaStatus::random(long start, long end)
@@ -215,7 +291,6 @@ void TamaStatus::updatePositionTimer()
     Serial.println(random(10, 20) - 30);
     Serial.println(esp_random());
     #endif
-    Serial.println(random(-10, -20));
     updateJump();    
 
     #ifdef DEBUG
@@ -298,7 +373,7 @@ short int TamaStatus::dicipline = 0;
 short int TamaStatus::weight = 50;
 short int TamaStatus::diet_health_counter = 0;
 short int TamaStatus::care_errors = 0;
-short int TamaStatus::evolution_state = 0;
+int16_t TamaStatus::evolution_state = 0;
 
 Vector2 TamaStatus::position = {
     .x = 40, 

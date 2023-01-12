@@ -5,7 +5,7 @@
 #include <Display.hpp>
 #include <TamaStatus.hpp>
 
-#define DEMO_MODE
+// #define DEMO_MODE
 
 #define BUTTON_A    0
 #define BUTTON_B    13
@@ -20,6 +20,7 @@ extern TamaStatus tamaStatus;
 extern UMS3 ums3;
 
 UserInput::UserInput() {
+    resetScreenOff(true);
 }
 
 void UserInput::begin()
@@ -43,7 +44,7 @@ void UserInput::onButtonAPressed() {
         active_screen->onButtonAPressed();
         screen_on = true;
         #ifndef DEMO_MODE
-        resetScreenOff();
+        resetScreenOff(false);
         #endif
         schedule_rerender = true;
         last_button_time = button_time;
@@ -60,7 +61,7 @@ void UserInput::onButtonBPressed() {
         }
         screen_on = true;
         #ifndef DEMO_MODE
-        resetScreenOff();
+        resetScreenOff(false);
         #endif
         last_button_time = button_time;
     }
@@ -74,7 +75,7 @@ void UserInput::onButtonCPressed() {
         active_screen->onButtonCPressed();
         screen_on = true;
         #ifndef DEMO_MODE
-        resetScreenOff();
+        resetScreenOff(false);
         #endif
         schedule_rerender = true;
         last_button_time = button_time;
@@ -89,14 +90,15 @@ void UserInput::turnOffScreen()
 }
 
 #ifndef DEMO_MODE
-void UserInput::resetScreenOff()
+void UserInput::resetScreenOff(bool initTimer = false)
 {   
-    if (screen_on) {
-        timer.cancel(screen_off_timer);
-        delete screen_off_timer;
-    } else {
-        Serial.println("update position timer on screen on");
-        tamaStatus.updatePositionTimer();
+    if (!initTimer) {
+        if (screen_on) {
+            timer.cancel(screen_off_timer);
+            delete screen_off_timer;
+        } else {
+            Serial.println("update position timer on screen on");
+        }
     }
     screen_off_timer = new Timeable{ 
         .call_time = millis() + screen_off_time,
