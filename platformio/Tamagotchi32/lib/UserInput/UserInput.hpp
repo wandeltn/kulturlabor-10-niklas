@@ -28,7 +28,7 @@ class UserInput
         static void ARDUINO_ISR_ATTR onButtonCPressed();
 
         static void turnOffScreen();
-        static void resetScreenOff();
+        static void resetScreenOff(bool);
     private:
         static Timeable* screen_off_timer;
 };

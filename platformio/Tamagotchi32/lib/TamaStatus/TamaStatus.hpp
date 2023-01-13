@@ -4,6 +4,8 @@
 #include <Timeable.hpp>
 #include <ImageFormat.hpp>
 #include <Vector2.hpp>
+#include <storage/settings_nvs.h>
+
 class TamaStatus {
     public:
         TamaStatus();
@@ -16,7 +18,10 @@ class TamaStatus {
         static bool light_on;
 
 //         static long random(long start, long end);
-
+        static void begin();
+        static void end();
+        static void reset();
+        static void errorCheck(esp_err_t);
         static void add_diet_counter(short int amount);
         static void toggle_light();
         static void toggle_light(bool on);
@@ -43,7 +48,7 @@ class TamaStatus {
         static constexpr double gravity = 9.8;
         static short int diet_health_counter;
         static short int care_errors;
-        static short int evolution_state;
+        static int16_t evolution_state;
         static bool sleeping;
         static bool jumping;
 };

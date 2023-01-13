@@ -36,7 +36,7 @@ void RAMProgressBar::render(Display& display, unsigned short int current_menu_po
     display.fillRect(
         positionX,
         positionY,
-        round(ESP.getFreeHeap() / 81920.0 * width),
+        round(ESP.getFreeHeap() / ESP.getHeapSize() * width),
         height,
         SSD1306_WHITE
     );
