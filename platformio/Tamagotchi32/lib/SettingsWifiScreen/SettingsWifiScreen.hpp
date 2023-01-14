@@ -7,8 +7,9 @@ class SettingsWifiScreen: public BaseScreen {
     public:
         SettingsWifiScreen();
         void onButtonBPressed();
-        inline static const char* display_options[6] {
+        inline static const char* display_options[7] {
             "  Connect",
+            "  Mode"
             "  Edit",
             "  Add",
             "  Remove",

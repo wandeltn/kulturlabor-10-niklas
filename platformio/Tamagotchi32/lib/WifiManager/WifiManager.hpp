@@ -11,14 +11,18 @@ class WifiManager {
         WifiManager();
         void begin(WiFiMode_t);
         void end();
-        void swichMode(WiFiMode_t);
+        void readCredentials();
+        void writeCredentials();
+        void switchMode(WiFiMode_t);
         void getPasswords(int*, char**);
         void addPassword(char*, char*);
         void removePassword(int);
 
     private:
-        inline static char* ssid_array[] = {};
-        inline static char* password_array[] = {};
+        static WiFiMulti wifiMulti;
+        static Preferences preferences;
+        inline static String ssid_array[7] = {};
+        inline static String password_array[7] = {};
 };
 
 #endif // __WIFIMANAGER_H__

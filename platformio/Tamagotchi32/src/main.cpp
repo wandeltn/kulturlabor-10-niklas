@@ -1,6 +1,9 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <UMS3.h>
+#include <WiFi.h>
+#include <WiFiMulti.h>
+#include <WifiManager.hpp>
 #include <storage/settings_nvs.h>
 #include "driver/rtc_io.h"
 #include <cmath>
@@ -38,10 +41,11 @@ Display display(
 
 Timer timer{};
 UMS3 ums3;
+WifiManager wifiManager;
+esp_err_t nvsError;
 BaseScreen* active_screen;
 static TamaStatus tamaStatus{};
 extern UserInput userInput;
-esp_err_t nvsError;
 
 bool screen_on = true;
 bool schedule_rerender = true;
@@ -66,7 +70,7 @@ void print_wakeup_reason(){
 }
 
 void loop() {
-    print_wakeup_reason();
+    Serial.println(WiFi.softAPIP());
     if (screen_on) {
         if(schedule_rerender) {
             display.clearDisplay();

@@ -3,6 +3,7 @@
 #include <MainScreen.hpp>
 #include <ResetScreen.hpp>
 #include "SubScreenOptions/SubScreenOptions.hpp"
+#include <SettingsWifiScreen.hpp>
 #include <TamaStatus.hpp>
 #include <RAMProgressBar.hpp>
 #include <DisplayText.hpp>
@@ -30,9 +31,13 @@ void SettingsScreen::onButtonBPressed()
     switch (current_menu_position)
     {
     case 0:
-        active_screen = new ResetScreen();
+        active_screen = new SettingsWifiScreen();
         break;
     
+    case 1:
+        active_screen = new ResetScreen();
+        break;
+
     default:
         active_screen = new MainScreen();
         break;
