@@ -622,6 +622,11 @@ class Logic(object):
         self.diet_health_counter: int = 0
         
         self.calories_intake_value: int = 0
+        
+        """how many calories the tama needs to survive.
+        Negative values means it has to eat more if it doesnt it will lose in weght. 
+        Positive values over a specific value means it will gain in weight.
+        """
         self.healthyness_value: int = 50
         self.happyness_value: int = 50
         self.weight_value: int = 50
@@ -807,3 +812,7 @@ while True:
     with regulator:
         if logic_class.screen_on:
             active_screen.render()
+
+
+
+Euch trotzdem viel Spaß und einen schönen Urlaub ;-)
