@@ -24,6 +24,11 @@ void BaseScreen::render(Display &display)
     }
 }
 
+void BaseScreen::updateScreen()
+{
+    
+}
+
 void BaseScreen::onButtonAPressed()
 {
     if (++current_menu_position > max_menu_position_) {
