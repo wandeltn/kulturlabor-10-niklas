@@ -10,8 +10,10 @@
 #define ANIMATION_DELAY 500
 #define ANIMATION_0_X   60
 #define ANIMATION_0_Y   48
+
 #define ANIMATION_1_X   50
-#define ANIMATION_1_Y   50
+#define ANIMATION_1_Y   36
+
 #define ANIMATION_2_X   40
 #define ANIMATION_2_Y   25
 

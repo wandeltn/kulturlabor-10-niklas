@@ -13,6 +13,7 @@ BaseScreen::BaseScreen(unsigned char max_menu_position):
 BaseScreen::~BaseScreen() {
     for ( Renderable* render_item : render_list) {
         delete render_item;
+        render_item = nullptr;
     }
     render_list.clear();
 }

@@ -1,6 +1,7 @@
 #include <PlayScreen.hpp>
 #include "DisplayBitmap/DisplayBitmap.hpp"
 #include <Bitmaps.hpp>
+#include <PlayTama/PlayTama.hpp>
 #include <StatsDisplay.hpp>
 #include <MainScreen.hpp>
 #include "SubScreenOptions/SubScreenOptions.hpp"
@@ -20,6 +21,7 @@ PlayScreen::PlayScreen(): BaseScreen(5) {
 }
 
 void PlayScreen::onButtonBPressed() {
+    delete active_screen;
     switch (current_menu_position)
     {
     case 0:
@@ -27,34 +29,38 @@ void PlayScreen::onButtonBPressed() {
         tamaStatus.hunger += 300;
         tamaStatus.happyness += 5;
         tamaStatus.health += 5;
+        active_screen = new PlayTama(current_menu_position, 0);
         break;
     case 1:
         // Badminton
         tamaStatus.hunger += 300;
         tamaStatus.happyness += 5;
         tamaStatus.health += 5;
+        active_screen = new PlayTama(current_menu_position, 0);
         break;
     case 2:
         // Hockey
         tamaStatus.hunger += 300;
         tamaStatus.happyness += 5;
         tamaStatus.health += 5;
+        active_screen = new PlayTama(current_menu_position, 0);
         break;
     case 3:
         // Chess
         tamaStatus.hunger += 30;
         tamaStatus.happyness += 0;
         tamaStatus.health += 5;
+        active_screen = new PlayTama(current_menu_position, 0);
         break;
     case 4:
-        // Cards
+        // Pong
         tamaStatus.hunger += 30;
         tamaStatus.happyness += 0;
         tamaStatus.health += 5;
+        active_screen = new PlayTama(current_menu_position, 0);
         break;
     
     default:
-        delete active_screen;
         active_screen = new MainScreen();
         break;
     }

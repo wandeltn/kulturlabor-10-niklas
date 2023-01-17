@@ -21,6 +21,7 @@ class TamaStatus {
         static void begin();
         static void end();
         static void reset();
+        static void recoverSleep(long shutdown_time);
         static void errorCheck(esp_err_t);
         static void add_diet_counter(short int amount);
         static void toggle_light();
@@ -39,7 +40,7 @@ class TamaStatus {
         static void updateEvolutionTimer();
 
         static void updateJump();
-        static double getPolynomialValue();
+        static double getPolynomialValue(time_t time_in_seconds);
 
         static ImageFormat current_display_state;
         static Vector2 position;

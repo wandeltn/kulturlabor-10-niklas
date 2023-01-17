@@ -70,7 +70,9 @@ void print_wakeup_reason(){
 }
 
 void loop() {
-    Serial.println(WiFi.softAPIP());
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    Serial.println(tv.tv_sec);
     if (screen_on) {
         active_screen->updateScreen();
         if(schedule_rerender) {

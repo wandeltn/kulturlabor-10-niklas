@@ -12,7 +12,7 @@ class PlayScreen: public BaseScreen {
         "  Badminton",
         "  Hockey",
         "  Chess",
-        "  Cards",
+        "  Pong",
         "  Exit"
         };
     private:

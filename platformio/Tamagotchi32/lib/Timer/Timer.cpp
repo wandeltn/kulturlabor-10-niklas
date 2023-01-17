@@ -20,8 +20,10 @@ void Timer::cancel(Timeable* timer)
 }
 
 void Timer::check_timer_list() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     for (Timeable* list_item : timer_list) {;
-        if (list_item->call_time <= millis()) { 
+        if (list_item->call_time <= tv.tv_sec) {
             #ifdef DEBUG
             Serial.println("finished timer");
             #endif
