@@ -20,6 +20,7 @@ extern esp_err_t nvsError;
 #define WEIGHT_CHECK_INTERVAL_TIME_MS   50  // muss für die wiederherstellung durch den wert von HUNGER teilbar sein 
 #define SLEEP_INTERVAL_TIME_MS          10
 #define DEATH_UPDATE_INTERVAL_TIME_MS   100
+#define SICKNESS_UPDATE_INTERVAL_TIME   10
 
 #define HUNGER_ADD_VALUE                -10
 #define HEALTH_ADD_VALUE                -10
@@ -457,6 +458,21 @@ void TamaStatus::updateEvolutionTimer()
     current_display_state = Bitmaps::Tama::evolution_list[evolution_state][random(Bitmaps::Tama::state_count[evolution_state] - 1)];
 }
 
+void TamaStatus::updateSicknessTimer()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    if (random(1, 50) == 1) {
+        current_sickness = random(0, 5);
+    }
+    timer.attach(new Timeable{
+        .call_time = SICKNESS_UPDATE_INTERVAL_TIME,
+        .linked_value = nullptr,
+        .payload = 0,
+        .notifier = &updateSicknessTimer
+    });
+}
+
 void TamaStatus::updateJump()
 {
         double delta = 0.1; // time delta [s]
@@ -500,6 +516,11 @@ double TamaStatus::getPolynomialValue(time_t time_in_seconds)
     return result; // convert back to millis
 }
 
+std::string TamaStatus::getSickness()
+{
+    return sicknesses[current_sickness];
+}
+
 short int TamaStatus::happyness = 0;
 short int TamaStatus::health = 0;
 short int TamaStatus::hunger = 0;
@@ -508,6 +529,7 @@ short int TamaStatus::dicipline = 0;
 short int TamaStatus::weight = 50;
 short int TamaStatus::diet_health_counter = 0;
 short int TamaStatus::care_errors = 0;
+short int TamaStatus::current_sickness = 0;
 int16_t TamaStatus::evolution_state = 0;
 
 Vector2 TamaStatus::position = {

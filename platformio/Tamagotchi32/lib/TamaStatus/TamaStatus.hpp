@@ -2,6 +2,7 @@
 #define __TAMASTATUS_H__
 
 #include <Timeable.hpp>
+#include <iostream>
 #include <ImageFormat.hpp>
 #include <Vector2.hpp>
 #include <storage/settings_nvs.h>
@@ -38,14 +39,28 @@ class TamaStatus {
         static void updateDeathTimer();
         static void updatePositionTimer();
         static void updateEvolutionTimer();
+        static void updateSicknessTimer();
 
         static void updateJump();
         static double getPolynomialValue(time_t time_in_seconds);
+        static std::string getSickness();
 
         static ImageFormat current_display_state;
         static Vector2 position;
         static Vector2 velocity;
     private:
+        static short current_sickness;
+        inline static const std::string sicknesses[9] = {
+            "Healthy",
+            "Headaches",
+            "Flu",
+            "Fever",
+            "Nausea",
+            "Vomiting"
+            "Insomnia",
+            "Depression",
+            "COVID-19"
+        };
         static constexpr double gravity = 9.8;
         static short int diet_health_counter;
         static short int care_errors;

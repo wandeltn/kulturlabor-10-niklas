@@ -2,6 +2,7 @@
 #include "DisplayBitmap/DisplayBitmap.hpp"
 #include <Bitmaps.hpp>
 #include <StatsDisplay.hpp>
+#include <DisplayText.hpp>
 #include <MainScreen.hpp>
 #include "SubScreenOptions/SubScreenOptions.hpp"
 #include <TamaStatus.hpp>
@@ -21,6 +22,7 @@ MedicineScreen::MedicineScreen(): BaseScreen(3) {
     );
     render_list.push_back(new DisplayBitmap{&Bitmaps::medicine_menu_icon_image, 0, 48});
     render_list.push_back(new StatsDisplay{&tamaStatus.health, 0, 0});
+    render_list.push_back(new DisplayText{32, 52, tamaStatus.getSickness().c_str()});
 }
 
 void MedicineScreen::onButtonBPressed() {
