@@ -8,7 +8,7 @@ WifiManager::WifiManager()
 {
     readCredentials();  
 
-    for (short i = 0; i <= sizeof(ssid_array) / sizeof(ssid_array[0]); i++) {
+    for (short i = 0; i <= ssid_array->length(); i++) {
         wifiMulti.addAP(ssid_array[i].c_str(), password_array[i].c_str());
     }  
 }
