@@ -19,6 +19,7 @@ extern BaseScreen* active_screen;
 extern Display display;
 extern TamaStatus tamaStatus;
 extern UMS3 ums3;
+extern struct timeval tv;
 
 UserInput::UserInput() {
     resetScreenOff(true);
@@ -101,11 +102,9 @@ void UserInput::resetScreenOff(bool initTimer = false)
             Serial.println("update position timer on screen on");
         }
     }
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
     screen_off_timer = new Timeable{
         .call_time = (unsigned long)tv.tv_sec + SCREEN_OFF_TIME,
-        .linked_value = nullptr,
+        .linked_value = &linked_value,
         .payload = 0,
         .notifier = &turnOffScreen
     };
@@ -116,7 +115,7 @@ void UserInput::resetScreenOff(bool initTimer = false)
 
 unsigned long UserInput::last_button_time = 0;
 unsigned long UserInput::button_time = 0;
-
+short UserInput::linked_value = 0;
 unsigned short int UserInput::max_menu_position = 7;
 unsigned short int UserInput::current_menu_position = 0;
 
@@ -125,7 +124,7 @@ bool UserInput::button_B_pressed = false;
 #ifndef DEMO_MODE
 Timeable* UserInput::screen_off_timer = new Timeable{
     .call_time = SCREEN_OFF_TIME,
-    .linked_value = nullptr,
+    .linked_value = &linked_value,
     .payload = 0,
     .notifier = &turnOffScreen
 };

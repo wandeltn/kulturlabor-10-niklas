@@ -61,10 +61,12 @@ class TamaStatus {
             "Depression",
             "COVID-19"
         };
+        static uint64_t evolve_time;
         static constexpr double gravity = 9.8;
         static short int diet_health_counter;
         static short int care_errors;
         static int16_t evolution_state;
+        static int16_t display_state;
         static bool sleeping;
         static bool jumping;
 };

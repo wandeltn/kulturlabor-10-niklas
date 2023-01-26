@@ -27,6 +27,9 @@ void BatteryIndicator::render(Display &display, unsigned short int current_menu_
             SSD1306_WHITE
         );
     }
+    //draw battery voltage
+    display.setCursor(position_X - 40, position_Y);
+    display.write(std::to_string(ums3.getBatteryVoltage()).c_str());
 }
 
 inline float BatteryIndicator::getChargePercent()

@@ -57,6 +57,8 @@ void TamaStatus::begin()
 
         nvsError = nvs_get_i16(my_handle, "evolution_state", &evolution_state);
         errorCheck(nvsError);
+        nvsError = nvs_get_i16(my_handle, "display_state", &display_state);
+        errorCheck(nvsError);
         nvsError = nvs_get_i16(my_handle, "happyness", &happyness);
         errorCheck(nvsError);
         nvsError = nvs_get_i16(my_handle, "health", &health);
@@ -75,6 +77,8 @@ void TamaStatus::begin()
         int64_t shutdown_time = 0;
         errorCheck(nvsError);
         nvsError = nvs_get_i64(my_handle, "shutdown_time", &shutdown_time);
+        recoverSleep(shutdown_time);
+        nvsError = nvs_get_u64(my_handle, "evolution_time", &evolve_time);
         recoverSleep(shutdown_time);
 
     // Close
@@ -103,11 +107,16 @@ void TamaStatus::end()
    if (nvsError != ESP_OK) {
        printf("Error (%s) opening NVS handle!\n", esp_err_to_name(nvsError));
    } else {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+
         printf("Done\n");
         // Write value into the NVS
         printf("Updating the length of first User Message in NVS ... ");
 
         nvsError = nvs_set_i16(my_handle, "evolution_state", evolution_state);
+        printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
+        nvsError = nvs_set_i16(my_handle, "display_state", display_state);
         printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
         nvsError = nvs_set_i16(my_handle, "happyness", happyness);
         printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
@@ -124,6 +133,10 @@ void TamaStatus::end()
         nvsError = nvs_set_i16(my_handle, "diet_counter", diet_health_counter);
         printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
         nvsError = nvs_set_i16(my_handle, "care_errors", care_errors);
+        printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
+        nvsError = nvs_set_i64(my_handle, "shutdown_time", tv.tv_sec);
+        printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
+        nvsError = nvs_set_i64(my_handle, "evolution_time", evolve_time);
         printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
 
         // Commit written value.
@@ -447,15 +460,21 @@ void TamaStatus::updateEvolutionTimer()
     if (evolution_state >= sizeof(Bitmaps::Tama::state_count) / sizeof(Bitmaps::Tama::state_count[0])) {
         evolution_state = (sizeof(Bitmaps::Tama::state_count) / sizeof(Bitmaps::Tama::state_count[0]) - 1);
     } else {
+        if (evolve_time <= tv.tv_sec) {
+            evolve_time = (unsigned long)(tv.tv_sec + 1000 * getPolynomialValue(tv.tv_sec));
+        }
         timer.attach(new Timeable{
-            .call_time = (unsigned long)(tv.tv_sec + 1000),
+            .call_time = (unsigned long)evolve_time,
             //.call_time = (unsigned long)(tv.tv_sec + round(getPolynomialValue() * 30 * 1000)),
             .linked_value = &evolution_state,
             .payload = 1,
             .notifier = &updateEvolutionTimer
         });
     }
-    current_display_state = Bitmaps::Tama::evolution_list[evolution_state][random(Bitmaps::Tama::state_count[evolution_state] - 1)];
+    if (evolve_time <= tv.tv_sec) {
+        display_state = random(Bitmaps::Tama::state_count[evolution_state] - 1);
+    }
+    current_display_state = Bitmaps::Tama::evolution_list[evolution_state][display_state];
 }
 
 void TamaStatus::updateSicknessTimer()
@@ -527,10 +546,12 @@ short int TamaStatus::hunger = 0;
 short int TamaStatus::poop_on_screen = 4;
 short int TamaStatus::dicipline = 0;
 short int TamaStatus::weight = 50;
+uint64_t TamaStatus::evolve_time = 0;
 short int TamaStatus::diet_health_counter = 0;
 short int TamaStatus::care_errors = 0;
 short int TamaStatus::current_sickness = 0;
 int16_t TamaStatus::evolution_state = 0;
+int16_t TamaStatus::display_state = 0;
 
 Vector2 TamaStatus::position = {
     .x = 40, 

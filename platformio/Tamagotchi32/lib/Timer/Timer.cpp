@@ -27,9 +27,7 @@ void Timer::check_timer_list() {
             #ifdef DEBUG
             Serial.println("finished timer");
             #endif
-            if (list_item->linked_value != nullptr){
-                *list_item->linked_value += list_item->payload;
-            }
+            *list_item->linked_value += list_item->payload;
             list_item->notifier();
             delete list_item;
             timer_list.erase(std::remove(

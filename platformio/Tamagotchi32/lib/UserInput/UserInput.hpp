@@ -15,7 +15,7 @@ class UserInput
 
         static unsigned long last_button_time;
         static unsigned long button_time;
-
+        static short linked_value;
         static unsigned short int max_menu_position;
         static unsigned short int current_menu_position;
 

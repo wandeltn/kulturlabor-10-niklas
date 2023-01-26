@@ -44,6 +44,7 @@ UMS3 ums3;
 WifiManager wifiManager;
 esp_err_t nvsError;
 BaseScreen* active_screen;
+struct timeval tv;
 static TamaStatus tamaStatus{};
 extern UserInput userInput;
 
@@ -70,9 +71,8 @@ void print_wakeup_reason(){
 }
 
 void loop() {
-    struct timeval tv;
     gettimeofday(&tv, NULL);
-    Serial.println(tv.tv_sec);
+    Serial.println(ums3.getBatteryVoltage());
     if (screen_on) {
         active_screen->updateScreen();
         if(schedule_rerender) {
