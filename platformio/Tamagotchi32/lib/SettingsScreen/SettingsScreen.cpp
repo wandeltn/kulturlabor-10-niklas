@@ -13,7 +13,7 @@
 extern BaseScreen* active_screen;
 extern Timer timer;
 
-SettingsScreen::SettingsScreen(): BaseScreen(2) {
+SettingsScreen::SettingsScreen(): BaseScreen(3) {
     #ifdef DEBUG
     Serial.println("inside SettingsScreen constructor");
     #endif

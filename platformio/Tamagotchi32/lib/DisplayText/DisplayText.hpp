@@ -7,6 +7,7 @@
 class DisplayText: public Renderable {
     public:
         DisplayText(short int positionX, short int positionY, std::string text);
+        DisplayText(short int positionX, short int positionY, std::string* text);
         void render(Display &display, unsigned short int current_menu_position);
     private:
         short int position_X, position_Y;

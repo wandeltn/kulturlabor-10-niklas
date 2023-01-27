@@ -7,7 +7,7 @@
 
 extern BaseScreen* active_screen;
 
-SettingsWifiScreen::SettingsWifiScreen(): BaseScreen(6)
+SettingsWifiScreen::SettingsWifiScreen(): BaseScreen(7)
 {
     render_list.push_back(new SubScreenOptions{display_options, sizeof(display_options) / sizeof(display_options[0])});
 }
