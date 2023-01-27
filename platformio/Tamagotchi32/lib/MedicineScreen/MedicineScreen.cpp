@@ -6,6 +6,7 @@
 #include <MainScreen.hpp>
 #include "SubScreenOptions/SubScreenOptions.hpp"
 #include <TamaStatus.hpp>
+#include <HealTama/HealTama.hpp>
 
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
@@ -26,26 +27,29 @@ MedicineScreen::MedicineScreen(): BaseScreen(3) {
 }
 
 void MedicineScreen::onButtonBPressed() {
+    delete active_screen;
     switch (current_menu_position)
     {
     case 0:
         // Vaccination
         tamaStatus.health += 10;
         tamaStatus.happyness += -10;
+        active_screen = new HealTama(current_menu_position);
         break;
     case 1:
         // Medicine
         tamaStatus.health += 10;
         tamaStatus.happyness += -5;
+        active_screen = new HealTama(current_menu_position);
         break;
     case 2:
         // Doctor
         tamaStatus.health += 5;
         tamaStatus.happyness += 2;
+        active_screen = new HealTama(current_menu_position);
         break;
     
     default:
-        delete active_screen;
         active_screen = new MainScreen();
         break;
     }
