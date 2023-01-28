@@ -172,7 +172,7 @@ void TamaStatus::recoverSleep(long shutdown_time)
     long current_time = tv.tv_sec;
     long simulated_time = shutdown_time;
     // happyness
-    while (simulated_time >= current_time) {
+    while (simulated_time <= current_time) {
         hunger += HUNGER_ADD_VALUE;
         simulated_time += random(
             simulated_time + POOP_INTERVAL_TIME_MS - 500,
@@ -182,7 +182,7 @@ void TamaStatus::recoverSleep(long shutdown_time)
     simulated_time = shutdown_time;
 
     //health
-    while (simulated_time >= current_time) {
+    while (simulated_time <= current_time) {
         health += HEALTH_ADD_VALUE;
         simulated_time += random(
             simulated_time + HEALTH_INTERVAL_TIME_MS - 500,
@@ -192,7 +192,7 @@ void TamaStatus::recoverSleep(long shutdown_time)
     simulated_time = shutdown_time;
     int hunger_interations = 0;
     // hunger
-    while (simulated_time >= current_time) {
+    while (simulated_time <= current_time) {
         hunger -= getPolynomialValue(simulated_time);
         simulated_time += random(
             simulated_time + HUNGER_INTERVAL_TIME_MS - 500,
@@ -219,7 +219,7 @@ void TamaStatus::recoverSleep(long shutdown_time)
     simulated_time = shutdown_time;
 
     //dicipline
-    while (simulated_time >= current_time) {
+    while (simulated_time <= current_time) {
         dicipline += DICIPLINE_ADD_VALUE;
         simulated_time += random(
             simulated_time + DICIPLINE_INTERVAL_TIME_MS - 500,
