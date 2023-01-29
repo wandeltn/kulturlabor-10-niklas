@@ -1,5 +1,9 @@
 #include <BaseScreen.hpp>
 #include <Renderable.hpp>
+#include <MainScreen.hpp>
+
+extern BaseScreen* active_screen;
+extern bool schedule_rerender;
 
 BaseScreen::BaseScreen(unsigned char max_menu_position): 
     current_menu_position{0}, 
@@ -27,7 +31,7 @@ void BaseScreen::render(Display &display)
 
 void BaseScreen::updateScreen()
 {
-    
+
 }
 
 void BaseScreen::onButtonAPressed()
@@ -44,4 +48,10 @@ void BaseScreen::onButtonCPressed()
     } else {
         current_menu_position--;
     }
+}
+
+void BaseScreen::onButtonDPressed()
+{
+    delete active_screen;
+    active_screen = new MainScreen();
 }

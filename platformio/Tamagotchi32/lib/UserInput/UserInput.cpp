@@ -7,9 +7,10 @@
 
 // #define DEMO_MODE
 
-#define BUTTON_A        0
+#define BUTTON_A        12
 #define BUTTON_B        13
 #define BUTTON_C        14
+#define BUTTON_D        15
 #define SCREEN_OFF_TIME 15
 
 extern Timer timer;
@@ -27,15 +28,17 @@ UserInput::UserInput() {
 
 void UserInput::begin()
 {
-    pinMode(12, INPUT_PULLUP);
-    pinMode(13, INPUT_PULLUP);
-    pinMode(14, INPUT_PULLUP);
+    pinMode(BUTTON_A, INPUT_PULLUP);
+    pinMode(BUTTON_B, INPUT_PULLUP);
+    pinMode(BUTTON_C, INPUT_PULLUP);
+    pinMode(BUTTON_D, INPUT_PULLUP);
 
     ums3.setPixelColor(ums3.colorWheel(180));
     
-    attachInterrupt(12, onButtonAPressed, FALLING);
-    attachInterrupt(13, onButtonBPressed, FALLING);
-    attachInterrupt(14, onButtonCPressed, FALLING);
+    attachInterrupt(BUTTON_A, onButtonAPressed, FALLING);
+    attachInterrupt(BUTTON_B, onButtonBPressed, FALLING);
+    attachInterrupt(BUTTON_C, onButtonCPressed, FALLING);
+    attachInterrupt(BUTTON_D, onButtonDPressed, FALLING);
 }
 
 void UserInput::onButtonAPressed() {
@@ -82,6 +85,24 @@ void UserInput::onButtonCPressed() {
         schedule_rerender = true;
         last_button_time = button_time;
     }
+}
+
+void ARDUINO_ISR_ATTR UserInput::onButtonDPressed()
+{
+    Serial.println("Button D pressed!");
+    button_time = millis();
+    if (button_time - last_button_time > 250)
+    {
+        if (screen_on) {
+            active_screen->onButtonDPressed();
+        }
+        screen_on = true;
+        #ifndef DEMO_MODE
+        resetScreenOff(false);
+        #endif
+        schedule_rerender = true;
+        last_button_time = button_time;
+    }    
 }
 
 void UserInput::turnOffScreen()
