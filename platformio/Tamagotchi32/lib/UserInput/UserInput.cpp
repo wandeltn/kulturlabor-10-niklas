@@ -7,9 +7,10 @@
 
 // #define DEMO_MODE
 
-#define BUTTON_A    0
-#define BUTTON_B    13
-#define BUTTON_C    14
+#define BUTTON_A        0
+#define BUTTON_B        13
+#define BUTTON_C        14
+#define SCREEN_OFF_TIME 15
 
 extern Timer timer;
 extern bool schedule_rerender;
@@ -18,6 +19,7 @@ extern BaseScreen* active_screen;
 extern Display display;
 extern TamaStatus tamaStatus;
 extern UMS3 ums3;
+extern struct timeval tv;
 
 UserInput::UserInput() {
     resetScreenOff(true);
@@ -100,9 +102,9 @@ void UserInput::resetScreenOff(bool initTimer = false)
             Serial.println("update position timer on screen on");
         }
     }
-    screen_off_timer = new Timeable{ 
-        .call_time = millis() + screen_off_time,
-        .linked_value = &screen_off_times,
+    screen_off_timer = new Timeable{
+        .call_time = (unsigned long)tv.tv_sec + SCREEN_OFF_TIME,
+        .linked_value = &linked_value,
         .payload = 0,
         .notifier = &turnOffScreen
     };
@@ -113,18 +115,16 @@ void UserInput::resetScreenOff(bool initTimer = false)
 
 unsigned long UserInput::last_button_time = 0;
 unsigned long UserInput::button_time = 0;
-
+short UserInput::linked_value = 0;
 unsigned short int UserInput::max_menu_position = 7;
 unsigned short int UserInput::current_menu_position = 0;
-unsigned short int UserInput::screen_off_time = 5000;
 
-short int UserInput::screen_off_times = 0;
 bool UserInput::button_B_pressed = false;
 
 #ifndef DEMO_MODE
 Timeable* UserInput::screen_off_timer = new Timeable{
-    .call_time = millis() + screen_off_time,
-    .linked_value = &screen_off_times,
+    .call_time = SCREEN_OFF_TIME,
+    .linked_value = &linked_value,
     .payload = 0,
     .notifier = &turnOffScreen
 };

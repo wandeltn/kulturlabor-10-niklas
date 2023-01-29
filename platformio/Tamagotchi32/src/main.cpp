@@ -44,6 +44,7 @@ UMS3 ums3;
 WifiManager wifiManager;
 esp_err_t nvsError;
 BaseScreen* active_screen;
+struct timeval tv;
 static TamaStatus tamaStatus{};
 extern UserInput userInput;
 
@@ -70,8 +71,10 @@ void print_wakeup_reason(){
 }
 
 void loop() {
-    Serial.println(WiFi.softAPIP());
+    gettimeofday(&tv, NULL);
+    Serial.println(ums3.getBatteryVoltage());
     if (screen_on) {
+        active_screen->updateScreen();
         if(schedule_rerender) {
             display.clearDisplay();
             active_screen->render(display);
@@ -96,13 +99,12 @@ void loop() {
 
 void setup() {
     Serial.begin(115200);
-    delay(1000);
 
     wakeup_reason = esp_sleep_get_wakeup_cause();
 
     ums3.begin();
     ums3.setLDO2Power(true);
-    ums3.setPixelBrightness(100);
+    ums3.setPixelBrightness(10);
     // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
     if(!display.begin(SSD1306_SWITCHCAPVCC)) {
         #ifdef DEBUG
@@ -114,7 +116,6 @@ void setup() {
     userInput.begin();
     
     display.display();
-    delay(1000);
 
     // Clear the buffer
     display.clearDisplay();

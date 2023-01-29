@@ -5,6 +5,7 @@
 #include "DisplayBitmap/DisplayBitmap.hpp"
 #include <TamaStatus.hpp>
 #include <MainScreen.hpp>
+#include <ToggleLight/ToggleLight.hpp>
 
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
@@ -26,22 +27,24 @@ LightScreen::LightScreen(): BaseScreen(2)
 
 void LightScreen::onButtonBPressed()
 {
+    delete active_screen;
     switch (current_menu_position)
     {
     case 0:
         tamaStatus.toggle_light(true);
+        active_screen = new ToggleLight(true, 0);
         #ifdef DEBUG
         Serial.println("turned on light");
         #endif
         break;
     case 1:
         tamaStatus.toggle_light(false);
+        active_screen = new ToggleLight(false, 0);
         #ifdef DEBUG
         Serial.println("turned off light"); 
         #endif
         break;
     default:
-        delete active_screen;
         active_screen = new MainScreen();
         break;
     }

@@ -1,5 +1,6 @@
 #include <PoopScreen.hpp>
 #include "DisplayBitmap/DisplayBitmap.hpp"
+#include <CleanPoop/CleanPoop.hpp>
 #include <Bitmaps.hpp>
 #include <StatsDisplay.hpp>
 #include <MainScreen.hpp>
@@ -20,18 +21,19 @@ PoopScreen::PoopScreen(): BaseScreen(1) {
 }
 
 void PoopScreen::onButtonBPressed() {
+    delete active_screen;
     switch (current_menu_position)
     {
     case 0:
         //Burger
         tamaStatus.clear_poop();
+        active_screen = new CleanPoop(current_menu_position, 0);
         #ifdef DEBUG
         Serial.println("cleared all poop");
         #endif
         break;
 
     default:
-        delete active_screen;
         active_screen = new MainScreen();
         break;
     }

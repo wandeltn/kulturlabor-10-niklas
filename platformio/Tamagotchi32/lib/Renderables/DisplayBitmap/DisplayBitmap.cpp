@@ -11,7 +11,7 @@ DisplayBitmap::DisplayBitmap(const ImageFormat* image, unsigned short int positi
     position_Y = positionY;
 }
 
-void DisplayBitmap::render(Display &display, unsigned short int current_menu_position)
+void DisplayBitmap::render(Display &display, unsigned short current_menu_position)
 {
     display.drawBitmap(
         position_X,

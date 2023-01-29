@@ -12,14 +12,19 @@ extern Timer timer;
 extern bool screen_on;
 extern esp_err_t nvsError;
 
-#define POOP_INTERVAL_TIME_MS           13000
-#define HUNGER_INTERVAL_TIME_MS         12000
-#define HAPPYNESS_INTERVAL_TIME_MS      15000
-#define HEALTH_INTERVAL_TIME_MS         20000
-#define DICIPLINE_INTERVAL_TIME_MS      11000
-#define WEIGHT_CHECK_INTERVAL_TIME_MS   50000
-#define SLEEP_INTERVAL_TIME_MS          10000
-#define DEATH_UPDATE_INTERVAL_TIME_MS   100000
+#define POOP_INTERVAL_TIME_MS           13
+#define HUNGER_INTERVAL_TIME_MS         10
+#define HAPPYNESS_INTERVAL_TIME_MS      15
+#define HEALTH_INTERVAL_TIME_MS         20
+#define DICIPLINE_INTERVAL_TIME_MS      11
+#define WEIGHT_CHECK_INTERVAL_TIME_MS   50  // muss für die wiederherstellung durch den wert von HUNGER teilbar sein 
+#define SLEEP_INTERVAL_TIME_MS          10
+#define DEATH_UPDATE_INTERVAL_TIME_MS   100
+#define SICKNESS_UPDATE_INTERVAL_TIME   10
+
+#define HUNGER_ADD_VALUE                -10
+#define HEALTH_ADD_VALUE                -10
+#define DICIPLINE_ADD_VALUE             -5
 
 TamaStatus::TamaStatus()
 {
@@ -52,6 +57,8 @@ void TamaStatus::begin()
 
         nvsError = nvs_get_i16(my_handle, "evolution_state", &evolution_state);
         errorCheck(nvsError);
+        nvsError = nvs_get_i16(my_handle, "display_state", &display_state);
+        errorCheck(nvsError);
         nvsError = nvs_get_i16(my_handle, "happyness", &happyness);
         errorCheck(nvsError);
         nvsError = nvs_get_i16(my_handle, "health", &health);
@@ -67,7 +74,12 @@ void TamaStatus::begin()
         nvsError = nvs_get_i16(my_handle, "diet_counter", &diet_health_counter);
         errorCheck(nvsError);
         nvsError = nvs_get_i16(my_handle, "care_errors", &care_errors);
+        int64_t shutdown_time = 0;
         errorCheck(nvsError);
+        nvsError = nvs_get_i64(my_handle, "shutdown_time", &shutdown_time);
+        recoverSleep(shutdown_time);
+        nvsError = nvs_get_u64(my_handle, "evolution_time", &evolve_time);
+        recoverSleep(shutdown_time);
 
     // Close
     nvs_close(my_handle);
@@ -95,11 +107,16 @@ void TamaStatus::end()
    if (nvsError != ESP_OK) {
        printf("Error (%s) opening NVS handle!\n", esp_err_to_name(nvsError));
    } else {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+
         printf("Done\n");
         // Write value into the NVS
         printf("Updating the length of first User Message in NVS ... ");
 
         nvsError = nvs_set_i16(my_handle, "evolution_state", evolution_state);
+        printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
+        nvsError = nvs_set_i16(my_handle, "display_state", display_state);
         printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
         nvsError = nvs_set_i16(my_handle, "happyness", happyness);
         printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
@@ -116,6 +133,10 @@ void TamaStatus::end()
         nvsError = nvs_set_i16(my_handle, "diet_counter", diet_health_counter);
         printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
         nvsError = nvs_set_i16(my_handle, "care_errors", care_errors);
+        printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
+        nvsError = nvs_set_i64(my_handle, "shutdown_time", tv.tv_sec);
+        printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
+        nvsError = nvs_set_i64(my_handle, "evolution_time", evolve_time);
         printf((nvsError != ESP_OK) ? "Failed!\n" : "Done\n");
 
         // Commit written value.
@@ -142,6 +163,72 @@ void TamaStatus::reset()
     weight = 50;
     diet_health_counter = 0;
     care_errors = 0;
+}
+
+void TamaStatus::recoverSleep(long shutdown_time)
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    long current_time = tv.tv_sec;
+    long simulated_time = shutdown_time;
+    // happyness
+    while (simulated_time <= current_time) {
+        hunger += HUNGER_ADD_VALUE;
+        simulated_time += random(
+            simulated_time + POOP_INTERVAL_TIME_MS - 500,
+            simulated_time + POOP_INTERVAL_TIME_MS + 500
+        );
+    }
+    simulated_time = shutdown_time;
+
+    //health
+    while (simulated_time <= current_time) {
+        health += HEALTH_ADD_VALUE;
+        simulated_time += random(
+            simulated_time + HEALTH_INTERVAL_TIME_MS - 500,
+            simulated_time + HEALTH_INTERVAL_TIME_MS + 500
+        );
+    }
+    simulated_time = shutdown_time;
+    int hunger_interations = 0;
+    // hunger
+    while (simulated_time <= current_time) {
+        hunger -= getPolynomialValue(simulated_time);
+        simulated_time += random(
+            simulated_time + HUNGER_INTERVAL_TIME_MS - 500,
+            simulated_time + HUNGER_INTERVAL_TIME_MS + 500
+        );
+        if (hunger_interations % 5 == 0) {
+            if (-2000 >= hunger) {
+                weight += hunger / 500; // 1500
+            } else if ( 2000 <= hunger) {
+                weight += hunger / 500; // 1500 
+            }
+        }
+    }
+    simulated_time = shutdown_time;
+
+    //poop_on_screen
+    while (simulated_time <= current_time) {
+        poop_on_screen += 1;
+        simulated_time += random(
+            simulated_time + HEALTH_INTERVAL_TIME_MS - 500,
+            simulated_time + HEALTH_INTERVAL_TIME_MS + 500
+        );
+    }
+    simulated_time = shutdown_time;
+
+    //dicipline
+    while (simulated_time <= current_time) {
+        dicipline += DICIPLINE_ADD_VALUE;
+        simulated_time += random(
+            simulated_time + DICIPLINE_INTERVAL_TIME_MS - 500,
+            simulated_time + DICIPLINE_INTERVAL_TIME_MS + 500
+        );
+    }
+    simulated_time = shutdown_time;
+
+    //care_errors
 }
 
 void TamaStatus::errorCheck(esp_err_t)
@@ -206,13 +293,15 @@ void TamaStatus::updateHungerTimer()
     Serial.print("poly function: ");
     Serial.println(getPolynomialValue());
     #endif
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + HUNGER_INTERVAL_TIME_MS - 500,
-            millis() + HUNGER_INTERVAL_TIME_MS + 500
+            tv.tv_sec + HUNGER_INTERVAL_TIME_MS - 500,
+            tv.tv_sec + HUNGER_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &hunger,
-        .payload = (short)(round(getPolynomialValue()) * -1),
+        .payload = (short)(round(getPolynomialValue(tv.tv_sec)) * -1),
         .notifier = &updateHungerTimer
     });
 }
@@ -222,13 +311,15 @@ void TamaStatus::updateHappynessTimer()
     #ifdef DEBUG
     Serial.println("Setting new happyness Timeable");
     #endif
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + POOP_INTERVAL_TIME_MS - 500,
-            millis() + POOP_INTERVAL_TIME_MS + 500
+            tv.tv_sec + POOP_INTERVAL_TIME_MS - 500,
+            tv.tv_sec + POOP_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &happyness,
-        .payload = -10,
+        .payload = HUNGER_ADD_VALUE,
         .notifier = &updatePoopTimer
     });
 }
@@ -239,13 +330,15 @@ void TamaStatus::updateHealthTimer()
     #ifdef DEBUG
     Serial.println("Setting new sickness Timeable");
     #endif
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + HEALTH_INTERVAL_TIME_MS - 500,
-            millis() + HEALTH_INTERVAL_TIME_MS + 500
+            tv.tv_sec + HEALTH_INTERVAL_TIME_MS - 500,
+            tv.tv_sec + HEALTH_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &health,
-        .payload = -10,
+        .payload = HEALTH_ADD_VALUE,
         .notifier = &updateHealthTimer
     });
 }
@@ -255,13 +348,15 @@ void TamaStatus::updateDiciplineTimer()
     #ifdef DEBUG
     Serial.println("Setting new dicipline Timeable");
     #endif
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + DICIPLINE_INTERVAL_TIME_MS - 500,
-            millis() + DICIPLINE_INTERVAL_TIME_MS + 500
+            tv.tv_sec + DICIPLINE_INTERVAL_TIME_MS - 500,
+            tv.tv_sec + DICIPLINE_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &dicipline,
-        .payload = -5,
+        .payload = DICIPLINE_ADD_VALUE,
         .notifier = &updateDiciplineTimer
     });
 }
@@ -276,10 +371,12 @@ void TamaStatus::updateWeghtCheckTImer()
     #ifdef DEBUG
     Serial.println("Setting new weightCheck Timeable");
     #endif
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + WEIGHT_CHECK_INTERVAL_TIME_MS - 500,
-            millis() + WEIGHT_CHECK_INTERVAL_TIME_MS + 500
+            tv.tv_sec + WEIGHT_CHECK_INTERVAL_TIME_MS - 500,
+            tv.tv_sec + WEIGHT_CHECK_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &weight,
         .payload = 0,
@@ -294,10 +391,12 @@ void TamaStatus::updateSleepTimer()
     #ifdef DEBUG
     Serial.println("Setting new sleep Timeable");
     #endif
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + SLEEP_INTERVAL_TIME_MS - 500,
-            millis() + SLEEP_INTERVAL_TIME_MS + 500
+            tv.tv_sec + SLEEP_INTERVAL_TIME_MS - 500,
+            tv.tv_sec + SLEEP_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &health,
         .payload = 5,
@@ -310,10 +409,12 @@ void TamaStatus::updateDeathTimer()
     #ifdef DEBUG
     Serial.println("Setting new deathCheck Timeable");
     #endif
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            millis() + DEATH_UPDATE_INTERVAL_TIME_MS - 500,
-            millis() + DEATH_UPDATE_INTERVAL_TIME_MS + 500
+            tv.tv_sec + DEATH_UPDATE_INTERVAL_TIME_MS - 500,
+            tv.tv_sec + DEATH_UPDATE_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &weight,
         .payload = 0,
@@ -322,7 +423,9 @@ void TamaStatus::updateDeathTimer()
 }
 
 void TamaStatus::updatePositionTimer()
-{ 
+{     
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     if (!jumping && !sleeping){
         jumping = true;
         velocity = {(double)random(-10, 10), -20};
@@ -339,9 +442,10 @@ void TamaStatus::updatePositionTimer()
     #ifdef DEBUG
     Serial.println("setting new timer");
     #endif
+
     if (screen_on && !sleeping) {
         timer.attach(new Timeable{
-            .call_time = millis() + 100,
+            .call_time = (unsigned long)tv.tv_sec + 100,
             .linked_value = &care_errors,
             .payload = 0,
             .notifier = &updatePositionTimer
@@ -351,18 +455,41 @@ void TamaStatus::updatePositionTimer()
 
 void TamaStatus::updateEvolutionTimer()
 {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
     if (evolution_state >= sizeof(Bitmaps::Tama::state_count) / sizeof(Bitmaps::Tama::state_count[0])) {
         evolution_state = (sizeof(Bitmaps::Tama::state_count) / sizeof(Bitmaps::Tama::state_count[0]) - 1);
     } else {
+        if (evolve_time <= tv.tv_sec) {
+            evolve_time = (unsigned long)(tv.tv_sec + 1000 * getPolynomialValue(tv.tv_sec));
+        }
         timer.attach(new Timeable{
-            .call_time = millis() + 1000,
-            //.call_time = (unsigned long)(millis() + round(getPolynomialValue() * 30 * 1000)),
+            .call_time = (unsigned long)evolve_time,
+            //.call_time = (unsigned long)(tv.tv_sec + round(getPolynomialValue() * 30 * 1000)),
             .linked_value = &evolution_state,
             .payload = 1,
             .notifier = &updateEvolutionTimer
         });
     }
-    current_display_state = Bitmaps::Tama::evolution_list[evolution_state][random(Bitmaps::Tama::state_count[evolution_state] - 1)];
+    if (evolve_time <= tv.tv_sec) {
+        display_state = random(Bitmaps::Tama::state_count[evolution_state] - 1);
+    }
+    current_display_state = Bitmaps::Tama::evolution_list[evolution_state][display_state];
+}
+
+void TamaStatus::updateSicknessTimer()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    if (random(1, 50) == 1) {
+        current_sickness = random(0, 5);
+    }
+    timer.attach(new Timeable{
+        .call_time = SICKNESS_UPDATE_INTERVAL_TIME,
+        .linked_value = nullptr,
+        .payload = 0,
+        .notifier = &updateSicknessTimer
+    });
 }
 
 void TamaStatus::updateJump()
@@ -391,7 +518,7 @@ void TamaStatus::updateJump()
         #endif
 }
 
-double TamaStatus::getPolynomialValue()
+double TamaStatus::getPolynomialValue(time_t time_in_seconds)
 {
     double terms[4] = {
         9.9999999999997874e+002,
@@ -403,9 +530,14 @@ double TamaStatus::getPolynomialValue()
     double result = 0;
     for (unsigned int c = 0; c < (sizeof(terms) / sizeof(terms[0])); c++) {
         result += terms[c] * t;
-        t *= millis() / 1000; // convert millis to seconds
+        t *= time_in_seconds; // convert millis to seconds
     }
     return result; // convert back to millis
+}
+
+std::string TamaStatus::getSickness()
+{
+    return sicknesses[current_sickness];
 }
 
 short int TamaStatus::happyness = 0;
@@ -414,9 +546,12 @@ short int TamaStatus::hunger = 0;
 short int TamaStatus::poop_on_screen = 4;
 short int TamaStatus::dicipline = 0;
 short int TamaStatus::weight = 50;
+uint64_t TamaStatus::evolve_time = 0;
 short int TamaStatus::diet_health_counter = 0;
 short int TamaStatus::care_errors = 0;
+short int TamaStatus::current_sickness = 0;
 int16_t TamaStatus::evolution_state = 0;
+int16_t TamaStatus::display_state = 0;
 
 Vector2 TamaStatus::position = {
     .x = 40, 

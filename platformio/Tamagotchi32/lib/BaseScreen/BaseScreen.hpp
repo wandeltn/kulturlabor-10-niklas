@@ -10,6 +10,7 @@ class BaseScreen {
         BaseScreen(unsigned char max_menu_position);
         virtual ~BaseScreen();
         void render(Display &display);
+        virtual void updateScreen();
 
         virtual void onButtonAPressed();
         virtual void onButtonBPressed() = 0;
