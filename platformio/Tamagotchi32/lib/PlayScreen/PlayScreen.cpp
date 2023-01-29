@@ -26,35 +26,35 @@ void PlayScreen::onButtonBPressed() {
     {
     case 0:
         //Soccer
-        tamaStatus.hunger += 300;
+        tamaStatus.hunger -= 300;
         tamaStatus.happyness += 5;
         tamaStatus.health += 5;
         active_screen = new PlayTama(current_menu_position, 0);
         break;
     case 1:
         // Badminton
-        tamaStatus.hunger += 300;
+        tamaStatus.hunger -= 300;
         tamaStatus.happyness += 5;
         tamaStatus.health += 5;
         active_screen = new PlayTama(current_menu_position, 0);
         break;
     case 2:
         // Hockey
-        tamaStatus.hunger += 300;
+        tamaStatus.hunger -= 300;
         tamaStatus.happyness += 5;
         tamaStatus.health += 5;
         active_screen = new PlayTama(current_menu_position, 0);
         break;
     case 3:
         // Chess
-        tamaStatus.hunger += 30;
+        tamaStatus.hunger -= 30;
         tamaStatus.happyness += 0;
         tamaStatus.health += 5;
         active_screen = new PlayTama(current_menu_position, 0);
         break;
     case 4:
         // Pong
-        tamaStatus.hunger += 30;
+        tamaStatus.hunger -= 30;
         tamaStatus.happyness += 0;
         tamaStatus.health += 5;
         active_screen = new PlayTama(current_menu_position, 0);
