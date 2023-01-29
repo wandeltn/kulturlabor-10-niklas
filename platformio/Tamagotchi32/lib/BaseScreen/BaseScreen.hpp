@@ -15,6 +15,7 @@ class BaseScreen {
         virtual void onButtonAPressed();
         virtual void onButtonBPressed() = 0;
         virtual void onButtonCPressed();
+        virtual void onButtonDPressed();
 
     protected:
         std::vector<Renderable*> render_list;

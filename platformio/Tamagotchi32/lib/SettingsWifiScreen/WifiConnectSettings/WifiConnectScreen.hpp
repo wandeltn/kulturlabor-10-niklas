@@ -6,7 +6,8 @@
 class WifiConnectScreen: public BaseScreen {
     public:
         WifiConnectScreen();
-        void onButtonBPressed();
+        void onButtonBPressed(); 
+        void onButtonDPressed(); 
 };
 
 #endif // __WIFICONNECT_H__

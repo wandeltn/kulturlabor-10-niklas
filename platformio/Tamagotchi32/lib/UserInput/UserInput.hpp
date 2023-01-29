@@ -24,6 +24,7 @@ class UserInput
         static void ARDUINO_ISR_ATTR onButtonAPressed();
         static void ARDUINO_ISR_ATTR onButtonBPressed();
         static void ARDUINO_ISR_ATTR onButtonCPressed();
+        static void ARDUINO_ISR_ATTR onButtonDPressed();
 
         static void turnOffScreen();
         static void resetScreenOff(bool);

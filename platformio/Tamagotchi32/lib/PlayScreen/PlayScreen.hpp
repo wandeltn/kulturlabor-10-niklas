@@ -7,13 +7,12 @@ class PlayScreen: public BaseScreen {
     public:
         PlayScreen();
         void onButtonBPressed();
-        inline static const char* display_options[6] = {
+        inline static const char* display_options[5] = {
         "  Soccer",
         "  Badminton",
         "  Hockey",
         "  Chess",
-        "  Pong",
-        "  Exit"
+        "  Pong"
         };
     private:
 };

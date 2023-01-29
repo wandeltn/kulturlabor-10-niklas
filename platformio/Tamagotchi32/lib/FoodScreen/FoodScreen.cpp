@@ -10,7 +10,7 @@
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
-FoodScreen::FoodScreen(): BaseScreen(7) {
+FoodScreen::FoodScreen(): BaseScreen(6) {
     #ifdef DEBUG
     Serial.println("inside FoodScreen constructor");
     #endif

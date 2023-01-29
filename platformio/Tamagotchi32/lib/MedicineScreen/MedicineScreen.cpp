@@ -11,7 +11,7 @@
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
-MedicineScreen::MedicineScreen(): BaseScreen(3) {
+MedicineScreen::MedicineScreen(): BaseScreen(2) {
     #ifdef DEBUG
     Serial.println("inside MedicineScreen constructor");
     #endif

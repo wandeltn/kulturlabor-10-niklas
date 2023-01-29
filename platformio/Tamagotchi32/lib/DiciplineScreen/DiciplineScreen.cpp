@@ -8,7 +8,7 @@
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
-DiciplineScreen::DiciplineScreen(): BaseScreen(4) {
+DiciplineScreen::DiciplineScreen(): BaseScreen(3) {
     #ifdef DEBUG
     Serial.println("inside DiciplineScreen constructor");
     #endif
@@ -52,11 +52,3 @@ void DiciplineScreen::onButtonBPressed() {
     Serial.println(tamaStatus.health);
     #endif
 }
-
-const char* DiciplineScreen::display_options[5] = {
-    "  Time together",
-    "  Set expectations",
-    "  Use concequences",
-    "  Do an activity",
-    "  Exit"
-};

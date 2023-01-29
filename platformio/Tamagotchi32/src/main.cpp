@@ -59,7 +59,6 @@ void shutdown() {
 }
 
 void print_wakeup_reason(){
-
   switch(wakeup_reason){
     case ESP_SLEEP_WAKEUP_EXT0 : ums3.setPixelColor(0x00FF00); break;
     case ESP_SLEEP_WAKEUP_EXT1 : Serial.println("Wakeup caused by external signal using RTC_CNTL"); break;

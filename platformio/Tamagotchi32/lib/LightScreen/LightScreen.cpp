@@ -10,7 +10,7 @@
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
-LightScreen::LightScreen(): BaseScreen(2)
+LightScreen::LightScreen(): BaseScreen(1)
 {
     #ifdef DEBUG
     Serial.println("inside LightScreen constructor");

@@ -3,11 +3,12 @@
 #include <MainScreen.hpp>
 #include <SubScreenOptions/SubScreenOptions.hpp>
 #include <WifiManager.hpp>
+#include <SettingsScreen.hpp>
 
 extern BaseScreen* active_screen;
 extern WifiManager wifiManager;
 
-WifiModeScreen::WifiModeScreen(): BaseScreen(2)
+WifiModeScreen::WifiModeScreen(): BaseScreen(1)
 {
     render_list.push_back(new SubScreenOptions{display_options, sizeof(display_options) / sizeof(display_options[0])});
 }
@@ -31,5 +32,11 @@ void WifiModeScreen::onButtonBPressed()
         active_screen = new MainScreen();
         break;
     }
+}
+
+void WifiModeScreen::onButtonDPressed()
+{
+    delete active_screen;
+    active_screen = new SettingsScreen();
 }
 
