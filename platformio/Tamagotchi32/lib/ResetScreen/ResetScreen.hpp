@@ -7,7 +7,8 @@ class ResetScreen: public BaseScreen {
     public: 
         ResetScreen();
         void onButtonBPressed();
-        inline static const char* display_options[] = {
+        void onButtonDPressed();
+        inline static const char* display_options[2] = {
             "  Reset",
             "  Cancel"
         };

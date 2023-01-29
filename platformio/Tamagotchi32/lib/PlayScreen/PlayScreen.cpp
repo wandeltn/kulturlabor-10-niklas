@@ -10,7 +10,7 @@
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
-PlayScreen::PlayScreen(): BaseScreen(5) {
+PlayScreen::PlayScreen(): BaseScreen(4) {
     #ifdef DEBUG
     Serial.println("inside PlayScreen constructor");
     #endif

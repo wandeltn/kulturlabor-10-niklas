@@ -3,18 +3,17 @@
 
 #include <BaseScreen.hpp>
 
-class SettingsWifiScreen: public BaseScreen {
+class WifiSettingsScreen: public BaseScreen {
     public:
-        SettingsWifiScreen();
+        WifiSettingsScreen();
         void onButtonBPressed();
-        inline static const char* display_options[7] {
+        inline static const char* display_options[6] {
             "  Connect",
             "  Mode"
             "  Edit",
             "  Add",
             "  Remove",
             "  Info",
-            "  Cancel"
         };
 };
 

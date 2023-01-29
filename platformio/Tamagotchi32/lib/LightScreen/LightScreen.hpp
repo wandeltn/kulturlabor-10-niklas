@@ -7,10 +7,9 @@ class LightScreen: public BaseScreen {
     public:
         LightScreen();
         void onButtonBPressed();
-        inline static const char* display_options[3] = {
+        inline static const char* display_options[2] = {
             "  Light ON",
             "  Light OFF",
-            "  Exit"
         };
 };
 

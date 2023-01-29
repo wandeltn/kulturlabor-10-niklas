@@ -10,7 +10,7 @@
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
-PoopScreen::PoopScreen(): BaseScreen(1) {
+PoopScreen::PoopScreen(): BaseScreen(0) {
     #ifdef DEBUG
     Serial.println("inside PoopScreen constructor");
     #endif

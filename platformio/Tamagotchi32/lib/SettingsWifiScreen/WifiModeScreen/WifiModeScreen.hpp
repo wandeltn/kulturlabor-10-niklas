@@ -10,10 +10,10 @@ class WifiModeScreen: public BaseScreen {
     public:
         WifiModeScreen();
         void onButtonBPressed();
-        inline static const char* display_options[3] = {
+        void onButtonDPressed();
+        inline static const char* display_options[2] = {
             "  Hotspot",
-            "  Wifi",
-            "  Cancel"
+            "  Wifi"
         };
 };
 

@@ -7,9 +7,8 @@ class PoopScreen: public BaseScreen {
     public:
         PoopScreen();
         void onButtonBPressed();
-        inline static const char* display_options[2] = {
-        "  Clean poop",
-        "  Exit"
+        inline static const char* display_options[1] = {
+        "  Clean poop"
         };
     private:
 };

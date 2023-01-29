@@ -7,15 +7,14 @@ class FoodScreen: public BaseScreen {
     public:
         FoodScreen();
         void onButtonBPressed();
-        inline static const char* display_options[8] = {
+        inline static const char* display_options[7] = {
         "  Burger",
         "  Pasta",
         "  Muffin",
         "  Broccoli",
         "  Salad",
         "  Sushi",
-        "  Crepes",
-        "  Exit"
+        "  Crepes"
         };
     private:
 };

@@ -93,10 +93,7 @@ void ARDUINO_ISR_ATTR UserInput::onButtonDPressed()
     button_time = millis();
     if (button_time - last_button_time > 250)
     {
-        if (screen_on) {
-            active_screen->onButtonDPressed();
-        }
-        screen_on = true;
+        active_screen->onButtonDPressed();
         #ifndef DEMO_MODE
         resetScreenOff(false);
         #endif

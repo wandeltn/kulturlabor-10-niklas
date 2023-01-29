@@ -10,7 +10,7 @@
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
 
-StatsScreen::StatsScreen(): BaseScreen(1)
+StatsScreen::StatsScreen(): BaseScreen(0)
 {
     #ifdef DEBUG
     Serial.println("inside StatsScreen constructor");

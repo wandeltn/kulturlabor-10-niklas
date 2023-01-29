@@ -7,11 +7,10 @@ class MedicineScreen: public BaseScreen {
     public:
         MedicineScreen();
         void onButtonBPressed();
-        inline static const char* display_options[4] = {
+        inline static const char* display_options[3] = {
         "  Vaccination",
         "  Medicine",
-        "  Doctor",
-        "  Exit"
+        "  Doctor"
         };
     private:
 };
