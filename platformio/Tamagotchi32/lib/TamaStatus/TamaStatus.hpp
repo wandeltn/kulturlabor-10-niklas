@@ -17,6 +17,7 @@ class TamaStatus {
         static short int dicipline;
         static short int weight;
         static bool light_on;
+        static bool sleeping;
 
 //         static long random(long start, long end);
         static void begin();
@@ -67,7 +68,6 @@ class TamaStatus {
         static short int care_errors;
         static int16_t evolution_state;
         static int16_t display_state;
-        static bool sleeping;
         static bool jumping;
 };
 

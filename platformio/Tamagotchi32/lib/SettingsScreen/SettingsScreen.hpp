@@ -7,8 +7,9 @@ class SettingsScreen: public BaseScreen {
     public:
         SettingsScreen();
         void onButtonBPressed();
-        inline static const char* display_options[2] = {
+        inline static const char* display_options[3] = {
             "  Wifi Settings",
+            "  Diagnostics",
             "  RESET"
         };
 };

@@ -16,6 +16,7 @@
 #include <Timer.hpp>
 #include <Timeable.hpp>
 #include <TamaStatus.hpp>
+#include <BTManager.hpp>
 
 #define DEBUG
 // #define DEMO_MODE
@@ -42,6 +43,7 @@ Display display(
 Timer timer{};
 UMS3 ums3;
 WifiManager wifiManager;
+BTManager btManager;
 esp_err_t nvsError;
 BaseScreen* active_screen;
 struct timeval tv;
@@ -52,6 +54,8 @@ bool screen_on = true;
 bool schedule_rerender = true;
 esp_sleep_wakeup_cause_t wakeup_reason;
 void shutdown() {
+    display.clearDisplay();
+    display.display();
     tamaStatus.end();
     esp_sleep_enable_ext0_wakeup(GPIO_NUM_13, LOW);
     rtc_gpio_pullup_en(GPIO_NUM_13);
@@ -71,7 +75,7 @@ void print_wakeup_reason(){
 
 void loop() {
     gettimeofday(&tv, NULL);
-    Serial.println(ums3.getBatteryVoltage());
+    // Serial.println(btManager.getNearbyDevices());
     if (screen_on) {
         active_screen->updateScreen();
         if(schedule_rerender) {
@@ -125,4 +129,6 @@ void setup() {
     display.display(); 
 
     tamaStatus.begin();   
+
+    btManager.begin();
 }

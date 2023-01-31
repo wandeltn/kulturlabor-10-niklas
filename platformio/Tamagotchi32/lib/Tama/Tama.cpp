@@ -24,4 +24,12 @@ void Tama::render(Display &display, unsigned short int current_menu_position)
         tamaStatus.current_display_state.height,
         SSD1306_WHITE
     );
+    if (tamaStatus.sleeping) {
+        display.setCursor(tamaStatus.position.x + 50, tamaStatus.position.y - 2);
+        display.print('Z');
+        display.setCursor(tamaStatus.position.x + 55, tamaStatus.position.y - 7);
+        display.print('Z');
+        display.setCursor(tamaStatus.position.x + 60, tamaStatus.position.y - 12);
+        display.print('Z');
+    }
 }
