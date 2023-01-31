@@ -27,6 +27,7 @@ extern timeval tv;
 #define SICKNESS_UPDATE_INTERVAL_TIME   10
 
 #define HUNGER_ADD_VALUE                -10
+#define HAPPYNESS_ADD_VALUE             -10
 #define HEALTH_ADD_VALUE                -10
 #define DICIPLINE_ADD_VALUE             -5
 
@@ -180,6 +181,16 @@ void TamaStatus::recoverSleep(long shutdown_time)
 {
     long current_time = tv.tv_sec;
     long simulated_time = shutdown_time;
+    // sleep
+    while (simulated_time <= current_time) {
+        sleeping = !sleeping;
+        simulated_time += (unsigned long)(random(
+            tv.tv_sec + SLEEP_INTERVAL_TIME_MS - 500,
+            tv.tv_sec + SLEEP_INTERVAL_TIME_MS + 500
+        ));
+    }
+    simulated_time = shutdown_time;
+
     // happyness
     while (simulated_time <= current_time) {
         hunger += HUNGER_ADD_VALUE;
@@ -318,13 +329,18 @@ void TamaStatus::updateHappynessTimer()
     #ifdef DEBUG
     Serial.println("Setting new happyness Timeable");
     #endif
+    if (happyness < 0) {
+        happyness = 0;
+        current_sickness = 7;
+        care_errors++;
+    }
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             tv.tv_sec + POOP_INTERVAL_TIME_MS - 500,
             tv.tv_sec + POOP_INTERVAL_TIME_MS + 500
         )),
         .linked_value = &happyness,
-        .payload = HUNGER_ADD_VALUE,
+        .payload = HAPPYNESS_ADD_VALUE,
         .notifier = &updatePoopTimer
     });
 }
@@ -335,6 +351,11 @@ void TamaStatus::updateHealthTimer()
     #ifdef DEBUG
     Serial.println("Setting new sickness Timeable");
     #endif
+    if(health < 0) {
+        health = 0;
+        current_sickness = 9;
+        care_errors++;
+    }
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             tv.tv_sec + HEALTH_INTERVAL_TIME_MS - 500,
@@ -351,6 +372,10 @@ void TamaStatus::updateDiciplineTimer()
     #ifdef DEBUG
     Serial.println("Setting new dicipline Timeable");
     #endif
+    if(dicipline < 0) {
+        dicipline = 0;
+        care_errors++;
+    }
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
             tv.tv_sec + DICIPLINE_INTERVAL_TIME_MS - 500,
@@ -368,6 +393,10 @@ void TamaStatus::updateWeghtCheckTImer()
         weight += hunger; // 1500
     } else if ( 500 <= hunger) {
         weight += hunger; // 1500 
+    }
+    if (weight < 0) {
+        weight = 0;
+        care_errors++;
     }
     #ifdef DEBUG
     Serial.println("Setting new weightCheck Timeable");

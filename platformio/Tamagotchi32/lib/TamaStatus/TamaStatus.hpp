@@ -60,7 +60,8 @@ class TamaStatus {
             "Vomiting"
             "Insomnia",
             "Depression",
-            "COVID-19"
+            "COVID-19",
+            "Weakness"
         };
         static uint64_t evolve_time;
         static constexpr double gravity = 9.8;
