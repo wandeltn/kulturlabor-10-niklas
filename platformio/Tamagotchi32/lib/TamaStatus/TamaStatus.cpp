@@ -101,7 +101,7 @@ void TamaStatus::begin()
     updateSleepTimer();
     updateDeathTimer();
     updateEvolutionTimer();
-    updatePositionTimer();
+    // updatePositionTimer();
 }
 
 void TamaStatus::end()
@@ -415,14 +415,14 @@ void TamaStatus::updateWeghtCheckTImer()
 void TamaStatus::updateSleepTimer()
 {
     sleeping = !sleeping;
-    updatePositionTimer();
+    // updatePositionTimer();
     #ifdef DEBUG
     Serial.println("Setting new sleep Timeable");
     #endif
     timer.attach(new Timeable{
         .call_time = (unsigned long)(random(
-            tv.tv_sec + SLEEP_INTERVAL_TIME_MS - 500,
-            tv.tv_sec + SLEEP_INTERVAL_TIME_MS + 500
+            tv.tv_sec + SLEEP_INTERVAL_TIME_MS - 5,
+            tv.tv_sec + SLEEP_INTERVAL_TIME_MS + 5
         )),
         .linked_value = &health,
         .payload = 5,
@@ -446,34 +446,34 @@ void TamaStatus::updateDeathTimer()
     });
 }
 
-void TamaStatus::updatePositionTimer()
-{     
-    if (!jumping && !sleeping){
-        jumping = true;
-        velocity = {(double)random(-10, 10), -20};
-        // velocity = {0, (double)random(-5, -20)};
-        // velocity = {0, -20};
-    }
-    #ifdef DEBUG
-    Serial.println("getting new jump pos");
-    Serial.println(random(10, 20) - 30);
-    Serial.println(esp_random());
-    #endif
-    updateJump();    
-    schedule_rerender = true;
-    #ifdef DEBUG
-    Serial.println("setting new timer");
-    #endif
+// void TamaStatus::updatePositionTimer()
+// {     
+//     if (!jumping && !sleeping){
+//         jumping = true;
+//         velocity = {(double)random(-10, 10), -20};
+//         // velocity = {0, (double)random(-5, -20)};
+//         // velocity = {0, -20};
+//     }
+//     #ifdef DEBUG
+//     Serial.println("getting new jump pos");
+//     Serial.println(random(10, 20) - 30);
+//     Serial.println(esp_random());
+//     #endif
+//     updateJump();    
+//     schedule_rerender = true;
+//     #ifdef DEBUG
+//     Serial.println("setting new timer");
+//     #endif
 
-    if (screen_on && !sleeping) {
-        timer.attach(new Timeable{
-            .call_time = (unsigned long)tv.tv_sec + 100,
-            .linked_value = &care_errors,
-            .payload = 0,
-            .notifier = &updatePositionTimer
-        }); 
-    }
-}
+//     if (!sleeping) {
+//         timer.attach(new Timeable{
+//             .call_time = (unsigned long)tv.tv_sec + 100,
+//             .linked_value = &care_errors,
+//             .payload = 0,
+//             .notifier = &updatePositionTimer
+//         }); 
+//     }
+// }
 
 void TamaStatus::updateEvolutionTimer()
 {
@@ -526,7 +526,10 @@ void TamaStatus::updateJump()
         if (position.y >= 16.0)
         {
             position.y = 16.0;
-            jumping = false;
+            if (!sleeping) { 
+                velocity = {(double)random(-10, 10), -20};
+            }
+
         }
         #ifdef DEBUG
         Serial.print("pos X: ");

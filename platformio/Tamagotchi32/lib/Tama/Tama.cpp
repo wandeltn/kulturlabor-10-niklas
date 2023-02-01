@@ -6,12 +6,23 @@
 extern TamaStatus tamaStatus;
 extern Timer timer;
 extern bool screen_on;
+extern bool schedule_rerender;
 
-Tama::Tama()
+Tama::Tama(): Renderable()
 {
     #ifdef DEBUG
     Serial.pirntln("inside Tama constructor");
     #endif
+    jump_time = 0;
+}
+
+void Tama::update()
+{
+    if (jump_time <= jump_time) { 
+        tamaStatus.updateJump();
+        schedule_rerender = true;
+        jump_time = millis() + 1000;
+    }
 }
 
 void Tama::render(Display &display, unsigned short int current_menu_position)

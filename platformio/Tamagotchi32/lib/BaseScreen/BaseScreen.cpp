@@ -31,7 +31,9 @@ void BaseScreen::render(Display &display)
 
 void BaseScreen::updateScreen()
 {
-
+    for (Renderable* element: render_list) {
+        element->update();
+    }
 }
 
 void BaseScreen::onButtonAPressed()

@@ -75,6 +75,7 @@ void print_wakeup_reason(){
 
 void loop() {
     gettimeofday(&tv, NULL);
+    timer.check_timer_list();
     // Serial.println(btManager.getNearbyDevices());
     if (screen_on) {
         active_screen->updateScreen();
@@ -83,15 +84,14 @@ void loop() {
             active_screen->render(display);
             display.display();
             schedule_rerender = false;
-        } else if (userInput.button_B_pressed) {
+        }
+        if (userInput.button_B_pressed) {
             #ifdef DEBUG
             Serial.println("B pressed");
             #endif
             active_screen->onButtonBPressed();
             userInput.button_B_pressed = false;
             schedule_rerender = true;
-        } else {
-            timer.check_timer_list();
         }
     } else {
         timer.check_timer_list();

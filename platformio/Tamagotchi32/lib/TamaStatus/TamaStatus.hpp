@@ -38,7 +38,7 @@ class TamaStatus {
         static void updateWeghtCheckTImer();
         static void updateSleepTimer();
         static void updateDeathTimer();
-        static void updatePositionTimer();
+        // static void updatePositionTimer();
         static void updateEvolutionTimer();
         static void updateSicknessTimer();
 
