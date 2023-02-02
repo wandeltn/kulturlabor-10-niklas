@@ -520,6 +520,10 @@ void TamaStatus::updateJump()
         position.y = position.y + delta * velocity.y; // distance [m] = speed [m/s] * time [s]
         
         if (position.x >= 62 || position.x <= 20) {
+            if (sleeping && velocity.x >= 30) {
+                velocity.x = 0;
+
+            }
             velocity.x *= -1;
         }
 
