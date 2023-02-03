@@ -18,10 +18,10 @@ Tama::Tama(): Renderable()
 
 void Tama::update()
 {
-    if (jump_time <= jump_time) { 
+    if (jump_time <= millis()) { 
         tamaStatus.updateJump();
         schedule_rerender = true;
-        jump_time = millis() + 1000;
+        jump_time = millis() + 50;
     }
 }
 

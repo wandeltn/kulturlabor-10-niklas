@@ -481,7 +481,8 @@ void TamaStatus::updateEvolutionTimer()
         evolution_state = (sizeof(Bitmaps::Tama::state_count) / sizeof(Bitmaps::Tama::state_count[0]) - 1);
     } else {
         if (evolve_time <= tv.tv_sec) {
-            evolve_time = (unsigned long)(tv.tv_sec + 1000 * getPolynomialValue(tv.tv_sec));
+            // evolve_time = (unsigned long)(tv.tv_sec + 1000 * getPolynomialValue(tv.tv_sec));
+            evolve_time = tv.tv_sec + 5;
         }
         timer.attach(new Timeable{
             .call_time = (unsigned long)evolve_time,
