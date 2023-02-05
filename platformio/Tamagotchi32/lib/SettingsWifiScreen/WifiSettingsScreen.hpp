@@ -9,7 +9,7 @@ class WifiSettingsScreen: public BaseScreen {
         void onButtonBPressed();
         inline static const char* display_options[6] {
             "  Connect",
-            "  Mode"
+            "  Mode",
             "  Edit",
             "  Add",
             "  Remove",

@@ -13,6 +13,7 @@ BTManager::BTManager()
 
 void BTManager::begin()
 {
+    enable();
     BLEDevice::init("");
     pBLEScan = BLEDevice::getScan(); //create new scan
     pBLEScan->setAdvertisedDeviceCallbacks(nullptr);

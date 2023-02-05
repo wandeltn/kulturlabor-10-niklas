@@ -8,8 +8,10 @@
 class Tama: public Renderable {
     public:
         Tama();
+        void update();
         void render(Display &display, unsigned short int current_menu_position);
     private:
+        unsigned long jump_time;
 };
 
 #endif // __TAMA_H__

@@ -11,6 +11,7 @@ class WifiManager {
         WifiManager();
         void begin(WiFiMode_t);
         void end();
+        void connect();
         void readCredentials();
         void writeCredentials();
         void switchMode(WiFiMode_t);

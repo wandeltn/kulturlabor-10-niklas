@@ -39,6 +39,16 @@ void UserInput::begin()
     attachInterrupt(BUTTON_B, onButtonBPressed, FALLING);
     attachInterrupt(BUTTON_C, onButtonCPressed, FALLING);
     attachInterrupt(BUTTON_D, onButtonDPressed, FALLING);
+
+    struct timeval tv_;
+    gettimeofday(&tv_, NULL);
+    screen_off_timer = new Timeable{
+        .call_time = (unsigned long)tv_.tv_sec + SCREEN_OFF_TIME,
+        .linked_value = &linked_value,
+        .payload = 0,
+        .notifier = &turnOffScreen
+    };
+    timer.attach(screen_off_timer);
 }
 
 void UserInput::onButtonAPressed() {
