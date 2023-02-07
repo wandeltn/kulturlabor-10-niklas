@@ -7,11 +7,13 @@ class SettingsScreen: public BaseScreen {
     public:
         SettingsScreen();
         void onButtonBPressed();
-        inline static const char* display_options[3] = {
+        inline static const char* display_options[4] = {
+            "  Rename Tama",
             "  Wifi Settings",
             "  Diagnostics",
             "  RESET"
         };
+
 };
 
 

@@ -565,6 +565,16 @@ std::string TamaStatus::getSickness()
     return sicknesses[current_sickness];
 }
 
+void TamaStatus::renameTama(std::string new_name)
+{
+    tama_name = new_name;
+}
+
+std::string* TamaStatus::getNameP()
+{
+    return &tama_name;
+}
+
 short int TamaStatus::happyness = 0;
 short int TamaStatus::health = 0;
 short int TamaStatus::hunger = 0;
@@ -590,4 +600,5 @@ Vector2 TamaStatus::velocity = {
 bool TamaStatus::jumping = true;
 bool TamaStatus::sleeping = false;
 bool TamaStatus::light_on = false;
+std::string TamaStatus::tama_name = "";
 ImageFormat TamaStatus::current_display_state = Bitmaps::Tama::EggStage::egg_up_image;

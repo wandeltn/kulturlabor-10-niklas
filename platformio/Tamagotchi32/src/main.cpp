@@ -21,8 +21,8 @@
 #define DEBUG
 // #define DEMO_MODE
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define SCREEN_WIDTH 64 // OLED display width, in pixels
+#define SCREEN_HEIGHT 128 // OLED display height, in pixels
 
 // Declaration for SSD1306 display connected using software SPI (default case):
 #define OLED_MOSI  35

@@ -23,7 +23,6 @@ extern UMS3 ums3;
 extern struct timeval tv;
 
 UserInput::UserInput() {
-    resetScreenOff(true);
 }
 
 void UserInput::begin()

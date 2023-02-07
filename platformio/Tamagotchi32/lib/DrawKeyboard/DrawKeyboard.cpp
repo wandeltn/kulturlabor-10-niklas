@@ -8,12 +8,12 @@ DrawKeyboard::DrawKeyboard(): Renderable()
 
 void DrawKeyboard::render(Display &display, unsigned short current_menu_position)
 {
-    for (unsigned int i = 0; i <= 26; i++) {
+    for (unsigned int i = 0; i <= 24; i++) {
         if (i != current_menu_position)
         {
             display.drawBitmap(
-                floor(i / 4) * 16,
-                (i % 4) * 16,
+                floor(i / 3) * 16,
+                (i % 3) * 16,
                 Bitmaps::Keyboard::Keyboard_images[i].data,
                 Bitmaps::Keyboard::Keyboard_images[i].width,
                 Bitmaps::Keyboard::Keyboard_images[i].height,
@@ -21,8 +21,8 @@ void DrawKeyboard::render(Display &display, unsigned short current_menu_position
             );
         } else {
             display.drawInvertBitmapColor(
-                floor(i / 4) * 16,
-                (i % 4) * 16,
+                floor(i / 3) * 16,
+                (i % 3) * 16,
                 Bitmaps::Keyboard::Keyboard_images[i].data,
                 Bitmaps::Keyboard::Keyboard_images[i].width,
                 Bitmaps::Keyboard::Keyboard_images[i].height,

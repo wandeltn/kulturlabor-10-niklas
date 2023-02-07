@@ -45,6 +45,8 @@ class TamaStatus {
         static void updateJump();
         static double getPolynomialValue(time_t time_in_seconds);
         static std::string getSickness();
+        static void renameTama(std::string new_name);
+        static std::string* getNameP();
 
         static ImageFormat current_display_state;
         static Vector2 position;
@@ -70,6 +72,7 @@ class TamaStatus {
         static int16_t evolution_state;
         static int16_t display_state;
         static bool jumping;
+        static std::string tama_name;
 };
 
 #endif // __TAMASTATUS_H__

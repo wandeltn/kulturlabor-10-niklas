@@ -2,6 +2,7 @@
 #define __DRAWKEYBOARD_H__
 
 #include <Renderable.hpp>
+#include <../BaseScreen/BaseScreen.hpp>
 
 class DrawKeyboard : public Renderable {
     public: 
