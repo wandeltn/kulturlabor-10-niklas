@@ -6,6 +6,7 @@
 #include <MainScreen.hpp>
 #include "SubScreenOptions/SubScreenOptions.hpp"
 #include <TamaStatus.hpp>
+#include <PlayTama/PlayBadminton/PlayBadminton.hpp>
 
 extern BaseScreen* active_screen;
 extern TamaStatus tamaStatus;
@@ -36,7 +37,7 @@ void PlayScreen::onButtonBPressed() {
         tamaStatus.hunger -= 300;
         tamaStatus.happyness += 5;
         tamaStatus.health += 5;
-        active_screen = new PlayTama(current_menu_position, 0);
+        active_screen = new PlayBadminton();
         break;
     case 2:
         // Hockey

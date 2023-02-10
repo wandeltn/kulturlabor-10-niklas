@@ -122,7 +122,6 @@ void setup() {
 
     // Clear the buffer
     display.clearDisplay();
-    display.dim(true);
     // init code
     active_screen = new MainScreen();
 
