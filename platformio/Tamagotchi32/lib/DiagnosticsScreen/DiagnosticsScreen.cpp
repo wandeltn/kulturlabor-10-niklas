@@ -3,11 +3,12 @@
 #include <BTManager.hpp>
 #include <DisplayText.hpp>
 #include <MainScreen.hpp>
+#include <ThanksScreen.hpp>
 
 extern BTManager btManager;
 extern BaseScreen* active_screen;
 
-DiagnosticsScreen::DiagnosticsScreen(): BaseScreen(0)
+DiagnosticsScreen::DiagnosticsScreen(): BaseScreen(2)
 {
     render_list.push_back(new DisplayText{
         25, 
@@ -19,26 +20,15 @@ DiagnosticsScreen::DiagnosticsScreen(): BaseScreen(0)
 void DiagnosticsScreen::onButtonBPressed()
 {
     delete active_screen;
-    active_screen = new MainScreen();
+    if (current_menu_position != 1) {
+        active_screen = new MainScreen();
+    } else {
+        active_screen = new ThanksScreen();    
+    }
 }
 
 void DiagnosticsScreen::onButtonDPressed()
 {
     delete active_screen;
     active_screen = new SettingsScreen();
-}
-
-void DiagnosticsScreen::updateScreen()
-{
-    for (Renderable* pointer : render_list) {
-        delete pointer;
-        pointer = nullptr;
-    }
-    render_list.clear();
-
-    render_list.push_back(new DisplayText{
-        25, 
-        8,
-        std::to_string(btManager.getNearbyDevices())
-    });
 }

@@ -8,7 +8,6 @@ class DiagnosticsScreen: public BaseScreen {
         DiagnosticsScreen();
         void onButtonBPressed();
         void onButtonDPressed();
-        void updateScreen();
 };
 
 #endif // __DIAGNOSTICSSCREEN_H__
